@@ -1,11 +1,18 @@
-# The 10-Weekend AI Resolution
+# DualReveal
 
-YOUR SELF-GUIDED PATH TO AI FLUENCY IN 2026
+Private, guided quiz flow for couples. One partner purchases, the other answers
+once, and the purchaser receives a formatted reveal.
 
-One weekend. One project. One tangible outcome.
+## Local development
+- `npm install`
+- Copy `.env.example` to `.env.local` and fill in Supabase keys if available.
 
-By the end: a personal AI operating system you'll actually use.
+## Scripts
+- `npm run dev` starts the Next.js dev server.
+- `npm run build` builds the production bundle.
+- `npm run start` runs the production server.
+- `npm run test` runs Playwright end-to-end tests.
 
-STARTING THIS WEEKEND
-
-NEW FOR 2026!
+## Notes
+- The app falls back to an in-memory store when Supabase is not configured.
+- Payments are stubbed and will be wired later.
