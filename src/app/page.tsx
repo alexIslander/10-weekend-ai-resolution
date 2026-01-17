@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Card } from "@/components/Card";
+import { getQuestionSetFlow } from "@/lib/feature-flags";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const flow = await getQuestionSetFlow();
+  const startHref = flow === "option-a" ? "/question-sets" : "/purchase";
   return (
     <main className="space-y-16">
       <section className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
@@ -15,7 +18,7 @@ export default function HomePage() {
             other answers once, and you receive a beautiful, organized reveal.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/purchase" className="btn-primary">
+            <Link href={startHref} className="btn-primary">
               Start the reveal
             </Link>
             <a href="#how" className="btn-secondary">
@@ -118,7 +121,7 @@ export default function HomePage() {
             <li>A shareable dashboard with status tracking.</li>
             <li>A reveal view designed for clarity and celebration.</li>
           </ul>
-          <Link href="/purchase" className="btn-primary w-fit">
+          <Link href={startHref} className="btn-primary w-fit">
             Begin now
           </Link>
         </Card>

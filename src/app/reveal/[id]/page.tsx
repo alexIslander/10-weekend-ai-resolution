@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/Card";
+import { FeedbackForm } from "@/components/FeedbackForm";
 import { getDataStore } from "@/lib/data";
 
 export default async function RevealPage({
@@ -40,7 +41,7 @@ export default async function RevealPage({
 
   const [answers, questions] = await Promise.all([
     store.listAnswers(reveal.id),
-    store.listQuestions()
+    reveal.questionSetId ? store.listQuestions(reveal.questionSetId) : store.listQuestions()
   ]);
 
   const answerMap = new Map(answers.map((answer) => [answer.questionId, answer]));
@@ -76,6 +77,13 @@ export default async function RevealPage({
           Start a new one
         </Link>
       </Card>
+
+      <FeedbackForm
+        revealId={reveal.id}
+        source="purchaser"
+        title="Did this help?"
+        description="Let us know if the reveal captured what you needed."
+      />
     </div>
   );
 }

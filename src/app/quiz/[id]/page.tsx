@@ -32,7 +32,18 @@ export default async function QuizPage({ params }: { params: { id: string } }) {
     );
   }
 
-  const questions = await store.listQuestions();
+  if (!reveal.questionSetId) {
+    return (
+      <Card className="space-y-3">
+        <h1 className="text-2xl font-semibold text-navy">Quiz not ready</h1>
+        <p className="text-sm text-navy/70">
+          The question set has not been selected yet.
+        </p>
+      </Card>
+    );
+  }
+
+  const questions = await store.listQuestions(reveal.questionSetId);
 
   return <QuizClient reveal={reveal} questions={questions} />;
 }

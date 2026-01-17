@@ -1,4 +1,4 @@
-import { defaultQuestions } from "@/lib/questions";
+import { questionSets } from "@/lib/questions";
 import { nowIso } from "@/lib/utils";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
@@ -6,8 +6,13 @@ import type {
   Answer,
   Coupon,
   CouponAttempt,
+  Feedback,
+  FeedbackSource,
   FeatureFlag,
   Question,
+  QuestionOption,
+  QuestionSet,
+  QuizStartResult,
   Reveal
 } from "@/lib/data/types";
 import type { DataStore, RevealFilter } from "@/lib/data/store";
@@ -19,15 +24,20 @@ const mapReveal = (row: Database["public"]["Tables"]["reveals"]["Row"]): Reveal 
   name: row.name,
   status: row.status as Reveal["status"],
   respondentName: row.respondent_name,
+  questionSetId: row.question_set_id,
+  quizStartedAt: row.quiz_started_at,
+  quizLockedBy: row.quiz_locked_by,
   createdAt: row.created_at,
   completedAt: row.completed_at
 });
 
 const mapQuestion = (row: Database["public"]["Tables"]["questions"]["Row"]): Question => ({
   id: row.id,
+  questionSetId: row.question_set_id,
   prompt: row.prompt,
   order: row.sort_order,
-  active: row.active
+  active: row.active,
+  answerType: (row.answer_type as Question["answerType"]) ?? "text"
 });
 
 const mapAnswer = (row: Database["public"]["Tables"]["answers"]["Row"]): Answer => ({
@@ -35,7 +45,39 @@ const mapAnswer = (row: Database["public"]["Tables"]["answers"]["Row"]): Answer 
   revealId: row.reveal_id,
   questionId: row.question_id,
   response: row.response,
+  selectedOptionId: row.selected_option_id,
   createdAt: row.created_at
+});
+
+const mapFeedback = (
+  row: Database["public"]["Tables"]["feedback"]["Row"]
+): Feedback => ({
+  id: row.id,
+  revealId: row.reveal_id,
+  source: row.source as FeedbackSource,
+  rating: row.rating,
+  note: row.note,
+  createdAt: row.created_at
+});
+
+const mapQuestionSet = (
+  row: Database["public"]["Tables"]["question_sets"]["Row"]
+): QuestionSet => ({
+  id: row.id,
+  key: row.key,
+  title: row.title,
+  description: row.description,
+  type: row.type as QuestionSet["type"]
+});
+
+const mapQuestionOption = (
+  row: Database["public"]["Tables"]["question_options"]["Row"]
+): QuestionOption => ({
+  id: row.id,
+  questionId: row.question_id,
+  label: row.label,
+  value: row.value,
+  order: row.sort_order
 });
 
 const mapCoupon = (row: Database["public"]["Tables"]["coupons"]["Row"]): Coupon => ({
@@ -79,25 +121,105 @@ const requireClient = () => {
   return client;
 };
 
-const seedQuestionsIfNeeded = async () => {
+const seedQuestionSetsIfNeeded = async () => {
   const client = requireClient();
   const { data: existing, error } = await client
-    .from("questions")
+    .from("question_sets")
     .select("id")
     .limit(1);
   if (error) throw error;
   if (existing && existing.length > 0) return;
 
-  const payload = defaultQuestions.map((prompt, index) => ({
-    prompt,
-    sort_order: index + 1,
-    active: true,
+  const setsPayload = questionSets.map((set) => ({
+    key: set.key,
+    title: set.title,
+    description: set.description,
+    type: set.type,
     created_at: nowIso(),
     updated_at: nowIso()
   }));
 
-  const { error: insertError } = await client.from("questions").insert(payload);
-  if (insertError) throw insertError;
+  const { data: insertedSets, error: setsError } = await client
+    .from("question_sets")
+    .insert(setsPayload)
+    .select("id,key");
+  if (setsError) throw setsError;
+
+  const setIdByKey = new Map(
+    (insertedSets ?? []).map((set) => [set.key, set.id])
+  );
+
+  const questionPayload: Array<Database["public"]["Tables"]["questions"]["Insert"]> =
+    [];
+  const optionSeed: Array<{
+    questionSetKey: string;
+    sortOrder: number;
+    options: { label: string; value: string }[];
+  }> = [];
+
+  questionSets.forEach((set) => {
+    const setId = setIdByKey.get(set.key);
+    if (!setId) return;
+    set.questions.forEach((question, index) => {
+      const answerType = question.answerType ?? (set.type === "single" ? "single" : "text");
+      questionPayload.push({
+        question_set_id: setId,
+        prompt: question.prompt,
+        sort_order: index + 1,
+        active: true,
+        answer_type: answerType,
+        created_at: nowIso(),
+        updated_at: nowIso()
+      });
+      if (answerType === "single" && question.options) {
+        optionSeed.push({
+          questionSetKey: set.key,
+          sortOrder: index + 1,
+          options: question.options
+        });
+      }
+    });
+  });
+
+  const { data: insertedQuestions, error: questionsError } = await client
+    .from("questions")
+    .insert(questionPayload)
+    .select("id,question_set_id,sort_order");
+  if (questionsError) throw questionsError;
+
+  const questionByKey = new Map(
+    (insertedQuestions ?? []).map((question) => [
+      `${question.question_set_id}:${question.sort_order}`,
+      question.id
+    ])
+  );
+
+  const optionsPayload: Array<
+    Database["public"]["Tables"]["question_options"]["Insert"]
+  > = [];
+  optionSeed.forEach((seed) => {
+    const setId = setIdByKey.get(seed.questionSetKey);
+    if (!setId) return;
+    const questionId = questionByKey.get(`${setId}:${seed.sortOrder}`);
+    if (!questionId) return;
+    seed.options.forEach((option, optionIndex) => {
+      optionsPayload.push({
+        question_id: questionId,
+        label: option.label,
+        value: option.value,
+        sort_order: optionIndex + 1,
+        created_at: nowIso(),
+        updated_at: nowIso()
+      });
+    });
+  });
+
+  if (optionsPayload.length > 0) {
+    const { error: optionsError } = await client
+      .from("question_options")
+      .insert(optionsPayload);
+    if (optionsError) throw optionsError;
+  }
 };
 
 export const supabaseStore: DataStore = {
@@ -123,12 +245,13 @@ export const supabaseStore: DataStore = {
     if (error) throw error;
     return data ? mapReveal(data) : null;
   },
-  async createReveal(email) {
+  async createReveal(email, questionSetId) {
     const client = requireClient();
     const { data, error } = await client
       .from("reveals")
       .insert({
         purchaser_email: email,
+        question_set_id: questionSetId ?? null,
         status: "awaiting",
         created_at: nowIso()
       })
@@ -148,6 +271,50 @@ export const supabaseStore: DataStore = {
     if (error) throw error;
     return data ? mapReveal(data) : null;
   },
+  async updateRevealQuestionSet(id, questionSetId) {
+    const client = requireClient();
+    const { data, error } = await client
+      .from("reveals")
+      .update({ question_set_id: questionSetId })
+      .eq("id", id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw error;
+    return data ? mapReveal(data) : null;
+  },
+  async startRevealQuiz(id, lockId): Promise<QuizStartResult> {
+    const client = requireClient();
+    const { data: reveal, error } = await client
+      .from("reveals")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) throw error;
+    if (!reveal) return { status: "not_found" };
+    if (reveal.status === "completed") {
+      return { status: "completed", reveal: mapReveal(reveal) };
+    }
+
+    if (!reveal.quiz_started_at) {
+      const { data: updated, error: updateError } = await client
+        .from("reveals")
+        .update({
+          quiz_started_at: nowIso(),
+          quiz_locked_by: lockId
+        })
+        .eq("id", id)
+        .is("quiz_started_at", null)
+        .select("*")
+        .maybeSingle();
+      if (updateError) throw updateError;
+      if (updated) return { status: "ok", reveal: mapReveal(updated) };
+    }
+
+    if (reveal.quiz_locked_by && reveal.quiz_locked_by !== lockId) {
+      return { status: "locked", reveal: mapReveal(reveal) };
+    }
+    return { status: "ok", reveal: mapReveal(reveal) };
+  },
   async completeReveal(id, respondentName, answers) {
     const client = requireClient();
     const { data: reveal, error } = await client
@@ -155,7 +322,8 @@ export const supabaseStore: DataStore = {
       .update({
         status: "completed",
         respondent_name: respondentName,
-        completed_at: nowIso()
+        completed_at: nowIso(),
+        quiz_locked_by: null
       })
       .eq("id", id)
       .select("*")
@@ -168,6 +336,7 @@ export const supabaseStore: DataStore = {
         reveal_id: id,
         question_id: answer.questionId,
         response: answer.response,
+        selected_option_id: answer.selectedOptionId ?? null,
         created_at: nowIso()
       }));
       const { error: insertError } = await client
@@ -197,16 +366,58 @@ export const supabaseStore: DataStore = {
     if (error) throw error;
     return data.map(mapAnswer);
   },
-  async listQuestions() {
-    await seedQuestionsIfNeeded();
+  async listQuestionSets() {
+    await seedQuestionSetsIfNeeded();
     const client = requireClient();
     const { data, error } = await client
-      .from("questions")
+      .from("question_sets")
       .select("*")
-      .eq("active", true)
-      .order("sort_order", { ascending: true });
+      .order("created_at", { ascending: true });
     if (error) throw error;
-    return data.map(mapQuestion);
+    return data.map(mapQuestionSet);
+  },
+  async getQuestionSetByKey(key: string) {
+    await seedQuestionSetsIfNeeded();
+    const client = requireClient();
+    const { data, error } = await client
+      .from("question_sets")
+      .select("*")
+      .eq("key", key)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? mapQuestionSet(data) : null;
+  },
+  async listQuestions(questionSetId?: string | null) {
+    await seedQuestionSetsIfNeeded();
+    const client = requireClient();
+    let query = client.from("questions").select("*").eq("active", true);
+    if (questionSetId) {
+      query = query.eq("question_set_id", questionSetId);
+    }
+    const { data: questions, error } = await query.order("sort_order", {
+      ascending: true
+    });
+    if (error) throw error;
+    const questionIds = questions.map((question) => question.id);
+    const optionsByQuestion = new Map<string, QuestionOption[]>();
+    if (questionIds.length > 0) {
+      const { data: options, error: optionsError } = await client
+        .from("question_options")
+        .select("*")
+        .in("question_id", questionIds)
+        .order("sort_order", { ascending: true });
+      if (optionsError) throw optionsError;
+      options.forEach((option) => {
+        const mapped = mapQuestionOption(option);
+        const current = optionsByQuestion.get(mapped.questionId) ?? [];
+        current.push(mapped);
+        optionsByQuestion.set(mapped.questionId, current);
+      });
+    }
+    return questions.map((question) => ({
+      ...mapQuestion(question),
+      options: optionsByQuestion.get(question.id) ?? []
+    }));
   },
   async updateQuestions(questions) {
     const client = requireClient();
@@ -220,20 +431,125 @@ export const supabaseStore: DataStore = {
   },
   async resetQuestions() {
     const client = requireClient();
-    await client.from("questions").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    const payload = defaultQuestions.map((prompt, index) => ({
-      prompt,
-      sort_order: index + 1,
-      active: true,
-      created_at: nowIso(),
-      updated_at: nowIso()
-    }));
-    const { data, error } = await client
+    await seedQuestionSetsIfNeeded();
+    await client
+      .from("question_options")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+    await client
       .from("questions")
-      .insert(payload)
-      .select("*");
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+
+    const { data: sets, error: setsError } = await client
+      .from("question_sets")
+      .select("id,key");
+    if (setsError) throw setsError;
+    const setIdByKey = new Map((sets ?? []).map((set) => [set.key, set.id]));
+
+    const questionPayload: Array<Database["public"]["Tables"]["questions"]["Insert"]> =
+      [];
+    const optionSeed: Array<{
+      questionSetKey: string;
+      sortOrder: number;
+      options: { label: string; value: string }[];
+    }> = [];
+
+    questionSets.forEach((set) => {
+      const setId = setIdByKey.get(set.key);
+      if (!setId) return;
+      set.questions.forEach((question, index) => {
+        const answerType = question.answerType ?? (set.type === "single" ? "single" : "text");
+        questionPayload.push({
+          question_set_id: setId,
+          prompt: question.prompt,
+          sort_order: index + 1,
+          active: true,
+          answer_type: answerType,
+          created_at: nowIso(),
+          updated_at: nowIso()
+        });
+        if (answerType === "single" && question.options) {
+          optionSeed.push({
+            questionSetKey: set.key,
+            sortOrder: index + 1,
+            options: question.options
+          });
+        }
+      });
+    });
+
+    const { data: insertedQuestions, error: questionError } = await client
+      .from("questions")
+      .insert(questionPayload)
+      .select("id,question_set_id,sort_order");
+    if (questionError) throw questionError;
+
+    const questionByKey = new Map(
+      (insertedQuestions ?? []).map((question) => [
+        `${question.question_set_id}:${question.sort_order}`,
+        question.id
+      ])
+    );
+    const optionsPayload: Array<
+      Database["public"]["Tables"]["question_options"]["Insert"]
+    > = [];
+    optionSeed.forEach((seed) => {
+      const setId = setIdByKey.get(seed.questionSetKey);
+      if (!setId) return;
+      const questionId = questionByKey.get(`${setId}:${seed.sortOrder}`);
+      if (!questionId) return;
+      seed.options.forEach((option, index) => {
+        optionsPayload.push({
+          question_id: questionId,
+          label: option.label,
+          value: option.value,
+          sort_order: index + 1,
+          created_at: nowIso(),
+          updated_at: nowIso()
+        });
+      });
+    });
+
+    if (optionsPayload.length > 0) {
+      const { error: optionsError } = await client
+        .from("question_options")
+        .insert(optionsPayload);
+      if (optionsError) throw optionsError;
+    }
+
+    const { data: finalQuestions, error: finalError } = await client
+      .from("questions")
+      .select("*")
+      .order("sort_order", { ascending: true });
+    if (finalError) throw finalError;
+    return finalQuestions.map(mapQuestion);
+  },
+  async createFeedback(revealId, source, rating, note) {
+    const client = requireClient();
+    const { data, error } = await client
+      .from("feedback")
+      .insert({
+        reveal_id: revealId,
+        source,
+        rating,
+        note: note ?? null,
+        created_at: nowIso()
+      })
+      .select("*")
+      .single();
     if (error) throw error;
-    return data.map(mapQuestion);
+    return mapFeedback(data);
+  },
+  async listFeedback(limit = 25) {
+    const client = requireClient();
+    const { data, error } = await client
+      .from("feedback")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return data.map(mapFeedback);
   },
   async getFeatureFlag(key) {
     const client = requireClient();

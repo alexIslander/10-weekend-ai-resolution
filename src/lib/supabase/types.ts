@@ -17,6 +17,9 @@ export type Database = {
           name: string | null;
           status: string;
           respondent_name: string | null;
+          question_set_id: string | null;
+          quiz_started_at: string | null;
+          quiz_locked_by: string | null;
           created_at: string;
           completed_at: string | null;
         };
@@ -27,29 +30,78 @@ export type Database = {
           name?: string | null;
           status?: string;
           respondent_name?: string | null;
+          question_set_id?: string | null;
+          quiz_started_at?: string | null;
+          quiz_locked_by?: string | null;
           created_at?: string;
           completed_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["reveals"]["Row"]>;
       };
-      questions: {
+      question_sets: {
         Row: {
           id: string;
-          prompt: string;
-          sort_order: number;
-          active: boolean;
+          key: string;
+          title: string;
+          description: string;
+          type: string;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
+          key: string;
+          title: string;
+          description: string;
+          type: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_sets"]["Row"]>;
+      };
+      questions: {
+        Row: {
+          id: string;
+          question_set_id: string | null;
+          prompt: string;
+          sort_order: number;
+          active: boolean;
+          answer_type: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          question_set_id?: string | null;
           prompt: string;
           sort_order: number;
           active?: boolean;
+          answer_type?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["questions"]["Row"]>;
+      };
+      question_options: {
+        Row: {
+          id: string;
+          question_id: string;
+          label: string;
+          value: string;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          question_id: string;
+          label: string;
+          value: string;
+          sort_order: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_options"]["Row"]>;
       };
       answers: {
         Row: {
@@ -57,6 +109,7 @@ export type Database = {
           reveal_id: string;
           question_id: string;
           response: string;
+          selected_option_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -64,9 +117,29 @@ export type Database = {
           reveal_id: string;
           question_id: string;
           response: string;
+          selected_option_id?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["answers"]["Row"]>;
+      };
+      feedback: {
+        Row: {
+          id: string;
+          reveal_id: string;
+          source: string;
+          rating: boolean;
+          note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          reveal_id: string;
+          source: string;
+          rating: boolean;
+          note?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["feedback"]["Row"]>;
       };
       coupons: {
         Row: {

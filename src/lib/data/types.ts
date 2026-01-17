@@ -7,15 +7,37 @@ export type Reveal = {
   name: string | null;
   status: RevealStatus;
   respondentName?: string | null;
+  questionSetId?: string | null;
+  quizStartedAt?: string | null;
+  quizLockedBy?: string | null;
   createdAt: string;
   completedAt?: string | null;
 };
 
+export type QuestionSet = {
+  id: string;
+  key: string;
+  title: string;
+  description: string;
+  type: "text" | "single";
+};
+
+export type QuestionOption = {
+  id: string;
+  questionId: string;
+  label: string;
+  value: string;
+  order: number;
+};
+
 export type Question = {
   id: string;
+  questionSetId?: string | null;
   prompt: string;
   order: number;
   active: boolean;
+  answerType: "text" | "single";
+  options?: QuestionOption[];
 };
 
 export type Answer = {
@@ -23,7 +45,26 @@ export type Answer = {
   revealId: string;
   questionId: string;
   response: string;
+  selectedOptionId?: string | null;
   createdAt: string;
+};
+
+export type FeedbackSource = "respondent" | "purchaser";
+
+export type Feedback = {
+  id: string;
+  revealId: string;
+  source: FeedbackSource;
+  rating: boolean;
+  note?: string | null;
+  createdAt: string;
+};
+
+export type QuizStartStatus = "ok" | "locked" | "completed" | "not_found";
+
+export type QuizStartResult = {
+  status: QuizStartStatus;
+  reveal?: Reveal | null;
 };
 
 export type Coupon = {

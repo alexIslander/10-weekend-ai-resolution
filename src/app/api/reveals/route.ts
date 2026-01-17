@@ -6,7 +6,8 @@ import { getDataStore } from "@/lib/data";
 
 const payloadSchema = z.object({
   email: z.string().email(),
-  couponCode: z.string().optional().nullable()
+  couponCode: z.string().optional().nullable(),
+  questionSetKey: z.string().optional().nullable()
 });
 
 export async function POST(request: Request) {
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
   const store = getDataStore();
   const normalizedEmail = parsed.data.email.trim().toLowerCase();
   const existing = await store.getRevealByEmail(normalizedEmail);
-  if (existing) {
+  if (existing && existing.status !== "completed") {
     return NextResponse.json({
       revealId: existing.id,
       existing: true
@@ -51,7 +52,26 @@ export async function POST(request: Request) {
     );
   }
 
-  const reveal = await store.createReveal(normalizedEmail);
+  const flowFlag = await store.getFeatureFlag("question_set_flow");
+  const optionBEnabled = Boolean(flowFlag?.enabled);
+  let questionSetId: string | null = null;
+  if (parsed.data.questionSetKey) {
+    const set = await store.getQuestionSetByKey(parsed.data.questionSetKey);
+    if (!set) {
+      return NextResponse.json(
+        { error: "Invalid question set." },
+        { status: 400 }
+      );
+    }
+    questionSetId = set.id;
+  } else if (!optionBEnabled) {
+    return NextResponse.json(
+      { error: "Please select a question set." },
+      { status: 400 }
+    );
+  }
+
+  const reveal = await store.createReveal(normalizedEmail, questionSetId);
 
   return NextResponse.json({
     revealId: reveal.id,

@@ -2,6 +2,9 @@ import Link from "next/link";
 import { Card } from "@/components/Card";
 import { DashboardClient } from "../DashboardClient";
 import { getDataStore } from "@/lib/data";
+import { isEmailSendEnabled } from "@/lib/feature-flags";
+
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage({
   params
@@ -25,5 +28,16 @@ export default async function DashboardPage({
     );
   }
 
-  return <DashboardClient reveal={reveal} />;
+  const questionSets = await store.listQuestionSets();
+  const selectedSet =
+    questionSets.find((set) => set.id === reveal.questionSetId) ?? null;
+  const emailSendEnabled = await isEmailSendEnabled();
+
+  return (
+    <DashboardClient
+      reveal={reveal}
+      questionSet={selectedSet}
+      emailSendEnabled={emailSendEnabled}
+    />
+  );
 }

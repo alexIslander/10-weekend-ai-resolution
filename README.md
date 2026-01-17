@@ -7,6 +7,10 @@ once, and the purchaser receives a formatted reveal.
 - `npm install`
 - Copy `.env.example` to `.env.local` and fill in Supabase keys if available.
 
+## Documentation
+- `docs/developer-setup.md`
+- `docs/testing.md`
+
 ## Scripts
 - `npm run dev` starts the Next.js dev server.
 - `npm run build` builds the production bundle.

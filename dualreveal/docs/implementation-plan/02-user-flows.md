@@ -8,26 +8,28 @@
 ## Purchase to dashboard
 - Purchaser enters email.
 - Purchaser can enter a coupon code at any time.
-- System checks for existing reveal by email.
-- If found, redirect to existing dashboard.
+- System checks for an active reveal by email.
+- If an active reveal exists, redirect to that dashboard.
 - If new, create reveal and route to dashboard.
+- Completed reveals do not block new purchases.
 
 ## Dashboard to quiz
 - Purchaser sets reveal name.
 - Purchaser copies magic link.
-- Status panel shows waiting state until submission.
+- Status panel auto-refreshes and updates when the quiz is completed.
+- Completed reveals disable the quiz link and suggest starting a new one.
 
 ## Respondent quiz
 - Respondent opens magic link.
 - Intro asks for respondent name.
 - 8 question flow with progress indicator.
 - Submit completes quiz and locks link.
-- Completed state shows confirmation message.
+- Completed state shows confirmation message with optional feedback that can be dismissed.
 
 ## Reveal view
 - Purchaser sees completed status.
 - View reveal shows each question and answer.
-- Footer encourages next reveal or return to dashboard.
+- Footer encourages starting a fresh reveal for the next moment.
 
 ## Edge cases
 - Invalid link: show friendly error and return home.

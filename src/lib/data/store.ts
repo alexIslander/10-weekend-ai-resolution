@@ -2,8 +2,12 @@ import type {
   Answer,
   Coupon,
   CouponAttempt,
+  Feedback,
+  FeedbackSource,
   FeatureFlag,
   Question,
+  QuestionSet,
+  QuizStartResult,
   Reveal
 } from "@/lib/data/types";
 
@@ -14,18 +18,36 @@ export type RevealFilter = {
 export type DataStore = {
   getRevealById: (id: string) => Promise<Reveal | null>;
   getRevealByEmail: (email: string) => Promise<Reveal | null>;
-  createReveal: (email: string) => Promise<Reveal>;
+  createReveal: (email: string, questionSetId?: string | null) => Promise<Reveal>;
   updateRevealName: (id: string, name: string) => Promise<Reveal | null>;
+  updateRevealQuestionSet: (
+    id: string,
+    questionSetId: string
+  ) => Promise<Reveal | null>;
+  startRevealQuiz: (id: string, lockId: string) => Promise<QuizStartResult>;
   completeReveal: (
     id: string,
     respondentName: string,
-    answers: Array<{ questionId: string; response: string }>
+    answers: Array<{
+      questionId: string;
+      response: string;
+      selectedOptionId?: string | null;
+    }>
   ) => Promise<Reveal | null>;
   listReveals: (filter?: RevealFilter) => Promise<Reveal[]>;
   listAnswers: (revealId: string) => Promise<Answer[]>;
-  listQuestions: () => Promise<Question[]>;
+  listQuestionSets: () => Promise<QuestionSet[]>;
+  getQuestionSetByKey: (key: string) => Promise<QuestionSet | null>;
+  listQuestions: (questionSetId?: string | null) => Promise<Question[]>;
   updateQuestions: (questions: Array<{ id: string; prompt: string }>) => Promise<void>;
   resetQuestions: () => Promise<Question[]>;
+  createFeedback: (
+    revealId: string,
+    source: FeedbackSource,
+    rating: boolean,
+    note?: string | null
+  ) => Promise<Feedback>;
+  listFeedback: (limit?: number) => Promise<Feedback[]>;
   getFeatureFlag: (key: string) => Promise<FeatureFlag | null>;
   upsertFeatureFlag: (
     key: string,

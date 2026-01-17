@@ -20,3 +20,9 @@
 ## Campaign discount ownership
 - Campaign discount is stored in the `feature_flags` table under the
   `campaign_discount` key with `config.percentOff`.
+
+## Phase 2 decisions
+- Question set flow defaults to Option B (`question_set_flow` enabled).
+- Completed reveal list is admin-only.
+- Question sets: Current connection, Clear communication, Lights off.
+- Quiz lock messaging uses: "Quiz already started", "Quiz not ready", "Already completed".

@@ -7,12 +7,18 @@ export default defineConfig({
   workers: 1,
   use: {
     baseURL: "http://localhost:3000",
-    headless: true
+    headless: true,
+    trace: "on",
+    video: "on",
+    screenshot: "on"
   },
   webServer: {
     command: "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
+    env: {
+      ADMIN_TOKEN: "test-token"
+    },
     timeout: 120_000
   }
 });

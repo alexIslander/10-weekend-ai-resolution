@@ -31,9 +31,19 @@ const defaultPricing: CouponResult = {
   campaignPercent: 0
 };
 
-export function PurchaseClient() {
+type PurchaseClientProps = {
+  questionSetFlow: "option-a" | "option-b";
+};
+
+export function PurchaseClient({ questionSetFlow }: PurchaseClientProps) {
   const router = useRouter();
-  const { purchaserEmail, setPurchaserEmail, setLastRevealId, hydrated } =
+  const {
+    purchaserEmail,
+    questionSetKey,
+    setPurchaserEmail,
+    setLastRevealId,
+    hydrated
+  } =
     useRevealStore();
   const [email, setEmail] = useState("");
   const [couponCode, setCouponCode] = useState("");
@@ -48,6 +58,13 @@ export function PurchaseClient() {
       setEmail(purchaserEmail);
     }
   }, [hydrated, purchaserEmail]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (questionSetFlow === "option-a" && !questionSetKey) {
+      router.replace("/question-sets");
+    }
+  }, [hydrated, questionSetFlow, questionSetKey, router]);
 
   const priceDisplay = useMemo(
     () => formatCents(pricing.finalPriceCents),
@@ -99,7 +116,11 @@ export function PurchaseClient() {
       const response = await fetch("/api/reveals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, couponCode })
+        body: JSON.stringify({
+          email,
+          couponCode,
+          questionSetKey: questionSetFlow === "option-a" ? questionSetKey : null
+        })
       });
       const data = await response.json();
       if (!response.ok) {
@@ -222,6 +243,23 @@ export function PurchaseClient() {
             {loading ? "Creating" : "Continue to dashboard"}
           </button>
         </form>
+      </Card>
+
+      <Card className="space-y-3">
+        <p className="kicker">Make it a ritual</p>
+        <h2 className="text-xl font-semibold text-navy">
+          Reveal what matters, more than once.
+        </h2>
+        <p className="text-sm text-navy/70">
+          Most couples use DualReveal for quick check-ins before trips, life
+          changes, or big weekends. Each new reveal keeps the tone fresh without
+          rehashing old answers.
+        </p>
+        <ul className="space-y-2 text-sm text-navy/70">
+          <li>Seasonal resets for changing needs.</li>
+          <li>Plan thoughtful surprises together.</li>
+          <li>Create a gentle habit of listening.</li>
+        </ul>
       </Card>
 
       <Card className="space-y-3">

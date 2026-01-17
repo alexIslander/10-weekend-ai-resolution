@@ -1,11 +1,16 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is currently content-first and lives at the root level. Today you will find:
+Top-level structure:
 - `README.md`: primary project description and entry point.
+- `docs/`: developer and testing guides.
+- `dualreveal/docs/`: product plans and reference docs.
+- `src/`: application code (components, routes, and helpers).
+- `tests/`: Playwright end-to-end tests.
+- `supabase/`: database migrations.
 - `LICENSE`: licensing terms.
 
-If you add source code, keep it organized and predictable:
+If you add new source code or assets, keep it organized and predictable:
 - `src/` for implementation code (e.g., `src/agent/` or `src/lib/`).
 - `tests/` for automated tests (mirrors `src/`).
 - `assets/` for images or downloadable artifacts.
