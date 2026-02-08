@@ -1,11 +1,22 @@
-# The 10-Weekend AI Resolution
+# 10-weekend-ai-resolution
 
-YOUR SELF-GUIDED PATH TO AI FLUENCY IN 2026
+Workspace for multiple projects, each in its own numbered subfolder.
 
-One weekend. One project. One tangible outcome.
+## Projects
 
-By the end: a personal AI operating system you'll actually use.
+| Folder | Project |
+|--------|---------|
+| `00-dualreveal/` | DualReveal – private quiz flow for couples |
+| `01-lit-starter/` | Lit starter (placeholder) |
 
-STARTING THIS WEEKEND
+New projects go in the next numbered folder (e.g. `02-project-name/`).
 
-NEW FOR 2026!
+## Getting started
+
+- Open the project folder you want to work on (e.g. `00-dualreveal`).
+- Follow that project’s README and `docs/` for setup and scripts.
+
+## Repository guidelines
+
+- `AGENTS.md` – project structure and conventions for contributors and agents.
+- `LICENSE` – licensing terms.
