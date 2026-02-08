@@ -2,26 +2,27 @@
 
 ## Project Structure & Module Organization
 Top-level structure:
-- `README.md`: primary project description and entry point.
-- `docs/`: developer and testing guides.
-- `dualreveal/docs/`: product plans and reference docs.
-- `src/`: application code (components, routes, and helpers).
-- `tests/`: Playwright end-to-end tests.
-- `supabase/`: database migrations.
+- `README.md`: workspace overview and project index.
+- `AGENTS.md`: this file.
 - `LICENSE`: licensing terms.
+- `00-dualreveal/`, `01-lit-starter/`, …: one subfolder per project (numbered for order).
 
-If you add new source code or assets, keep it organized and predictable:
-- `src/` for implementation code (e.g., `src/agent/` or `src/lib/`).
-- `tests/` for automated tests (mirrors `src/`).
-- `assets/` for images or downloadable artifacts.
-- `docs/` for longer-form documentation beyond the README.
+Each project folder (e.g. `00-dualreveal/`) is self-contained:
+- Its own `src/`, `docs/`, `tests/`, config files, and dependencies.
+- New projects use the next number (e.g. `02-my-next-app/`).
+
+Within a project, keep code organized and predictable:
+- `src/` for implementation code.
+- `tests/` for automated tests (e.g. Playwright in `00-dualreveal`).
+- `docs/` for setup and product/plan docs.
+- `assets/` for images or downloadable artifacts when needed.
 
 ## Build, Test, and Development Commands
-- `npm run dev` starts the Next.js development server.
-- `npm run build` builds the production bundle.
-- `npm run start` runs the production server.
-- `npm run test` runs Playwright end-to-end tests.
-- `npm run test:e2e` runs Playwright end-to-end tests (alias).
+Run from the project folder (e.g. `00-dualreveal/`):
+- `npm run dev` – Next.js dev server (DualReveal).
+- `npm run build` – production bundle.
+- `npm run start` – production server.
+- `npm run test` / `npm run test:e2e` – Playwright e2e tests (DualReveal).
 
 ## Coding Style & Naming Conventions
 - Documentation is Markdown; use ATX headings (`#`, `##`) and `-` for bullets.
@@ -30,9 +31,9 @@ If you add new source code or assets, keep it organized and predictable:
 - New documentation files should use kebab-case names (e.g., `project-overview.md`).
 
 ## Testing Guidelines
-- End-to-end tests live in `tests/e2e`.
+- Per-project: e.g. DualReveal’s Playwright tests live in `00-dualreveal/tests/e2e`.
 - Use Playwright for browser automation and keep tests flow-focused.
-- Run tests with `npm run test`.
+- Run tests from the project directory: `npm run test`.
 
 ## Commit & Pull Request Guidelines
 The existing history uses short, direct messages (e.g., "Initial commit"). Continue with concise, imperative summaries (50-72 characters), and add a body when context is needed.

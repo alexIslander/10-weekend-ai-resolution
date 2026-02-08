@@ -1,22 +1,22 @@
-# DualReveal
+# 10-weekend-ai-resolution
 
-Private, guided quiz flow for couples. One partner purchases, the other answers
-once, and the purchaser receives a formatted reveal.
+Workspace for multiple projects, each in its own numbered subfolder.
 
-## Local development
-- `npm install`
-- Copy `.env.example` to `.env.local` and fill in Supabase keys if available.
+## Projects
 
-## Documentation
-- `docs/developer-setup.md`
-- `docs/testing.md`
+| Folder | Project |
+|--------|---------|
+| `00-dualreveal/` | DualReveal – private quiz flow for couples |
+| `01-lit-starter/` | Lit starter (placeholder) |
 
-## Scripts
-- `npm run dev` starts the Next.js dev server.
-- `npm run build` builds the production bundle.
-- `npm run start` runs the production server.
-- `npm run test` runs Playwright end-to-end tests.
+New projects go in the next numbered folder (e.g. `02-project-name/`).
 
-## Notes
-- The app falls back to an in-memory store when Supabase is not configured.
-- Payments are stubbed and will be wired later.
+## Getting started
+
+- Open the project folder you want to work on (e.g. `00-dualreveal`).
+- Follow that project’s README and `docs/` for setup and scripts.
+
+## Repository guidelines
+
+- `AGENTS.md` – project structure and conventions for contributors and agents.
+- `LICENSE` – licensing terms.
