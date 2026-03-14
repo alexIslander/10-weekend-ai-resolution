@@ -55,3 +55,7 @@ Do not commit secrets. If the project gains external dependencies or API keys, s
 
 ## Agent-Specific Instructions
 Keep this guide up to date as the repository grows. If you change structure or add tooling, update the relevant sections here so new contributors can get started quickly.
+
+## Local git hooks
+- The repo includes `.githooks/pre-commit` to validate staged GitHub Actions workflow files.
+- Enable it locally with `git config core.hooksPath .githooks`.

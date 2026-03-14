@@ -15,6 +15,7 @@
 - [x] Expand routing tests to cover delegated anchor navigation and `popstate` handling.
 - [x] Add GitHub Actions workflows for `01-lit-starter` CI and Cloudflare Pages deployment.
 - [x] Add a static SPA fallback asset for Cloudflare Pages deep links.
+- [x] Add local workflow validation to catch unsupported GitHub Actions patterns before commit.
 
 ## Progress log
 
@@ -22,3 +23,4 @@
 - 2026-02-08: Added Vitest coverage for routing, host event scope, and async rendering.
 - 2026-02-08: Verified `npm run test`, `npm run build`, and `npm run dev` (startup check on `127.0.0.1:4173`).
 - 2026-03-14: Updated repo docs, added explicit routing coverage, and added GitHub Actions for CI and Pages deploys.
+- 2026-03-14: Fixed GitHub Actions secret gating and added a pre-commit workflow validator.
