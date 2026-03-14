@@ -13,7 +13,7 @@ on:
 
 env:
   NODE_VERSION: 22
-  CF_PROJECT_NAME: 01-lit-starter
+  CF_PROJECT_NAME: ${{ vars.CLOUDFLARE_PAGES_PROJECT_NAME || '01-lit-starter' }}
   CF_DIST_PATH: 01-lit-starter/dist
 
 concurrency:
@@ -53,6 +53,10 @@ jobs:
         run: |
           test -n "$CLOUDFLARE_API_TOKEN"
           test -n "$CLOUDFLARE_ACCOUNT_ID"
+          test -n "$CF_PROJECT_NAME"
+
+      - name: Show deploy target
+        run: echo "Deploying production to Cloudflare Pages project '$CF_PROJECT_NAME'"
 
       - name: Deploy to Cloudflare Pages (production)
         run: >-

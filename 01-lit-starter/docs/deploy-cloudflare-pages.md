@@ -34,6 +34,8 @@ This project also ships `public/_redirects`, so the build output includes a fall
 npx wrangler pages deploy dist --project-name 01-lit-starter
 ```
 
+Replace `01-lit-starter` with your actual Cloudflare Pages project name if it differs.
+
 ## SPA fallback for deep links
 
 This app uses client-side routing (`history.pushState`), so direct loads of `/about` or `/list` should return `index.html`.
@@ -59,7 +61,20 @@ Required repository secrets:
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 
-The deploy workflows build `01-lit-starter/dist` and upload it to the Cloudflare Pages project named `01-lit-starter`. Non-`main` branches create preview deployments, and `main` pushes deploy production.
+Recommended repository variable:
+
+- `CLOUDFLARE_PAGES_PROJECT_NAME`
+
+If you do not set `CLOUDFLARE_PAGES_PROJECT_NAME`, the workflows fall back to `01-lit-starter`.
+
+The Cloudflare Pages project must already exist in the target account before GitHub Actions can deploy to it.
+
+The deploy workflows build `01-lit-starter/dist` and upload it to the Pages project named by `CLOUDFLARE_PAGES_PROJECT_NAME` or, if unset, `01-lit-starter`. Non-`main` branches create preview deployments, and `main` pushes deploy production.
+
+If the workflow fails with `Project not found`, either:
+
+- create the Cloudflare Pages project first, or
+- set `CLOUDFLARE_PAGES_PROJECT_NAME` to the existing project name in GitHub repository variables
 
 ## Post-deploy validation
 
