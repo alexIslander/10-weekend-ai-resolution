@@ -30,6 +30,12 @@ Run from `01-lit-starter/`:
 - `npm run start` – local preview of the production build.
 - `npm run test` / `npm run test:watch` – Vitest coverage for the controller and templates.
 
+Run from `02-lit-admin-starter/`:
+- `npm run dev` – Vite dev server for the Lit admin dashboard starter.
+- `npm run build` – production build to `dist/`.
+- `npm run start` – local preview of the production build.
+- `npm run test` / `npm run test:watch` – Vitest coverage for the Lit shell flow.
+
 ## Coding Style & Naming Conventions
 - Documentation is Markdown; use ATX headings (`#`, `##`) and `-` for bullets.
 - Keep headings in sentence case and keep paragraphs short.
@@ -39,6 +45,7 @@ Run from `01-lit-starter/`:
 ## Testing Guidelines
 - Per-project: e.g. DualReveal’s Playwright tests live in `00-dualreveal/tests/e2e`.
 - `01-lit-starter/tests/` uses Vitest with `jsdom` for controller and template behavior.
+- `02-lit-admin-starter/tests/` uses Vitest with `jsdom` for Lit shell rendering and login flow coverage.
 - Use Playwright for browser automation and keep tests flow-focused.
 - Run tests from the project directory: `npm run test`.
 
