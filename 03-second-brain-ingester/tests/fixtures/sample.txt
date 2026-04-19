@@ -1,0 +1,5 @@
+Architecture trade-offs only make sense in context.
+
+The best decision depends on the constraints you are actually carrying.
+
+A second brain should preserve evidence, not just conclusions.

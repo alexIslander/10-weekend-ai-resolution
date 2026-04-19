@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/main/.schema/devbox.schema.json",
+  "packages": [
+    "python@3.12",
+    "uv@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "if [ ! -x .venv/bin/python ]; then python -m venv .venv; fi",
+      ". .venv/bin/activate"
+    ]
+  },
+  "scripts": {
+    "sync": [
+      "uv sync"
+    ],
+    "lint": [
+      "ruff check ."
+    ],
+    "typecheck": [
+      "mypy src"
+    ],
+    "test": [
+      "pytest"
+    ]
+  }
+}

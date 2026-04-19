@@ -1,0 +1,1 @@
+"""Concrete output components."""
