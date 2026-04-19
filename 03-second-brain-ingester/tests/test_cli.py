@@ -26,6 +26,8 @@ def test_cli_run_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str
             "--output-dir",
             str(tmp_path),
             "--dry-run",
+            "--enable",
+            "extractor",
         ]
     )
 

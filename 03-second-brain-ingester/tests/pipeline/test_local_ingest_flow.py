@@ -6,7 +6,8 @@ from second_brain_ingester.ingest.components.chunk_normalizer import Determinist
 from second_brain_ingester.ingest.components.pdf_loader import PdfSourceLoader
 from second_brain_ingester.ingest.components.text_loader import TextSourceLoader
 from second_brain_ingester.ingest.orchestrator import IngestOrchestrator
-from second_brain_ingester.notes.components.placeholder_extractor import PlaceholderNoteExtractor
+from second_brain_ingester.notes.components.api_client import DryRunStructuredExtractionClient
+from second_brain_ingester.notes.components.extractor import StructuredNoteExtractor
 from second_brain_ingester.notes.orchestrator import NotesOrchestrator
 from second_brain_ingester.output.components.markdown_writer import DeterministicMarkdownWriter
 from second_brain_ingester.output.components.quality_reporter import PlaceholderQualityReporter
@@ -20,7 +21,12 @@ def _build_runner(tmp_path: Path) -> LocalPipelineRunner:
             loaders=[TextSourceLoader(), PdfSourceLoader()],
             chunk_generator=DeterministicChunkGenerator(max_chunk_chars=120),
         ),
-        notes=NotesOrchestrator(extractor=PlaceholderNoteExtractor()),
+        notes=NotesOrchestrator(
+            extractor=StructuredNoteExtractor(
+                client=DryRunStructuredExtractionClient(),
+                prompt_text="phase-3-test-prompt",
+            )
+        ),
         output=OutputOrchestrator(
             writer=DeterministicMarkdownWriter(output_root=tmp_path),
             reporter=PlaceholderQualityReporter(),

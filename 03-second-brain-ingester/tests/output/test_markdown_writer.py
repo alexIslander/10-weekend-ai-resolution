@@ -29,6 +29,8 @@ def test_markdown_writer_writes_manifest_and_note(tmp_path: Path) -> None:
                 source_id="source-001",
                 chunk_ids=["chunk-001"],
                 tags=["local-ingest"],
+                links=["Sample reference"],
+                source_excerpt="body",
             )
         ],
     )
@@ -43,3 +45,5 @@ def test_markdown_writer_writes_manifest_and_note(tmp_path: Path) -> None:
     assert manifest["source"]["source_id"] == "source-001"
     assert "sample-note-1.md" in str(written_state.output.note_paths[0])
     assert "id: note-001" in note_text
+    assert "links: [Sample reference]" in note_text
+    assert "## Source metadata" in note_text

@@ -53,6 +53,35 @@ class ProcessedChunk:
 
 
 @dataclass(frozen=True)
+class ExtractedNoteDraft:
+    title: str
+    summary: str
+    body: str
+    tags: list[str] = field(default_factory=list)
+    links: list[str] = field(default_factory=list)
+    source_excerpt: str | None = None
+
+
+@dataclass(frozen=True)
+class ExtractionRequest:
+    source_id: str
+    source_type: SourceType
+    source_title: str
+    chunk_id: str
+    chunk_title: str
+    chunk_text: str
+    prompt: str
+    dry_run: bool = True
+
+
+@dataclass(frozen=True)
+class ExtractionResponse:
+    chunk_id: str
+    raw_payload: str
+    notes: list[ExtractedNoteDraft]
+
+
+@dataclass(frozen=True)
 class AtomicNote:
     note_id: str
     title: str
@@ -62,6 +91,8 @@ class AtomicNote:
     source_id: str
     chunk_ids: list[str]
     tags: list[str] = field(default_factory=list)
+    links: list[str] = field(default_factory=list)
+    source_excerpt: str | None = None
 
 
 @dataclass(frozen=True)
@@ -86,4 +117,3 @@ class PipelineResult:
     output_dir: Path
     manifest_path: Path
     note_paths: list[Path]
-

@@ -79,6 +79,8 @@ class DeterministicMarkdownWriter:
 
         tags = " ".join(f"#{tag}" for tag in typed_note.tags)
         chunk_links = ", ".join(typed_note.chunk_ids)
+        related_links = ", ".join(typed_note.links)
+        source_excerpt = typed_note.source_excerpt or ""
         return (
             "---\n"
             f"id: {typed_note.note_id}\n"
@@ -87,7 +89,12 @@ class DeterministicMarkdownWriter:
             f"source_id: {state.source_metadata.source_id}\n"
             f"chunk_ids: [{chunk_links}]\n"
             f"tags: [{tags}]\n"
+            f"links: [{related_links}]\n"
             "---\n\n"
             f"# {typed_note.title}\n\n"
-            f"{typed_note.body}"
+            f"{typed_note.body}\n\n"
+            f"## Source metadata\n\n"
+            f"- Source type: `{state.source_metadata.source_type}`\n"
+            f"- Input path: `{state.source_metadata.input_path}`\n"
+            f"- Source excerpt: {source_excerpt}"
         )

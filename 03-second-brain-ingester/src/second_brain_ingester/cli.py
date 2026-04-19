@@ -12,7 +12,11 @@ from second_brain_ingester.ingest.components.chunk_normalizer import Determinist
 from second_brain_ingester.ingest.components.pdf_loader import PdfSourceLoader
 from second_brain_ingester.ingest.components.text_loader import TextSourceLoader
 from second_brain_ingester.ingest.orchestrator import IngestOrchestrator
-from second_brain_ingester.notes.components.placeholder_extractor import PlaceholderNoteExtractor
+from second_brain_ingester.notes.components.api_client import DryRunStructuredExtractionClient
+from second_brain_ingester.notes.components.extractor import (
+    StructuredNoteExtractor,
+    load_extractor_prompt,
+)
 from second_brain_ingester.notes.orchestrator import NotesOrchestrator
 from second_brain_ingester.output.components.markdown_writer import DeterministicMarkdownWriter
 from second_brain_ingester.output.components.quality_reporter import PlaceholderQualityReporter
@@ -54,6 +58,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=settings.dry_run,
         help="Keep the flow local and deterministic.",
     )
+    run_parser.add_argument(
+        "--enable",
+        action="append",
+        default=[],
+        choices=["extractor"],
+        help="Enable individual pipeline slices. `extractor` is supported in Phase 3.",
+    )
     return parser
 
 
@@ -68,13 +79,21 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.error(f"Input path does not exist: {args.input}")
     if not args.dry_run:
         parser.error("Only --dry-run is supported in the current implementation.")
+    if args.enable and "extractor" not in args.enable:
+        parser.error("Only the `extractor` slice can be enabled in the current implementation.")
+
+    prompt_path = Path(__file__).resolve().parent / "notes" / "prompts" / "extractor.md"
+    extractor = StructuredNoteExtractor(
+        client=DryRunStructuredExtractionClient(prompt_path=prompt_path),
+        prompt_text=load_extractor_prompt(prompt_path),
+    )
 
     runner = LocalPipelineRunner(
         ingest=IngestOrchestrator(
             loaders=[TextSourceLoader(), PdfSourceLoader()],
             chunk_generator=DeterministicChunkGenerator(max_chunk_chars=get_settings().max_chunk_chars),
         ),
-        notes=NotesOrchestrator(extractor=PlaceholderNoteExtractor()),
+        notes=NotesOrchestrator(extractor=extractor),
         output=OutputOrchestrator(
             writer=DeterministicMarkdownWriter(output_root=args.output_dir),
             reporter=PlaceholderQualityReporter(),
