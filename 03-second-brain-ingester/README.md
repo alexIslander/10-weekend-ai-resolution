@@ -33,16 +33,21 @@ devbox run app
 devbox run app-linker
 devbox run app-srq
 devbox run app-anti-pattern
+devbox run app-adr
+devbox run app-adr-no-output
+devbox run app-adr-no-output-2
 ```
 
 Artifacts are written under `vault_output/<run-id>/` with:
 
 - `atomics/` populated atomic-note markdown files
+- `adrs/` populated ADR markdown files when the ADR slice is enabled
 - `srqs/` populated SRQ markdown files when the SRQ slice is enabled
 - `manifest.json` source and chunk metadata
 
 The Phase 3 extractor prompt is owned at `src/second_brain_ingester/notes/prompts/extractor.md`.
-The default `app`, `app-linker`, `app-srq`, and `app-anti-pattern` scripts all use `tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt` so content checks are easier to review.
+The default `app`, `app-linker`, `app-srq`, `app-anti-pattern`, `app-adr`, and `app-adr-no-output` scripts all use `tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt` so content checks are easier to review.
+Use `devbox run app-adr-no-output-2` when you want to run the ADR slice against `tests/fixtures/test-effective-eng-ch1/Edmond-Lau-The-Effective-Engineer-Part-1-1.txt`.
 Use `devbox run app-effective-engineer-chapter` or `devbox run app-head-first-sa-chapter` when you want a second realistic chapter fixture for later comparison runs.
 
 ## Devbox scripts
@@ -58,12 +63,16 @@ devbox run ingest-test
 devbox run extractor-test
 devbox run linker-test
 devbox run srq-test
+devbox run adr-test
 devbox run pipeline-test
 devbox run help
 devbox run app
 devbox run app-linker
 devbox run app-srq
 devbox run app-anti-pattern
+devbox run app-adr
+devbox run app-adr-no-output
+devbox run app-adr-no-output-2
 devbox run app-anyone-chapter
 devbox run app-effective-engineer-chapter
 devbox run app-head-first-sa-chapter

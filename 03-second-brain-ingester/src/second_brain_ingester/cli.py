@@ -13,6 +13,7 @@ from second_brain_ingester.ingest.components.pdf_loader import PdfSourceLoader
 from second_brain_ingester.ingest.components.text_loader import TextSourceLoader
 from second_brain_ingester.ingest.orchestrator import IngestOrchestrator
 from second_brain_ingester.notes.components.api_client import DryRunStructuredExtractionClient
+from second_brain_ingester.notes.components.adr import DeterministicAdrGenerator
 from second_brain_ingester.notes.components.anti_pattern import DeterministicAntiPatternGenerator
 from second_brain_ingester.notes.components.extractor import (
     StructuredNoteExtractor,
@@ -65,10 +66,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--enable",
         action="append",
         default=[],
-        choices=["extractor", "linker", "srq", "anti-pattern"],
+        choices=["extractor", "linker", "srq", "anti-pattern", "adr"],
         help=(
             "Enable individual pipeline slices. "
-            "`extractor`, `linker`, `srq`, and `anti-pattern` are supported."
+            "`extractor`, `linker`, `srq`, `anti-pattern`, and `adr` are supported."
         ),
     )
     return parser
@@ -86,7 +87,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.dry_run:
         parser.error("Only --dry-run is supported in the current implementation.")
     if args.enable:
-        unsupported = sorted(set(args.enable) - {"extractor", "linker", "srq", "anti-pattern"})
+        unsupported = sorted(
+            set(args.enable) - {"extractor", "linker", "srq", "anti-pattern", "adr"}
+        )
         if unsupported:
             parser.error(f"Unsupported pipeline slices requested: {', '.join(unsupported)}")
 
@@ -102,6 +105,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         enrichers.append(DeterministicSrqGenerator())
     if "anti-pattern" in args.enable:
         enrichers.append(DeterministicAntiPatternGenerator())
+    if "adr" in args.enable:
+        enrichers.append(DeterministicAdrGenerator())
 
     runner = LocalPipelineRunner(
         ingest=IngestOrchestrator(

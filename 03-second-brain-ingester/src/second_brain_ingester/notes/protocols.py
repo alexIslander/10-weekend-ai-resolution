@@ -24,3 +24,8 @@ class NoteEnricher(Protocol):
 class NoteLinker(Protocol):
     def enrich(self, notes: list[AtomicNote]) -> list[AtomicNote]:
         ...
+
+
+class AdrGenerator(Protocol):
+    def enrich(self, notes: list[AtomicNote]) -> list[AtomicNote]:
+        ...
