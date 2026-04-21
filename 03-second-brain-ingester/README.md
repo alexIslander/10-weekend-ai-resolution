@@ -37,6 +37,8 @@ devbox run app-adr
 devbox run app-moc
 devbox run app-adr-no-output
 devbox run app-adr-no-output-2
+devbox run app-anyone-chapter-pdf
+devbox run app-head-first-sa-chapter-pdf
 ```
 
 Artifacts are written under `vault_output/<run-id>/` with:
@@ -53,6 +55,7 @@ The default `app`, `app-linker`, `app-srq`, `app-anti-pattern`, and `app-adr-no-
 The `app-adr` and `app-moc` scripts use `tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.txt` so Phase 4 review runs exercise the stronger architecture fixture by default.
 Use `devbox run app-adr-no-output-2` when you want to run the ADR slice against `tests/fixtures/test-effective-eng-ch1/Edmond-Lau-The-Effective-Engineer-Part-1-1.txt`.
 Use `devbox run app-effective-engineer-chapter` or `devbox run app-head-first-sa-chapter` when you want a second realistic chapter fixture for later comparison runs.
+Use `devbox run app-anyone-chapter-pdf` and `devbox run app-head-first-sa-chapter-pdf` for repeatable Phase 0 PDF baseline runs on the narrative and technical fixtures.
 
 ## Devbox scripts
 
@@ -80,8 +83,10 @@ devbox run app-moc
 devbox run app-adr-no-output
 devbox run app-adr-no-output-2
 devbox run app-anyone-chapter
+devbox run app-anyone-chapter-pdf
 devbox run app-effective-engineer-chapter
 devbox run app-head-first-sa-chapter
+devbox run app-head-first-sa-chapter-pdf
 devbox run app-anyone-chapter-linker
 devbox run app-anyone-chapter-srq
 ```
