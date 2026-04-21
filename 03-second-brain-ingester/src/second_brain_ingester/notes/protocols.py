@@ -19,3 +19,8 @@ class NoteExtractor(Protocol):
 class NoteEnricher(Protocol):
     def enrich(self, notes: list[AtomicNote]) -> list[AtomicNote]:
         ...
+
+
+class NoteLinker(Protocol):
+    def enrich(self, notes: list[AtomicNote]) -> list[AtomicNote]:
+        ...

@@ -8,20 +8,24 @@
     "init_hook": [
       "if [ ! -x .venv/bin/python ]; then python -m venv .venv; fi",
       ". .venv/bin/activate"
-    ]
-  },
-  "scripts": {
-    "sync": [
-      "uv sync"
     ],
-    "lint": [
-      "ruff check ."
-    ],
-    "typecheck": [
-      "mypy src"
-    ],
-    "test": [
-      "pytest"
-    ]
+    "scripts": {
+      "sync": "uv sync",
+      "lint": "uv run ruff check .",
+      "typecheck": "uv run mypy src",
+      "test": "uv run pytest",
+      "ingest-test": "uv run pytest tests/ingest tests/pipeline/test_local_ingest_flow.py",
+      "extractor-test": "uv run pytest tests/notes/test_api_client.py tests/notes/test_extractor.py tests/pipeline/test_extraction_flow.py",
+      "linker-test": "uv run pytest tests/notes/test_linker.py tests/pipeline/test_linker_flow.py",
+      "notes-test": "uv run pytest tests/notes",
+      "pipeline-test": "uv run pytest tests/pipeline",
+      "app": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/sample.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-run",
+      "app-anyone-long": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-until-ch3/HOW-TO-TALK-TO-Anyone-until-ch3.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-long-run",
+      "app-anyone-short": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-until-ch1/HOW-TO-TALK-TO-Anyone-until-ch1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-short-run",
+      "app-anyone-chapter": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-chapter-run",
+      "app-linker": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/sample.txt --dry-run --enable extractor --enable linker --output-dir vault_output/devbox-app-linker-run",
+      "app-anyone-chapter-linker": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable linker --output-dir vault_output/devbox-app-anyone-chapter-linker-run",
+      "help": "uv run python -m second_brain_ingester.cli --help"
+    }
   }
 }

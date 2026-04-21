@@ -17,6 +17,7 @@ from second_brain_ingester.notes.components.extractor import (
     StructuredNoteExtractor,
     load_extractor_prompt,
 )
+from second_brain_ingester.notes.components.linker import DeterministicNoteLinker
 from second_brain_ingester.notes.orchestrator import NotesOrchestrator
 from second_brain_ingester.output.components.markdown_writer import DeterministicMarkdownWriter
 from second_brain_ingester.output.components.quality_reporter import PlaceholderQualityReporter
@@ -62,8 +63,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--enable",
         action="append",
         default=[],
-        choices=["extractor"],
-        help="Enable individual pipeline slices. `extractor` is supported in Phase 3.",
+        choices=["extractor", "linker"],
+        help="Enable individual pipeline slices. `extractor` and `linker` are supported.",
     )
     return parser
 
@@ -79,21 +80,24 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.error(f"Input path does not exist: {args.input}")
     if not args.dry_run:
         parser.error("Only --dry-run is supported in the current implementation.")
-    if args.enable and "extractor" not in args.enable:
-        parser.error("Only the `extractor` slice can be enabled in the current implementation.")
+    if args.enable:
+        unsupported = sorted(set(args.enable) - {"extractor", "linker"})
+        if unsupported:
+            parser.error(f"Unsupported pipeline slices requested: {', '.join(unsupported)}")
 
     prompt_path = Path(__file__).resolve().parent / "notes" / "prompts" / "extractor.md"
     extractor = StructuredNoteExtractor(
         client=DryRunStructuredExtractionClient(prompt_path=prompt_path),
         prompt_text=load_extractor_prompt(prompt_path),
     )
+    enrichers = [DeterministicNoteLinker()] if "linker" in args.enable else []
 
     runner = LocalPipelineRunner(
         ingest=IngestOrchestrator(
             loaders=[TextSourceLoader(), PdfSourceLoader()],
             chunk_generator=DeterministicChunkGenerator(max_chunk_chars=get_settings().max_chunk_chars),
         ),
-        notes=NotesOrchestrator(extractor=extractor),
+        notes=NotesOrchestrator(extractor=extractor, enrichers=enrichers),
         output=OutputOrchestrator(
             writer=DeterministicMarkdownWriter(output_root=args.output_dir),
             reporter=PlaceholderQualityReporter(),

@@ -8,12 +8,12 @@ Run these commands from the repository root:
 
 ```bash
 devbox shell
-uv sync
-pre-commit install
-ruff check .
-mypy src
-pytest
-python -m second_brain_ingester.cli --help
+devbox run sync
+uv run pre-commit install
+devbox run lint
+devbox run typecheck
+devbox run test
+devbox run help
 ```
 
 ## Development notes
@@ -27,8 +27,8 @@ python -m second_brain_ingester.cli --help
 Run the local extraction dry run against a text or PDF source:
 
 ```bash
-python -m second_brain_ingester.cli run --input tests/fixtures/sample.txt --dry-run --enable extractor
-python -m second_brain_ingester.cli run --input tests/fixtures/sample.pdf --dry-run --enable extractor
+devbox run app
+devbox run app-linker
 ```
 
 Artifacts are written under `vault_output/<run-id>/` with:
@@ -37,3 +37,21 @@ Artifacts are written under `vault_output/<run-id>/` with:
 - `manifest.json` source and chunk metadata
 
 The Phase 3 extractor prompt is owned at `src/second_brain_ingester/notes/prompts/extractor.md`.
+
+## Devbox scripts
+
+Use Devbox as the main project entrypoint:
+
+```bash
+devbox run sync
+devbox run lint
+devbox run typecheck
+devbox run test
+devbox run ingest-test
+devbox run extractor-test
+devbox run linker-test
+devbox run pipeline-test
+devbox run help
+devbox run app
+devbox run app-linker
+```

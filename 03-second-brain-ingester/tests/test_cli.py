@@ -35,3 +35,25 @@ def test_cli_run_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str
 
     assert result == 0
     assert "Wrote run artifacts to" in captured.out
+
+
+def test_cli_run_with_linker_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    result = main(
+        [
+            "run",
+            "--input",
+            "tests/fixtures/sample.txt",
+            "--output-dir",
+            str(tmp_path),
+            "--dry-run",
+            "--enable",
+            "extractor",
+            "--enable",
+            "linker",
+        ]
+    )
+
+    captured = capsys.readouterr()
+
+    assert result == 0
+    assert "Wrote run artifacts to" in captured.out
