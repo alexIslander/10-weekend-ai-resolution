@@ -29,3 +29,8 @@ class NoteLinker(Protocol):
 class AdrGenerator(Protocol):
     def enrich(self, notes: list[AtomicNote]) -> list[AtomicNote]:
         ...
+
+
+class MocGenerator(Protocol):
+    def enrich(self, notes: list[AtomicNote]) -> list[AtomicNote]:
+        ...

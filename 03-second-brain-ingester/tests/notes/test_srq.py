@@ -14,7 +14,8 @@ def test_srq_generator_adds_question_note_per_concept_note() -> None:
             note_type="concept",
             body=(
                 "## Summary\n\n"
-                "Shared understanding improves when speakers and listeners align on the same idea.\n\n"
+                "Shared understanding improves when speakers and listeners "
+                "align on the same idea.\n\n"
                 "## Key details\n\n"
                 "- Useful in teaching."
             ),

@@ -30,7 +30,8 @@ def _build_body(note: AtomicNote) -> str:
     summary_line = _extract_summary_line(note.body) or note.title
     return (
         "## Failure mode\n\n"
-        f"Do not apply {summary_line.lower()} without checking context, audience, and tradeoffs.\n\n"
+        f"Do not apply {summary_line.lower()} without checking context, "
+        "audience, and tradeoffs.\n\n"
         "## Why this breaks down\n\n"
         f"- The original note `[[{note.title}]]` depends on conditions that may not hold.\n"
         "- Blind reuse turns a useful heuristic into a rigid rule.\n"

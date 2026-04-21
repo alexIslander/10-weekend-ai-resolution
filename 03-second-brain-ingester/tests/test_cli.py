@@ -37,7 +37,9 @@ def test_cli_run_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str
     assert "Wrote run artifacts to" in captured.out
 
 
-def test_cli_run_with_linker_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_run_with_linker_writes_output(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     result = main(
         [
             "run",
@@ -59,7 +61,9 @@ def test_cli_run_with_linker_writes_output(tmp_path: Path, capsys: pytest.Captur
     assert "Wrote run artifacts to" in captured.out
 
 
-def test_cli_run_with_srq_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_run_with_srq_writes_output(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     result = main(
         [
             "run",
@@ -105,7 +109,9 @@ def test_cli_run_with_anti_pattern_writes_output(
     assert "Wrote run artifacts to" in captured.out
 
 
-def test_cli_run_with_adr_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_run_with_adr_writes_output(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     result = main(
         [
             "run",
@@ -118,6 +124,30 @@ def test_cli_run_with_adr_writes_output(tmp_path: Path, capsys: pytest.CaptureFi
             "extractor",
             "--enable",
             "adr",
+        ]
+    )
+
+    captured = capsys.readouterr()
+
+    assert result == 0
+    assert "Wrote run artifacts to" in captured.out
+
+
+def test_cli_run_with_moc_writes_output(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    result = main(
+        [
+            "run",
+            "--input",
+            "tests/fixtures/sample.txt",
+            "--output-dir",
+            str(tmp_path),
+            "--dry-run",
+            "--enable",
+            "extractor",
+            "--enable",
+            "moc",
         ]
     )
 

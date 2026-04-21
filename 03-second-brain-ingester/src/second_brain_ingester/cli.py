@@ -12,14 +12,15 @@ from second_brain_ingester.ingest.components.chunk_normalizer import Determinist
 from second_brain_ingester.ingest.components.pdf_loader import PdfSourceLoader
 from second_brain_ingester.ingest.components.text_loader import TextSourceLoader
 from second_brain_ingester.ingest.orchestrator import IngestOrchestrator
-from second_brain_ingester.notes.components.api_client import DryRunStructuredExtractionClient
 from second_brain_ingester.notes.components.adr import DeterministicAdrGenerator
 from second_brain_ingester.notes.components.anti_pattern import DeterministicAntiPatternGenerator
+from second_brain_ingester.notes.components.api_client import DryRunStructuredExtractionClient
 from second_brain_ingester.notes.components.extractor import (
     StructuredNoteExtractor,
     load_extractor_prompt,
 )
 from second_brain_ingester.notes.components.linker import DeterministicNoteLinker
+from second_brain_ingester.notes.components.moc import DeterministicMocGenerator
 from second_brain_ingester.notes.components.srq import DeterministicSrqGenerator
 from second_brain_ingester.notes.orchestrator import NotesOrchestrator
 from second_brain_ingester.output.components.markdown_writer import DeterministicMarkdownWriter
@@ -66,10 +67,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--enable",
         action="append",
         default=[],
-        choices=["extractor", "linker", "srq", "anti-pattern", "adr"],
+        choices=["extractor", "linker", "srq", "anti-pattern", "adr", "moc"],
         help=(
             "Enable individual pipeline slices. "
-            "`extractor`, `linker`, `srq`, `anti-pattern`, and `adr` are supported."
+            "`extractor`, `linker`, `srq`, `anti-pattern`, `adr`, and `moc` are supported."
         ),
     )
     return parser
@@ -88,7 +89,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.error("Only --dry-run is supported in the current implementation.")
     if args.enable:
         unsupported = sorted(
-            set(args.enable) - {"extractor", "linker", "srq", "anti-pattern", "adr"}
+            set(args.enable) - {"extractor", "linker", "srq", "anti-pattern", "adr", "moc"}
         )
         if unsupported:
             parser.error(f"Unsupported pipeline slices requested: {', '.join(unsupported)}")
@@ -107,6 +108,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         enrichers.append(DeterministicAntiPatternGenerator())
     if "adr" in args.enable:
         enrichers.append(DeterministicAdrGenerator())
+    if "moc" in args.enable:
+        enrichers.append(DeterministicMocGenerator())
 
     runner = LocalPipelineRunner(
         ingest=IngestOrchestrator(

@@ -113,3 +113,36 @@ def test_markdown_writer_routes_anti_patterns_to_dedicated_directory(tmp_path: P
 
     assert written_state.output is not None
     assert "/anti-patterns/" in written_state.output.note_paths[0].as_posix()
+
+
+def test_markdown_writer_routes_mocs_to_dedicated_directory(tmp_path: Path) -> None:
+    state = PipelineState(
+        source_metadata=SourceMetadata(
+            source_id="source-001",
+            source_type="text",
+            input_path=Path("sample.txt"),
+            title="Sample",
+            checksum_sha256="abc123",
+            byte_size=10,
+        ),
+        chunks=[ProcessedChunk("chunk-001", "source-001", 1, "body", "Chunk 1")],
+        notes=[
+            AtomicNote(
+                note_id="source-001-moc",
+                title="MOC: source-001",
+                slug="source-001-moc",
+                note_type="moc",
+                body="## Themes\n\n- [[Sample note 1]]\n\n```mermaid\nmindmap\n```",
+                source_id="source-001",
+                chunk_ids=["chunk-001"],
+                tags=["moc"],
+                links=["Sample note 1"],
+            )
+        ],
+    )
+    writer = DeterministicMarkdownWriter(output_root=tmp_path)
+
+    written_state = writer.write(state)
+
+    assert written_state.output is not None
+    assert "/mocs/" in written_state.output.note_paths[0].as_posix()

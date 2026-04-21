@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from second_brain_ingester.common.models import ErrorPayload
+from second_brain_ingester.common.models import ErrorPayload, MocSummary
 from second_brain_ingester.ingest.orchestrator import IngestOrchestrator
 from second_brain_ingester.notes.orchestrator import NotesOrchestrator
 from second_brain_ingester.output.orchestrator import OutputOrchestrator
@@ -32,6 +32,19 @@ class LocalPipelineRunner:
         )
         try:
             state.notes = self._notes.create_notes(chunks, source.metadata)
+            moc_note = next((note for note in state.notes if note.note_type == "moc"), None)
+            if moc_note is not None:
+                linked_note_ids = [
+                    note.note_id
+                    for note in state.notes
+                    if note.note_type != "moc" and note.title in moc_note.links
+                ]
+                state.moc = MocSummary(
+                    note_id=moc_note.note_id,
+                    title=moc_note.title,
+                    linked_note_ids=linked_note_ids,
+                    source_id=moc_note.source_id,
+                )
             return self._output.write(state)
         except ValueError as exc:
             state.errors.append(ErrorPayload(code="pipeline_error", message=str(exc)))
