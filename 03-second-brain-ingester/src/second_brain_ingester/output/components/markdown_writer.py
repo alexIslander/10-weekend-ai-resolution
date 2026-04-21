@@ -104,4 +104,10 @@ class DeterministicMarkdownWriter:
 def _note_directory(note_type: str) -> str:
     if note_type == "srq":
         return "srqs"
+    if note_type == "anti-pattern":
+        return "anti-patterns"
+    if note_type == "adr":
+        return "adrs"
+    if note_type == "moc":
+        return "mocs"
     return "atomics"

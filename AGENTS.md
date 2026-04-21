@@ -62,6 +62,8 @@ Do not commit secrets. If the project gains external dependencies or API keys, s
 
 ## Agent-Specific Instructions
 Keep this guide up to date as the repository grows. If you change structure or add tooling, update the relevant sections here so new contributors can get started quickly.
+- For projects that use `devbox.json` workflow entrypoints, add or update the matching `shell.scripts` entry whenever a new runnable slice or workflow command is introduced, and reflect that change in the project README in the same update.
+- For projects that use `devbox.json` test entrypoints, add or update a bounded `shell.scripts` test command whenever new slice-specific tests are introduced, so the new coverage is runnable through a stable Devbox command instead of only through ad hoc `pytest` arguments.
 
 ## Local git hooks
 - The repo includes `.githooks/pre-commit` to validate staged GitHub Actions workflow files.

@@ -13,6 +13,7 @@ from second_brain_ingester.ingest.components.pdf_loader import PdfSourceLoader
 from second_brain_ingester.ingest.components.text_loader import TextSourceLoader
 from second_brain_ingester.ingest.orchestrator import IngestOrchestrator
 from second_brain_ingester.notes.components.api_client import DryRunStructuredExtractionClient
+from second_brain_ingester.notes.components.anti_pattern import DeterministicAntiPatternGenerator
 from second_brain_ingester.notes.components.extractor import (
     StructuredNoteExtractor,
     load_extractor_prompt,
@@ -64,8 +65,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--enable",
         action="append",
         default=[],
-        choices=["extractor", "linker", "srq"],
-        help="Enable individual pipeline slices. `extractor`, `linker`, and `srq` are supported.",
+        choices=["extractor", "linker", "srq", "anti-pattern"],
+        help=(
+            "Enable individual pipeline slices. "
+            "`extractor`, `linker`, `srq`, and `anti-pattern` are supported."
+        ),
     )
     return parser
 
@@ -82,7 +86,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.dry_run:
         parser.error("Only --dry-run is supported in the current implementation.")
     if args.enable:
-        unsupported = sorted(set(args.enable) - {"extractor", "linker", "srq"})
+        unsupported = sorted(set(args.enable) - {"extractor", "linker", "srq", "anti-pattern"})
         if unsupported:
             parser.error(f"Unsupported pipeline slices requested: {', '.join(unsupported)}")
 
@@ -96,6 +100,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         enrichers.append(DeterministicNoteLinker())
     if "srq" in args.enable:
         enrichers.append(DeterministicSrqGenerator())
+    if "anti-pattern" in args.enable:
+        enrichers.append(DeterministicAntiPatternGenerator())
 
     runner = LocalPipelineRunner(
         ingest=IngestOrchestrator(

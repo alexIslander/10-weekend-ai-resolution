@@ -80,3 +80,36 @@ def test_markdown_writer_routes_srqs_to_dedicated_directory(tmp_path: Path) -> N
 
     assert written_state.output is not None
     assert "/srqs/" in written_state.output.note_paths[0].as_posix()
+
+
+def test_markdown_writer_routes_anti_patterns_to_dedicated_directory(tmp_path: Path) -> None:
+    state = PipelineState(
+        source_metadata=SourceMetadata(
+            source_id="source-001",
+            source_type="text",
+            input_path=Path("sample.txt"),
+            title="Sample",
+            checksum_sha256="abc123",
+            byte_size=10,
+        ),
+        chunks=[ProcessedChunk("chunk-001", "source-001", 1, "body", "Chunk 1")],
+        notes=[
+            AtomicNote(
+                note_id="note-001-anti-pattern",
+                title="Anti-pattern: Sample note 1",
+                slug="sample-note-1-anti-pattern",
+                note_type="anti-pattern",
+                body="## Failure mode\n\nDo not apply this blindly.",
+                source_id="source-001",
+                chunk_ids=["chunk-001"],
+                tags=["anti-pattern"],
+                links=["Sample note 1"],
+            )
+        ],
+    )
+    writer = DeterministicMarkdownWriter(output_root=tmp_path)
+
+    written_state = writer.write(state)
+
+    assert written_state.output is not None
+    assert "/anti-patterns/" in written_state.output.note_paths[0].as_posix()

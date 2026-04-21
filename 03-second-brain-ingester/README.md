@@ -32,6 +32,7 @@ Run the local extraction dry run against a text or PDF source:
 devbox run app
 devbox run app-linker
 devbox run app-srq
+devbox run app-anti-pattern
 ```
 
 Artifacts are written under `vault_output/<run-id>/` with:
@@ -41,8 +42,8 @@ Artifacts are written under `vault_output/<run-id>/` with:
 - `manifest.json` source and chunk metadata
 
 The Phase 3 extractor prompt is owned at `src/second_brain_ingester/notes/prompts/extractor.md`.
-The default `app`, `app-linker`, and `app-srq` scripts all use `tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt` so content checks are easier to review.
-Use `devbox run app-effective-engineer-chapter` when you want a second realistic chapter fixture for later comparison runs.
+The default `app`, `app-linker`, `app-srq`, and `app-anti-pattern` scripts all use `tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt` so content checks are easier to review.
+Use `devbox run app-effective-engineer-chapter` or `devbox run app-head-first-sa-chapter` when you want a second realistic chapter fixture for later comparison runs.
 
 ## Devbox scripts
 
@@ -62,8 +63,10 @@ devbox run help
 devbox run app
 devbox run app-linker
 devbox run app-srq
+devbox run app-anti-pattern
 devbox run app-anyone-chapter
 devbox run app-effective-engineer-chapter
+devbox run app-head-first-sa-chapter
 devbox run app-anyone-chapter-linker
 devbox run app-anyone-chapter-srq
 ```
