@@ -6,4 +6,4 @@ from typing import Literal
 
 SourceType = Literal["text", "pdf"]
 RawUnitType = Literal["text_block", "pdf_page"]
-NoteType = Literal["concept", "adr", "moc"]
+NoteType = Literal["concept", "srq", "adr", "moc"]

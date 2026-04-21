@@ -47,3 +47,36 @@ def test_markdown_writer_writes_manifest_and_note(tmp_path: Path) -> None:
     assert "id: note-001" in note_text
     assert "links: [Sample reference]" in note_text
     assert "## Source metadata" in note_text
+
+
+def test_markdown_writer_routes_srqs_to_dedicated_directory(tmp_path: Path) -> None:
+    state = PipelineState(
+        source_metadata=SourceMetadata(
+            source_id="source-001",
+            source_type="text",
+            input_path=Path("sample.txt"),
+            title="Sample",
+            checksum_sha256="abc123",
+            byte_size=10,
+        ),
+        chunks=[ProcessedChunk("chunk-001", "source-001", 1, "body", "Chunk 1")],
+        notes=[
+            AtomicNote(
+                note_id="note-001-srq",
+                title="SRQ: Sample note 1",
+                slug="sample-note-1-srq",
+                note_type="srq",
+                body="## Question\n\nWhat changes here?",
+                source_id="source-001",
+                chunk_ids=["chunk-001"],
+                tags=["srq"],
+                links=["Sample note 1"],
+            )
+        ],
+    )
+    writer = DeterministicMarkdownWriter(output_root=tmp_path)
+
+    written_state = writer.write(state)
+
+    assert written_state.output is not None
+    assert "/srqs/" in written_state.output.note_paths[0].as_posix()

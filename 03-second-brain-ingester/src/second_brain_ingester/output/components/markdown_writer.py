@@ -15,12 +15,13 @@ class DeterministicMarkdownWriter:
 
     def write(self, state: PipelineState) -> PipelineState:
         run_dir = self._output_root / state.run_id
-        atomics_dir = run_dir / "atomics"
-        atomics_dir.mkdir(parents=True, exist_ok=True)
+        run_dir.mkdir(parents=True, exist_ok=True)
 
         note_paths: list[Path] = []
         for note in state.notes:
-            note_path = atomics_dir / f"{note.slug}.md"
+            note_dir = run_dir / _note_directory(note.note_type)
+            note_dir.mkdir(parents=True, exist_ok=True)
+            note_path = note_dir / f"{note.slug}.md"
             note_path.write_text(self._render_note(note, state), encoding="utf-8")
             note_paths.append(note_path)
 
@@ -98,3 +99,9 @@ class DeterministicMarkdownWriter:
             f"- Input path: `{state.source_metadata.input_path}`\n"
             f"- Source excerpt: {source_excerpt}"
         )
+
+
+def _note_directory(note_type: str) -> str:
+    if note_type == "srq":
+        return "srqs"
+    return "atomics"

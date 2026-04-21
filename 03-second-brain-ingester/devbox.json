@@ -17,14 +17,18 @@
       "ingest-test": "uv run pytest tests/ingest tests/pipeline/test_local_ingest_flow.py",
       "extractor-test": "uv run pytest tests/notes/test_api_client.py tests/notes/test_extractor.py tests/pipeline/test_extraction_flow.py",
       "linker-test": "uv run pytest tests/notes/test_linker.py tests/pipeline/test_linker_flow.py",
+      "srq-test": "uv run pytest tests/notes/test_srq.py tests/pipeline/test_srq_flow.py tests/test_cli.py",
       "notes-test": "uv run pytest tests/notes",
       "pipeline-test": "uv run pytest tests/pipeline",
-      "app": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/sample.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-run",
+      "app": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-run",
       "app-anyone-long": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-until-ch3/HOW-TO-TALK-TO-Anyone-until-ch3.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-long-run",
       "app-anyone-short": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-until-ch1/HOW-TO-TALK-TO-Anyone-until-ch1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-short-run",
       "app-anyone-chapter": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-chapter-run",
-      "app-linker": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/sample.txt --dry-run --enable extractor --enable linker --output-dir vault_output/devbox-app-linker-run",
+      "app-effective-engineer-chapter": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-effective-eng-ch1/Edmond-Lau-The-Effective-Engineer-Part-1-1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-effective-engineer-chapter-run",
+      "app-linker": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable linker --output-dir vault_output/devbox-app-linker-run",
+      "app-srq": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable srq --output-dir vault_output/devbox-app-srq-run",
       "app-anyone-chapter-linker": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable linker --output-dir vault_output/devbox-app-anyone-chapter-linker-run",
+      "app-anyone-chapter-srq": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable srq --output-dir vault_output/devbox-app-anyone-chapter-srq-run",
       "help": "uv run python -m second_brain_ingester.cli --help"
     }
   }

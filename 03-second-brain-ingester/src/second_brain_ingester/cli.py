@@ -18,6 +18,7 @@ from second_brain_ingester.notes.components.extractor import (
     load_extractor_prompt,
 )
 from second_brain_ingester.notes.components.linker import DeterministicNoteLinker
+from second_brain_ingester.notes.components.srq import DeterministicSrqGenerator
 from second_brain_ingester.notes.orchestrator import NotesOrchestrator
 from second_brain_ingester.output.components.markdown_writer import DeterministicMarkdownWriter
 from second_brain_ingester.output.components.quality_reporter import PlaceholderQualityReporter
@@ -63,8 +64,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--enable",
         action="append",
         default=[],
-        choices=["extractor", "linker"],
-        help="Enable individual pipeline slices. `extractor` and `linker` are supported.",
+        choices=["extractor", "linker", "srq"],
+        help="Enable individual pipeline slices. `extractor`, `linker`, and `srq` are supported.",
     )
     return parser
 
@@ -81,7 +82,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.dry_run:
         parser.error("Only --dry-run is supported in the current implementation.")
     if args.enable:
-        unsupported = sorted(set(args.enable) - {"extractor", "linker"})
+        unsupported = sorted(set(args.enable) - {"extractor", "linker", "srq"})
         if unsupported:
             parser.error(f"Unsupported pipeline slices requested: {', '.join(unsupported)}")
 
@@ -90,7 +91,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         client=DryRunStructuredExtractionClient(prompt_path=prompt_path),
         prompt_text=load_extractor_prompt(prompt_path),
     )
-    enrichers = [DeterministicNoteLinker()] if "linker" in args.enable else []
+    enrichers = []
+    if "linker" in args.enable:
+        enrichers.append(DeterministicNoteLinker())
+    if "srq" in args.enable:
+        enrichers.append(DeterministicSrqGenerator())
 
     runner = LocalPipelineRunner(
         ingest=IngestOrchestrator(
