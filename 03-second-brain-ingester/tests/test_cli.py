@@ -155,3 +155,34 @@ def test_cli_run_with_moc_writes_output(
 
     assert result == 0
     assert "Wrote run artifacts to" in captured.out
+
+
+def test_cli_can_emit_extracted_source_markdown(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    result = main(
+        [
+            "run",
+            "--input",
+            "tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.pdf",
+            "--output-dir",
+            str(tmp_path),
+            "--dry-run",
+            "--enable",
+            "extractor",
+            "--emit-extracted-source-markdown",
+        ]
+    )
+
+    captured = capsys.readouterr()
+    run_directories = [path for path in tmp_path.iterdir() if path.is_dir()]
+
+    assert result == 0
+    assert len(run_directories) == 1
+    artifact_path = run_directories[0] / "extracted-source.md"
+    assert artifact_path.exists()
+    artifact_text = artifact_path.read_text(encoding="utf-8")
+    assert "Extracted source" in artifact_text
+    assert "Chapter 1" in artifact_text
+    assert "effective storytelling" in artifact_text
+    assert "Wrote extracted source markdown to" in captured.out

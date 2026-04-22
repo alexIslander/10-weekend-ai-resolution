@@ -20,6 +20,13 @@ Phase 1 contains the first real value milestone:
 - Verification: run the same fixture twice, once with baseline output capture and once with the new real path, then compare against the Phase 0 rubric.
 - Manual quality verdict: at least one reviewer can point to a small set of notes and say they are useful enough to keep rather than obviously fragmented or embarrassing.
 
+Phase 0.5 is the gating recovery slice before that milestone:
+
+- Real input: the current narrative PDF fixture and at least one reference PDF fixture.
+- Real output artifact: a written go/no-go decision on the narrative PDF path, plus the smallest loader-only fix or justified fixture swap required to make the fixture stable.
+- Verification: rerun the narrative PDF through the existing local ingest path and confirm readable extracted text exists before any Ollama or orchestration work begins.
+- Manual quality verdict: the extracted narrative PDF text is legible enough that Phase 1 would be testing local-model extraction quality, not loader failure.
+
 ## Goal
 
 Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yields useful notes from local Ollama models before any broader orchestration work continues. This plan translates the recovery direction in [docs/0421/secondbrain-project-recovery-plan.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/secondbrain-project-recovery-plan.md), the critique in [docs/0419/user-feedback-analisys.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0419/user-feedback-analisys.md), and the older architecture-first track in [docs/0419/secondbrain-v2-plan.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0419/secondbrain-v2-plan.md) into smaller, reviewable execution slices.
@@ -27,12 +34,13 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
 ## KISS approach
 
 1. Freeze a truthful baseline on a very small fixture set so later quality claims are evidence-based.
-2. Prove one real offline-first Ollama path on one narrative PDF and write markdown notes to disk without `--dry-run`.
-3. Harden PDF ingest on the same small fixture set before changing broader flow control.
-4. Replace fixed-width chunking with boundary-aware chunking and rerun the same fixtures.
-5. Improve extraction quality only after ingest and chunk boundaries are measurable.
-6. Add one bounded routing decision only if it reduces wasted local inference and improves output quality.
-7. Keep cloud fallback, LangGraph, checkpointing, and broader orchestration off the critical path until the offline path is already useful.
+2. Recover the narrative PDF fixture so Phase 1 starts from a stable local ingest path rather than a known loader failure.
+3. Prove one real offline-first Ollama path on one narrative PDF and write markdown notes to disk without `--dry-run`.
+4. Harden PDF ingest on the same small fixture set before changing broader flow control.
+5. Replace fixed-width chunking with boundary-aware chunking and rerun the same fixtures.
+6. Improve extraction quality only after ingest and chunk boundaries are measurable.
+7. Add one bounded routing decision only if it reduces wasted local inference and improves output quality.
+8. Keep cloud fallback, LangGraph, checkpointing, and broader orchestration off the critical path until the offline path is already useful.
 
 ## Scope
 
@@ -84,10 +92,35 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
   one written baseline note,
   one manual verdict on whether the output is useful or not.
 
+### Phase 0.5: PDF ingest recovery
+
+- Target: stabilize the narrative PDF fixture and expose extracted source text for human review before any Ollama or orchestration work begins.
+- Phase gate: Phase 0 baseline note exists and shows that the current narrative PDF fixture is not stable enough for Phase 1.
+- Phase output: a loader-focused recovery note plus the smallest loader-only code or fixture decision required to make the narrative PDF path stable, and one optional extracted-source markdown artifact that a human can review before trusting downstream note quality.
+- Exit gate:
+  the narrative PDF fixture loads successfully with readable extracted text through the existing local ingest path,
+  one single-file extracted markdown artifact can be emitted from the ingest boundary for the narrative PDF,
+  a human review says the extracted markdown is good enough to judge PDF extraction quality directly,
+  or a replacement narrative PDF fixture is chosen with explicit written justification,
+  and the roadmap plus task file point Phase 1 at the approved stable fixture.
+- Constraint:
+  do not start Ollama wiring, chunking changes, routing, or orchestration work in this phase.
+- Evidence loop:
+  1. compare the failing narrative PDF against at least one reference PDF that currently loads,
+  2. isolate why `PdfSourceLoader` fails or degrades on the narrative fixture,
+  3. make the smallest local-first fix or fixture decision that stabilizes the path,
+  4. emit one extracted-source markdown artifact from the ingest boundary for the narrative PDF,
+  5. rerun the narrative PDF through the existing ingest path and record whether the extracted markdown is readable enough for human approval.
+- Lean verification:
+  one ingest-focused regression test,
+  one bounded smoke run that writes the extracted-source markdown artifact for the narrative PDF,
+  one narrative PDF smoke run through the current local path,
+  one reference PDF smoke run to confirm no regression.
+
 ### Phase 1: First real value on one narrative PDF
 
 - Target: a real Ollama-backed `PDF -> chunk -> extract -> markdown` path without `--dry-run`.
-- Phase gate: Phase 0 baseline note exists and the chosen narrative PDF fixture is stable.
+- Phase gate: Phase 0 baseline note exists, Phase 0.5 is green, and the chosen narrative PDF fixture is stable.
 - Phase output: real markdown notes written from one narrative PDF through the local model path, plus a short comparison note against the baseline.
 - Exit gate:
   the CLI can run without `--dry-run`,
@@ -110,7 +143,7 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
 ### Phase 2: PDF ingest hardening on the same fixture set
 
 - Target: improve parser quality before broader chunking or routing work.
-- Phase gate: Phase 1 first real value is green on the narrative PDF.
+- Phase gate: Phase 1 first real value is green on the narrative PDF and Phase 0.5 already removed hard loader failure from the critical path.
 - Phase output: improved PDF ingest behavior plus a short ingest-focused before/after note on the narrative and technical PDFs.
 - Exit gate:
   narrative and technical PDFs both complete with explicit parser behavior,
@@ -125,6 +158,13 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
   one ingest-focused test for parser failure behavior,
   one ingest smoke run on the narrative PDF,
   one ingest smoke run on the technical PDF.
+- Deferred note for this phase:
+  the current repo still uses a custom `PdfSourceLoader` rather than a dedicated PDF library,
+  so table structure, embedded images, and figure assets are not being captured as durable ingest artifacts yet.
+  When Phase 2 begins, evaluate whether a single PDF library can preserve those assets in hand for later phases without expanding the immediate text-quality gate.
+  Keep this KISS:
+  prefer one library choice and one bounded artifact shape for non-text assets,
+  not full table understanding or image interpretation in the same slice.
 
 ### Phase 3: Boundary-aware chunking
 
@@ -181,3 +221,7 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
 - Optional cloud fallback is not required for first real value.
 - LangGraph, resume, checkpointing, and broad orchestration are deferred until the offline path is already useful on the fixture set.
 - Larger multi-agent expansion is deferred until routing proves it adds value rather than complexity.
+- Rich PDF asset capture is deferred until the ingest path is already trusted for text:
+  tables may currently flatten into text,
+  and images or diagrams are not extracted as durable assets.
+  Revisit a single-library upgrade later so tables, images, and figure references can be preserved for downstream use even before they are fully processed.

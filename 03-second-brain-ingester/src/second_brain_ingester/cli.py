@@ -73,6 +73,14 @@ def build_parser() -> argparse.ArgumentParser:
             "`extractor`, `linker`, `srq`, `anti-pattern`, `adr`, and `moc` are supported."
         ),
     )
+    run_parser.add_argument(
+        "--emit-extracted-source-markdown",
+        action="store_true",
+        help=(
+            "Write one review-focused markdown file containing the extracted source text "
+            "seen by downstream extraction."
+        ),
+    )
     return parser
 
 
@@ -125,8 +133,51 @@ def main(argv: Sequence[str] | None = None) -> int:
     state = runner.run(input_path=args.input, output_dir=args.output_dir)
     if state.output is None:
         parser.exit(status=1, message="Pipeline failed before writing output.\n")
+    if args.emit_extracted_source_markdown:
+        artifact_path = _write_extracted_source_markdown(state)
+        print(f"Wrote extracted source markdown to {artifact_path}")
     print(f"Wrote run artifacts to {state.output.output_dir}")
     return 0
+
+
+def _write_extracted_source_markdown(state: object) -> Path:
+    from second_brain_ingester.pipeline.state import PipelineState
+
+    typed_state = state if isinstance(state, PipelineState) else None
+    if typed_state is None or typed_state.output is None:
+        raise ValueError("Extracted source markdown requires a completed pipeline output.")
+
+    artifact_path = typed_state.output.output_dir / "extracted-source.md"
+    chunk_sections: list[str] = []
+    for chunk in typed_state.chunks:
+        heading = f"## Chunk {chunk.ordinal:03d}: {chunk.title}"
+        page_line = (
+            f"- Page: {chunk.page_number}\n"
+            if chunk.page_number is not None
+            else ""
+        )
+        chunk_sections.append(
+            (
+                f"{heading}\n\n"
+                f"- Chunk ID: `{chunk.chunk_id}`\n"
+                f"{page_line}"
+                f"\n{chunk.text}"
+            ).strip()
+        )
+
+    artifact_path.write_text(
+        (
+            f"# Extracted source: {typed_state.source_metadata.title}\n\n"
+            f"- Source type: `{typed_state.source_metadata.source_type}`\n"
+            f"- Input path: `{typed_state.source_metadata.input_path}`\n"
+            f"- Source ID: `{typed_state.source_metadata.source_id}`\n"
+            f"- Chunk count: {len(typed_state.chunks)}\n"
+            f"- Warning count: {len(typed_state.warnings)}\n\n"
+            f"{'\n\n'.join(chunk_sections)}\n"
+        ),
+        encoding="utf-8",
+    )
+    return artifact_path
 
 
 if __name__ == "__main__":

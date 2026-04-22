@@ -15,6 +15,7 @@
       "typecheck": "uv run mypy src",
       "test": "uv run pytest",
       "ingest-test": "uv run pytest tests/ingest tests/pipeline/test_local_ingest_flow.py",
+      "pdf-recovery-test": "uv run pytest tests/ingest/test_pdf_loader.py tests/pipeline/test_local_ingest_flow.py tests/test_cli.py::test_cli_can_emit_extracted_source_markdown",
       "extractor-test": "uv run pytest tests/notes/test_api_client.py tests/notes/test_extractor.py tests/pipeline/test_extraction_flow.py",
       "linker-test": "uv run pytest tests/notes/test_linker.py tests/pipeline/test_linker_flow.py",
       "srq-test": "uv run pytest tests/notes/test_srq.py tests/pipeline/test_srq_flow.py tests/test_cli.py",
@@ -28,7 +29,9 @@
       "app-anyone-short": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-until-ch1/HOW-TO-TALK-TO-Anyone-until-ch1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-short-run",
       "app-anyone-chapter": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-chapter-run",
       "app-anyone-chapter-pdf": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.pdf --dry-run --enable extractor --output-dir vault_output/devbox-app-anyone-chapter-pdf-run",
+      "app-anyone-chapter-pdf-source": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.pdf --dry-run --enable extractor --emit-extracted-source-markdown --output-dir vault_output/devbox-app-anyone-chapter-pdf-source-run",
       "app-effective-engineer-chapter": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-effective-eng-ch1/Edmond-Lau-The-Effective-Engineer-Part-1-1.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-effective-engineer-chapter-run",
+      "app-effective-engineer-chapter-pdf-source": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-effective-eng-ch1/Edmond-Lau-The-Effective-Engineer-Part-1-1.txt --dry-run --enable extractor --emit-extracted-source-markdown --output-dir vault_output/devbox-app-effective-engineer-chapter-run",
       "app-linker": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable linker --output-dir vault_output/devbox-app-linker-run",
       "app-srq": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable srq --output-dir vault_output/devbox-app-srq-run",
       "app-anti-pattern": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable anti-pattern --output-dir vault_output/devbox-app-anti-pattern-run",
@@ -40,6 +43,7 @@
       "app-anyone-chapter-srq": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-anyone-ch1/HOW-TO-TALK-TO-Anyone-ch1.txt --dry-run --enable extractor --enable srq --output-dir vault_output/devbox-app-anyone-chapter-srq-run",
       "app-head-first-sa-chapter": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-head-first-sa-chapter-run",
       "app-head-first-sa-chapter-pdf": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf --dry-run --enable extractor --output-dir vault_output/devbox-app-head-first-sa-chapter-pdf-run",
+      "app-head-first-sa-chapter-pdf-source": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf --dry-run --enable extractor --emit-extracted-source-markdown --output-dir vault_output/devbox-app-head-first-sa-chapter-pdf-run",
       "help": "uv run python -m second_brain_ingester.cli --help"
     }
   }

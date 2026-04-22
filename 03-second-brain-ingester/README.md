@@ -13,6 +13,7 @@ uv run pre-commit install
 devbox run lint
 devbox run typecheck
 devbox run test
+devbox run pdf-recovery-test
 devbox run help
 ```
 
@@ -38,6 +39,7 @@ devbox run app-moc
 devbox run app-adr-no-output
 devbox run app-adr-no-output-2
 devbox run app-anyone-chapter-pdf
+devbox run app-anyone-chapter-pdf-source
 devbox run app-head-first-sa-chapter-pdf
 ```
 
@@ -55,7 +57,9 @@ The default `app`, `app-linker`, `app-srq`, `app-anti-pattern`, and `app-adr-no-
 The `app-adr` and `app-moc` scripts use `tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.txt` so Phase 4 review runs exercise the stronger architecture fixture by default.
 Use `devbox run app-adr-no-output-2` when you want to run the ADR slice against `tests/fixtures/test-effective-eng-ch1/Edmond-Lau-The-Effective-Engineer-Part-1-1.txt`.
 Use `devbox run app-effective-engineer-chapter` or `devbox run app-head-first-sa-chapter` when you want a second realistic chapter fixture for later comparison runs.
-Use `devbox run app-anyone-chapter-pdf` and `devbox run app-head-first-sa-chapter-pdf` for repeatable Phase 0 PDF baseline runs on the narrative and technical fixtures.
+Use `devbox run app-anyone-chapter-pdf` and `devbox run app-head-first-sa-chapter-pdf` for repeatable Phase 0 and Phase 0.5 PDF recovery runs on the narrative and technical reference fixtures.
+Use `devbox run app-anyone-chapter-pdf-source` when you need the single-file extracted-source markdown artifact for Phase 0.5 human review before Phase 1 starts.
+Use `devbox run pdf-recovery-test` for the bounded PDF recovery suite that protects the loader path, the local ingest PDF smoke path, and the extracted-source CLI artifact path.
 
 ## Devbox scripts
 
@@ -67,6 +71,7 @@ devbox run lint
 devbox run typecheck
 devbox run test
 devbox run ingest-test
+devbox run pdf-recovery-test
 devbox run extractor-test
 devbox run linker-test
 devbox run srq-test
@@ -84,6 +89,7 @@ devbox run app-adr-no-output
 devbox run app-adr-no-output-2
 devbox run app-anyone-chapter
 devbox run app-anyone-chapter-pdf
+devbox run app-anyone-chapter-pdf-source
 devbox run app-effective-engineer-chapter
 devbox run app-head-first-sa-chapter
 devbox run app-head-first-sa-chapter-pdf
