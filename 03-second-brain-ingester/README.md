@@ -14,6 +14,7 @@ devbox run lint
 devbox run typecheck
 devbox run test
 devbox run pdf-recovery-test
+devbox run ollama-preflight
 devbox run help
 ```
 
@@ -59,6 +60,8 @@ Use `devbox run app-adr-no-output-2` when you want to run the ADR slice against 
 Use `devbox run app-effective-engineer-chapter` or `devbox run app-head-first-sa-chapter` when you want a second realistic chapter fixture for later comparison runs.
 Use `devbox run app-anyone-chapter-pdf` and `devbox run app-head-first-sa-chapter-pdf` for repeatable Phase 0 and Phase 0.5 PDF recovery runs on the narrative and technical reference fixtures.
 Use `devbox run app-anyone-chapter-pdf-source` when you need the single-file extracted-source markdown artifact for Phase 0.5 human review before Phase 1 starts.
+Use `devbox run ollama-preflight` to start the Docker-backed Ollama fallback and verify that the local model inventory is visible on `http://localhost:11434`.
+Use `devbox run app-anyone-chapter-pdf-ollama` for the bounded Phase 1 real-model smoke run on the approved narrative PDF fixture with `qwen3:8b`.
 Use `devbox run pdf-recovery-test` for the bounded PDF recovery suite that protects the loader path, the local ingest PDF smoke path, and the extracted-source CLI artifact path.
 
 ## Devbox scripts
@@ -70,6 +73,10 @@ devbox run sync
 devbox run lint
 devbox run typecheck
 devbox run test
+devbox run ollama-up
+devbox run ollama-down
+devbox run ollama-preflight
+devbox run phase-1-ollama-test
 devbox run ingest-test
 devbox run pdf-recovery-test
 devbox run extractor-test
@@ -89,6 +96,7 @@ devbox run app-adr-no-output
 devbox run app-adr-no-output-2
 devbox run app-anyone-chapter
 devbox run app-anyone-chapter-pdf
+devbox run app-anyone-chapter-pdf-ollama
 devbox run app-anyone-chapter-pdf-source
 devbox run app-effective-engineer-chapter
 devbox run app-head-first-sa-chapter

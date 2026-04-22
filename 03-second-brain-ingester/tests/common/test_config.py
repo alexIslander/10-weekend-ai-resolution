@@ -10,3 +10,7 @@ def test_settings_default_output_dir() -> None:
 
     assert settings.output_dir == Path("./vault_output")
     assert settings.dry_run is True
+    assert settings.provider == "dry-run"
+    assert settings.model == "qwen3:8b"
+    assert settings.ollama_base_url == "http://localhost:11434"
+    assert settings.ollama_timeout_seconds == 600

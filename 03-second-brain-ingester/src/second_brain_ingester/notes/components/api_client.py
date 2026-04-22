@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from urllib import error as urllib_error
+from urllib import request as urllib_request
 
 from second_brain_ingester.common.models import (
     ExtractedNoteDraft,
@@ -15,6 +17,10 @@ from second_brain_ingester.common.models import (
 
 class ExtractionResponseParseError(ValueError):
     """Raised when a raw extraction payload cannot be parsed into typed notes."""
+
+
+class StructuredExtractionClientError(RuntimeError):
+    """Raised when the extraction client cannot complete a request."""
 
 
 def parse_extraction_response(chunk_id: str, raw_payload: str) -> ExtractionResponse:
@@ -103,6 +109,56 @@ class DryRunStructuredExtractionClient:
         }
 
 
+class OllamaStructuredExtractionClient:
+    def __init__(
+        self,
+        model: str,
+        base_url: str,
+        prompt_path: Path | None = None,
+        timeout_seconds: int = 600,
+    ) -> None:
+        self._model = model
+        self._base_url = base_url.rstrip("/")
+        self._prompt_path = prompt_path
+        self._timeout_seconds = timeout_seconds
+
+    def complete(self, request: ExtractionRequest) -> ExtractionResponse:
+        payload = {
+            "model": self._model,
+            "system": request.prompt,
+            "prompt": _build_ollama_prompt(request, self._prompt_path),
+            "stream": False,
+            "format": "json",
+            "options": {"temperature": 0},
+        }
+        request_bytes = json.dumps(payload).encode("utf-8")
+        http_request = urllib_request.Request(
+            url=f"{self._base_url}/api/generate",
+            data=request_bytes,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        opener = urllib_request.build_opener(urllib_request.ProxyHandler({}))
+        try:
+            with opener.open(http_request, timeout=self._timeout_seconds) as response:
+                raw_response = json.loads(response.read().decode("utf-8"))
+        except urllib_error.URLError as exc:
+            raise StructuredExtractionClientError(
+                f"Ollama request failed for model {self._model}: {exc}"
+            ) from exc
+
+        response_text = raw_response.get("response")
+        if not isinstance(response_text, str) or not response_text.strip():
+            raise StructuredExtractionClientError(
+                f"Ollama returned an empty response for chunk {request.chunk_id}."
+            )
+
+        return parse_extraction_response(
+            chunk_id=request.chunk_id,
+            raw_payload=_strip_json_fences(response_text),
+        )
+
+
 def _ensure_string_list(value: object, field_name: str) -> list[str]:
     if value is None:
         return []
@@ -132,3 +188,26 @@ def _truncate(text: str, limit: int) -> str:
     if len(normalized) <= limit:
         return normalized
     return normalized[: limit - 3].rstrip() + "..."
+
+
+def _build_ollama_prompt(request: ExtractionRequest, prompt_path: Path | None) -> str:
+    prompt_name = prompt_path.name if prompt_path is not None else "inline"
+    return (
+        "Extract atomic notes from the following chunk.\n\n"
+        f"Prompt asset: {prompt_name}\n"
+        f"Source title: {request.source_title}\n"
+        f"Source type: {request.source_type}\n"
+        f"Chunk title: {request.chunk_title}\n"
+        f"Chunk ID: {request.chunk_id}\n\n"
+        "Chunk text:\n"
+        f"{request.chunk_text}\n\n"
+        "Return only valid JSON that matches the required notes schema."
+    )
+
+
+def _strip_json_fences(raw_payload: str) -> str:
+    normalized = raw_payload.strip()
+    if normalized.startswith("```"):
+        normalized = re.sub(r"^```(?:json)?\s*", "", normalized)
+        normalized = re.sub(r"\s*```$", "", normalized)
+    return normalized.strip()

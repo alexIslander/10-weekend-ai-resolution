@@ -14,7 +14,10 @@ from second_brain_ingester.ingest.components.text_loader import TextSourceLoader
 from second_brain_ingester.ingest.orchestrator import IngestOrchestrator
 from second_brain_ingester.notes.components.adr import DeterministicAdrGenerator
 from second_brain_ingester.notes.components.anti_pattern import DeterministicAntiPatternGenerator
-from second_brain_ingester.notes.components.api_client import DryRunStructuredExtractionClient
+from second_brain_ingester.notes.components.api_client import (
+    DryRunStructuredExtractionClient,
+    OllamaStructuredExtractionClient,
+)
 from second_brain_ingester.notes.components.extractor import (
     StructuredNoteExtractor,
     load_extractor_prompt,
@@ -64,6 +67,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Keep the flow local and deterministic.",
     )
     run_parser.add_argument(
+        "--provider",
+        choices=["dry-run", "ollama"],
+        default=settings.provider,
+        help="Structured extraction provider to use for the extractor path.",
+    )
+    run_parser.add_argument(
+        "--model",
+        default=settings.model,
+        help="Model name for the configured structured extraction provider.",
+    )
+    run_parser.add_argument(
         "--enable",
         action="append",
         default=[],
@@ -93,8 +107,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if not args.input.exists():
         parser.error(f"Input path does not exist: {args.input}")
-    if not args.dry_run:
-        parser.error("Only --dry-run is supported in the current implementation.")
+    if args.dry_run and args.provider == "ollama":
+        parser.error("Use --no-dry-run with --provider ollama for real local runs.")
+    if not args.dry_run and args.provider != "ollama":
+        parser.error("Only --provider ollama is supported for non-dry-run runs.")
     if args.enable:
         unsupported = sorted(
             set(args.enable) - {"extractor", "linker", "srq", "anti-pattern", "adr", "moc"}
@@ -104,7 +120,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     prompt_path = Path(__file__).resolve().parent / "notes" / "prompts" / "extractor.md"
     extractor = StructuredNoteExtractor(
-        client=DryRunStructuredExtractionClient(prompt_path=prompt_path),
+        client=_build_extraction_client(
+            dry_run=args.dry_run,
+            provider=args.provider,
+            model=args.model,
+            prompt_path=prompt_path,
+        ),
         prompt_text=load_extractor_prompt(prompt_path),
     )
     enrichers = []
@@ -138,6 +159,27 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Wrote extracted source markdown to {artifact_path}")
     print(f"Wrote run artifacts to {state.output.output_dir}")
     return 0
+
+
+def _build_extraction_client(
+    *,
+    dry_run: bool,
+    provider: str,
+    model: str,
+    prompt_path: Path,
+) -> DryRunStructuredExtractionClient | OllamaStructuredExtractionClient:
+    if dry_run:
+        return DryRunStructuredExtractionClient(prompt_path=prompt_path)
+
+    settings = get_settings()
+    if provider != "ollama":
+        raise ValueError(f"Unsupported non-dry-run provider: {provider}")
+    return OllamaStructuredExtractionClient(
+        model=model,
+        base_url=settings.ollama_base_url,
+        prompt_path=prompt_path,
+        timeout_seconds=settings.ollama_timeout_seconds,
+    )
 
 
 def _write_extracted_source_markdown(state: object) -> Path:
