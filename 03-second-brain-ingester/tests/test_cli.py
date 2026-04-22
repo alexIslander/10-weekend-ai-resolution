@@ -190,6 +190,37 @@ def test_cli_can_emit_extracted_source_markdown(
     assert "Wrote extracted source markdown to" in captured.out
 
 
+def test_cli_can_emit_technical_pdf_extracted_source_markdown(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    result = main(
+        [
+            "run",
+            "--input",
+            "tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf",
+            "--output-dir",
+            str(tmp_path),
+            "--dry-run",
+            "--enable",
+            "extractor",
+            "--emit-extracted-source-markdown",
+        ]
+    )
+
+    captured = capsys.readouterr()
+    run_directories = [path for path in tmp_path.iterdir() if path.is_dir()]
+
+    assert result == 0
+    assert len(run_directories) == 1
+    artifact_path = run_directories[0] / "extracted-source.md"
+    artifact_text = artifact_path.read_text(encoding="utf-8")
+    assert "## Warnings" in artifact_text
+    assert 'Users can add new content on Lafter as a “Joke”' in artifact_text
+    assert "control glyphs stripped during extraction" in artifact_text
+    assert r"\223" not in artifact_text
+    assert "Wrote extracted source markdown to" in captured.out
+
+
 def test_cli_run_with_ollama_provider_writes_output(
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],

@@ -191,6 +191,11 @@ def _write_extracted_source_markdown(state: object) -> Path:
 
     artifact_path = typed_state.output.output_dir / "extracted-source.md"
     chunk_sections: list[str] = []
+    warning_lines = (
+        "\n".join(f"- {warning}" for warning in typed_state.warnings)
+        if typed_state.warnings
+        else "- None"
+    )
     for chunk in typed_state.chunks:
         heading = f"## Chunk {chunk.ordinal:03d}: {chunk.title}"
         page_line = (
@@ -215,6 +220,8 @@ def _write_extracted_source_markdown(state: object) -> Path:
             f"- Source ID: `{typed_state.source_metadata.source_id}`\n"
             f"- Chunk count: {len(typed_state.chunks)}\n"
             f"- Warning count: {len(typed_state.warnings)}\n\n"
+            f"## Warnings\n\n"
+            f"{warning_lines}\n\n"
             f"{'\n\n'.join(chunk_sections)}\n"
         ),
         encoding="utf-8",

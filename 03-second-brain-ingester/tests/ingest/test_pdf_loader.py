@@ -24,3 +24,19 @@ def test_pdf_loader_extracts_readable_text_from_narrative_fixture() -> None:
     assert "Chapter 1" in combined_text
     assert "effective storytelling" in combined_text
     assert "neural coupling" in combined_text
+
+
+def test_pdf_loader_hardens_technical_fixture_and_emits_parser_warnings() -> None:
+    loader = PdfSourceLoader()
+
+    source = loader.load(
+        Path("tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf")
+    )
+
+    combined_text = " ".join(unit.text for unit in source.units)
+
+    assert 'Users can add new content on Lafter as a “Joke”' in combined_text
+    assert "they’ve got the logo figured out" in combined_text
+    assert r"\222" not in combined_text
+    assert r"\223" not in combined_text
+    assert any("control glyphs stripped during extraction" in warning for warning in source.warnings)
