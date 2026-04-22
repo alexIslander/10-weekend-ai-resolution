@@ -37,6 +37,8 @@ def test_cli_run_writes_output(tmp_path: Path, capsys: pytest.CaptureFixture[str
 
     assert result == 0
     assert "Wrote run artifacts to" in captured.out
+    assert "[status] Loading source..." in captured.out
+    assert "[status] Completed artifact_write." in captured.out
 
 
 def test_cli_run_with_linker_writes_output(
@@ -284,9 +286,40 @@ def test_cli_run_with_ollama_on_narrative_pdf_fixture(
     assert "Wrote run artifacts to" in captured.out
 
 
+def test_cli_run_reports_stage_statuses(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    result = main(
+        [
+            "run",
+            "--input",
+            "tests/fixtures/sample.txt",
+            "--output-dir",
+            str(tmp_path),
+            "--dry-run",
+            "--enable",
+            "extractor",
+        ]
+    )
+
+    captured = capsys.readouterr()
+
+    assert result == 0
+    assert "[status] Loading source..." in captured.out
+    assert "[status] Completed source_load." in captured.out
+    assert "[status] Generating chunks..." in captured.out
+    assert "[status] Completed chunk_generation." in captured.out
+    assert "[status] Extracting notes..." in captured.out
+    assert "[status] Extracting chunk 1/" in captured.out
+    assert "[status] Completed chunk 1/" in captured.out
+    assert "[status] Completed extraction." in captured.out
+    assert "[status] Writing artifacts..." in captured.out
+    assert "[status] Completed artifact_write." in captured.out
+
+
 def _mock_ollama_response(monkeypatch: pytest.MonkeyPatch) -> None:
     class FakeOpener:
-        def open(self, request: object, timeout: int) -> "FakeResponse":
+        def open(self, request: object, timeout: int) -> FakeResponse:
             assert isinstance(request, api_client.urllib_request.Request)
             assert timeout == 600
             payload = json.loads(request.data.decode("utf-8"))
@@ -295,7 +328,7 @@ def _mock_ollama_response(monkeypatch: pytest.MonkeyPatch) -> None:
             return FakeResponse()
 
     class FakeResponse:
-        def __enter__(self) -> "FakeResponse":
+        def __enter__(self) -> FakeResponse:
             return self
 
         def __exit__(self, *_args: object) -> None:
@@ -309,11 +342,28 @@ def _mock_ollama_response(monkeypatch: pytest.MonkeyPatch) -> None:
                             "notes": [
                                 {
                                     "title": "Connection through storytelling",
-                                    "summary": "Storytelling helps people connect ideas to felt experience.",
-                                    "body": "## Summary\n\nStorytelling helps people connect ideas to felt experience.\n\n## Key details\n\n- Narrative framing improves recall.\n\n## Related links\n\n- [[Storytelling]]\n\n## Source excerpt\n\nEffective storytelling helps people remember and internalize ideas.",
+                                    "summary": (
+                                        "Storytelling helps people connect ideas "
+                                        "to felt experience."
+                                    ),
+                                    "body": (
+                                        "## Summary\n\n"
+                                        "Storytelling helps people connect ideas "
+                                        "to felt experience.\n\n"
+                                        "## Key details\n\n"
+                                        "- Narrative framing improves recall.\n\n"
+                                        "## Related links\n\n"
+                                        "- [[Storytelling]]\n\n"
+                                        "## Source excerpt\n\n"
+                                        "Effective storytelling helps people remember "
+                                        "and internalize ideas."
+                                    ),
                                     "tags": ["extracted", "pdf"],
                                     "links": ["Storytelling"],
-                                    "source_excerpt": "Effective storytelling helps people remember and internalize ideas.",
+                                    "source_excerpt": (
+                                        "Effective storytelling helps people remember "
+                                        "and internalize ideas."
+                                    ),
                                 }
                             ]
                         }

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from pathlib import Path
 
 from second_brain_ingester.common.llm import StructuredExtractionClient
@@ -15,9 +16,15 @@ from second_brain_ingester.common.models import (
 
 
 class StructuredNoteExtractor:
-    def __init__(self, client: StructuredExtractionClient, prompt_text: str) -> None:
+    def __init__(
+        self,
+        client: StructuredExtractionClient,
+        prompt_text: str,
+        progress_callback: Callable[[str], None] | None = None,
+    ) -> None:
         self._client = client
         self._prompt_text = prompt_text
+        self._progress_callback = progress_callback
 
     def extract(
         self,
@@ -26,8 +33,12 @@ class StructuredNoteExtractor:
     ) -> list[AtomicNote]:
         notes: list[AtomicNote] = []
         seen_slugs: set[str] = set()
+        total_chunks = len(chunks)
 
-        for chunk in chunks:
+        for chunk_index, chunk in enumerate(chunks, start=1):
+            self._emit_progress(
+                f"Extracting chunk {chunk_index}/{total_chunks}: {chunk.title}"
+            )
             response = self._client.complete(
                 ExtractionRequest(
                     source_id=source_metadata.source_id,
@@ -56,8 +67,15 @@ class StructuredNoteExtractor:
                         source_excerpt=draft.source_excerpt,
                     )
                 )
+            self._emit_progress(
+                f"Completed chunk {chunk_index}/{total_chunks}: {chunk.title}"
+            )
 
         return notes
+
+    def _emit_progress(self, message: str) -> None:
+        if self._progress_callback is not None:
+            self._progress_callback(message)
 
 
 def load_extractor_prompt(prompt_path: Path) -> str:

@@ -26,6 +26,7 @@ from second_brain_ingester.notes.components.linker import DeterministicNoteLinke
 from second_brain_ingester.notes.components.moc import DeterministicMocGenerator
 from second_brain_ingester.notes.components.srq import DeterministicSrqGenerator
 from second_brain_ingester.notes.orchestrator import NotesOrchestrator
+from second_brain_ingester.notes.protocols import NoteEnricher
 from second_brain_ingester.output.components.markdown_writer import DeterministicMarkdownWriter
 from second_brain_ingester.output.components.quality_reporter import PlaceholderQualityReporter
 from second_brain_ingester.output.orchestrator import OutputOrchestrator
@@ -127,8 +128,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             prompt_path=prompt_path,
         ),
         prompt_text=load_extractor_prompt(prompt_path),
+        progress_callback=lambda message: print(f"[status] {message}", flush=True),
     )
-    enrichers = []
+    enrichers: list[NoteEnricher] = []
     if "linker" in args.enable:
         enrichers.append(DeterministicNoteLinker())
     if "srq" in args.enable:
@@ -150,14 +152,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             writer=DeterministicMarkdownWriter(output_root=args.output_dir),
             reporter=PlaceholderQualityReporter(),
         ),
+        status_callback=lambda message: print(f"[status] {message}"),
     )
     state = runner.run(input_path=args.input, output_dir=args.output_dir)
     if state.output is None:
         parser.exit(status=1, message="Pipeline failed before writing output.\n")
     if args.emit_extracted_source_markdown:
         artifact_path = _write_extracted_source_markdown(state)
-        print(f"Wrote extracted source markdown to {artifact_path}")
-    print(f"Wrote run artifacts to {state.output.output_dir}")
+        print(f"Wrote extracted source markdown to {artifact_path}", flush=True)
+    print(f"Wrote run artifacts to {state.output.output_dir}", flush=True)
     return 0
 
 

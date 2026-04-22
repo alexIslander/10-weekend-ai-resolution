@@ -39,4 +39,6 @@ def test_pdf_loader_hardens_technical_fixture_and_emits_parser_warnings() -> Non
     assert "they’ve got the logo figured out" in combined_text
     assert r"\222" not in combined_text
     assert r"\223" not in combined_text
-    assert any("control glyphs stripped during extraction" in warning for warning in source.warnings)
+    assert any(
+        "control glyphs stripped during extraction" in warning for warning in source.warnings
+    )

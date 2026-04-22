@@ -26,6 +26,16 @@ class DeterministicMarkdownWriter:
             note_paths.append(note_path)
 
         manifest_path = run_dir / "manifest.json"
+        artifact_timing = next(
+            (
+                timing
+                for timing in reversed(state.stage_timings)
+                if timing.stage == "artifact_write"
+            ),
+            None,
+        )
+        if artifact_timing is not None:
+            artifact_timing.mark_completed()
         manifest = {
             "run_id": state.run_id,
             "source": {
@@ -53,6 +63,7 @@ class DeterministicMarkdownWriter:
                 for note in state.notes
             ],
             "warnings": state.warnings,
+            "timings": [timing.as_dict() for timing in state.stage_timings],
             "errors": [
                 {
                     "code": error.code,

@@ -48,7 +48,7 @@ def test_ollama_api_client_posts_to_generate_endpoint(
     captured: dict[str, object] = {}
 
     class FakeOpener:
-        def open(self, request: object, timeout: int) -> "FakeResponse":
+        def open(self, request: object, timeout: int) -> FakeResponse:
             assert isinstance(request, api_client.urllib_request.Request)
             captured["url"] = request.full_url
             captured["timeout"] = timeout
@@ -56,7 +56,7 @@ def test_ollama_api_client_posts_to_generate_endpoint(
             return FakeResponse()
 
     class FakeResponse:
-        def __enter__(self) -> "FakeResponse":
+        def __enter__(self) -> FakeResponse:
             return self
 
         def __exit__(self, *_args: object) -> None:
@@ -70,11 +70,24 @@ def test_ollama_api_client_posts_to_generate_endpoint(
                             "notes": [
                                 {
                                     "title": "Queue-based decoupling",
-                                    "summary": "Queues reduce temporal coupling between services.",
-                                    "body": "## Summary\n\nQueues reduce temporal coupling.\n\n## Key details\n\n- Async boundaries help.\n\n## Related links\n\n- [[Message queue]]\n\n## Source excerpt\n\nQueues reduce temporal coupling between services.",
+                                    "summary": (
+                                        "Queues reduce temporal coupling between services."
+                                    ),
+                                    "body": (
+                                        "## Summary\n\n"
+                                        "Queues reduce temporal coupling.\n\n"
+                                        "## Key details\n\n"
+                                        "- Async boundaries help.\n\n"
+                                        "## Related links\n\n"
+                                        "- [[Message queue]]\n\n"
+                                        "## Source excerpt\n\n"
+                                        "Queues reduce temporal coupling between services."
+                                    ),
                                     "tags": ["extracted", "text"],
                                     "links": ["Message queue"],
-                                    "source_excerpt": "Queues reduce temporal coupling between services.",
+                                    "source_excerpt": (
+                                        "Queues reduce temporal coupling between services."
+                                    ),
                                 }
                             ]
                         }

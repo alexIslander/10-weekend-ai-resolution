@@ -19,6 +19,7 @@
       "ollama-preflight": "docker compose up -d ollama && sleep 3 && curl -s http://localhost:11434/api/tags | jq -r '.models[].name'",
       "phase-1-ollama-test": "uv run pytest tests/notes/test_api_client.py tests/test_cli.py::test_cli_run_with_ollama_provider_writes_output tests/test_cli.py::test_cli_run_with_ollama_on_narrative_pdf_fixture",
       "phase-2-ingest-test": "uv run pytest tests/ingest/test_pdf_loader.py tests/pipeline/test_local_ingest_flow.py tests/test_cli.py::test_cli_can_emit_extracted_source_markdown tests/test_cli.py::test_cli_can_emit_technical_pdf_extracted_source_markdown",
+      "phase-2-5-runtime-test": "uv run pytest tests/ingest/test_pdf_loader.py tests/pipeline/test_local_ingest_flow.py::test_local_ingest_flow_records_stage_timings tests/test_cli.py::test_cli_run_reports_stage_statuses",
       "ingest-test": "uv run pytest tests/ingest tests/pipeline/test_local_ingest_flow.py",
       "pdf-recovery-test": "uv run pytest tests/ingest/test_pdf_loader.py tests/pipeline/test_local_ingest_flow.py tests/test_cli.py::test_cli_can_emit_extracted_source_markdown",
       "extractor-test": "uv run pytest tests/notes/test_api_client.py tests/notes/test_extractor.py tests/pipeline/test_extraction_flow.py",
@@ -50,6 +51,7 @@
       "app-head-first-sa-chapter": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.txt --dry-run --enable extractor --output-dir vault_output/devbox-app-head-first-sa-chapter-run",
       "app-head-first-sa-chapter-pdf": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf --dry-run --enable extractor --output-dir vault_output/devbox-app-head-first-sa-chapter-pdf-run",
       "app-head-first-sa-chapter-pdf-source-ollama": "SECOND_BRAIN_OLLAMA_BASE_URL=http://localhost:11434 uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf --no-dry-run --provider ollama --model qwen3:8b --enable extractor --emit-extracted-source-markdown --output-dir vault_output/devbox-app-head-first-sa-chapter-pdf-ollama-source-run",
+      "app-head-first-sa-chapter-pdf-source-ollama-smoke": "SECOND_BRAIN_OLLAMA_BASE_URL=http://localhost:11434 uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf --no-dry-run --provider ollama --model smollm2:1.7b --enable extractor --emit-extracted-source-markdown --output-dir vault_output/devbox-app-head-first-sa-chapter-pdf-ollama-smoke-run",
       "app-head-first-sa-chapter-pdf-source": "uv run python -m second_brain_ingester.cli run --input tests/fixtures/test-head-first-sa-ch2/Head-First-Software-Architecture-ch2.pdf --dry-run --enable extractor --emit-extracted-source-markdown --output-dir vault_output/devbox-app-head-first-sa-chapter-pdf-run",
       "help": "uv run python -m second_brain_ingester.cli --help"
     }
