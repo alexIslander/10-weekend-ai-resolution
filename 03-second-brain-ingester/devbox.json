@@ -20,6 +20,7 @@
       "phase-1-ollama-test": "uv run pytest tests/notes/test_api_client.py tests/test_cli.py::test_cli_run_with_ollama_provider_writes_output tests/test_cli.py::test_cli_run_with_ollama_on_narrative_pdf_fixture",
       "phase-2-ingest-test": "uv run pytest tests/ingest/test_pdf_loader.py tests/pipeline/test_local_ingest_flow.py tests/test_cli.py::test_cli_can_emit_extracted_source_markdown tests/test_cli.py::test_cli_can_emit_technical_pdf_extracted_source_markdown",
       "phase-2-5-runtime-test": "uv run pytest tests/ingest/test_pdf_loader.py tests/pipeline/test_local_ingest_flow.py::test_local_ingest_flow_records_stage_timings tests/test_cli.py::test_cli_run_reports_stage_statuses",
+      "phase-3-chunking-test": "uv run pytest tests/ingest/test_chunker.py tests/pipeline/test_local_ingest_flow.py",
       "ingest-test": "uv run pytest tests/ingest tests/pipeline/test_local_ingest_flow.py",
       "pdf-recovery-test": "uv run pytest tests/ingest/test_pdf_loader.py tests/pipeline/test_local_ingest_flow.py tests/test_cli.py::test_cli_can_emit_extracted_source_markdown",
       "extractor-test": "uv run pytest tests/notes/test_api_client.py tests/notes/test_extractor.py tests/pipeline/test_extraction_flow.py",

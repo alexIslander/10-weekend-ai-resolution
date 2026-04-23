@@ -214,6 +214,45 @@ This checklist tracks only the active recovery slice and the immediately followi
   and the revised bounded short technical `.txt` Ollama smoke run is green.
 - [x] Exit gate: a human can tell which major step a long-running run is in before output exists, stage timing data exists for the major runtime milestones, and the loader code is split into smaller reviewable pieces without changing ingest output.
 
+## Phase 3: Boundary-aware chunking
+
+- Target: replace fixed-width chunking with paragraph-first and sentence-aware chunking.
+- Phase gate: Phase 2.5 is green and PDF ingest is stable enough that parser failures are visible and bounded.
+- Phase output: new chunking behavior plus a short before/after chunk quality note on the same fixture set.
+- Phase 3 status: closed on 2026-04-23 on branch `feature/secondbrain-recovery-phase-3-boundary-chunking`. Recovery evidence is recorded in [phase-3-boundary-aware-chunking.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-3-boundary-aware-chunking.md).
+- Local checkpoint:
+  work is isolated on branch `feature/secondbrain-recovery-phase-3-boundary-chunking`.
+- Additional evidence:
+  the narrative extracted-source artifact no longer starts a later chunk with the broken continuation `completely against what the person was expecting`;
+  that continuation is now absorbed into the preceding chunk and the next chunk begins with `Through these experiments, we have learned...`.
+  The technical extracted-source artifact now starts the corresponding formerly broken section with `For example, architects should pay attention to the application's internal structure...` rather than with the fixed-width fragment `as you build it!`.
+  Technical chunk count increased from 76 to 84 because sentence-preserving splits replaced arbitrary width cuts, but the new starts are more reviewable.
+- Next safe slice:
+  start Phase 4 extraction quality recovery only.
+- [x] Review the short technical comparison note in [phase-2-5-short-head-first-pdf-vs-txt-comparison.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-2-5-short-head-first-pdf-vs-txt-comparison.md) before tuning technical chunk boundaries so ingest noise is not mistaken for a chunking failure.
+- [x] Replace fixed-width chunk splitting with paragraph-first chunk assembly and sentence-aware fallback while keeping chunk IDs deterministic and page association stable.
+- [x] Keep this slice chunking-only:
+  no loader changes,
+  no prompt changes,
+  and no routing or orchestration changes.
+- [x] Add the smallest focused test coverage for the new chunking behavior:
+  one paragraph-boundary assertion,
+  one sentence-boundary assertion,
+  and one bounded hard-wrap fallback assertion.
+- [x] Add one bounded Devbox regression command for Phase 3 and document it in `README.md` in the same change.
+- [x] Rerun the narrative fixture and capture whether broken chunk starts fall relative to the Phase 1 and Phase 2 baselines.
+- [x] Rerun the technical fixture and capture whether mixed-content pages are still noisy but less over-fragmented than the fixed-width baseline.
+- [x] Write one short before/after chunk-quality note under `docs/0421/02/` with concrete chunk examples from the narrative and technical fixtures.
+- [x] Verification:
+  `devbox run --recompute=false phase-3-chunking-test`
+  `devbox run --recompute=false app-anyone-chapter-pdf-source`
+  `devbox run --recompute=false app-head-first-sa-chapter-pdf-source`
+  Result:
+  the bounded Phase 3 suite passed,
+  the narrative extracted-source rerun is green,
+  and the technical extracted-source rerun is green with cleaner sentence-led chunk starts despite a higher total chunk count.
+- [x] Exit gate: broken-start counts fall on the narrative PDF, technical chunks no longer over-fragment mixed-content pages as often, and chunker behavior is covered by focused tests.
+
 ## Hold line
 
 - [ ] Do not start Ollama/provider wiring until Phase 0.5 is closed with evidence.
