@@ -153,25 +153,31 @@ This checklist tracks only the active recovery slice and the immediately followi
 - Target: make long-running local PDF and Ollama runs observable enough to trust in-flight execution, and reduce loader maintenance risk before chunking work begins.
 - Phase gate: Phase 2 is closed, but the technical PDF Ollama path still appears silent during long runs, the real-model technical fixture is still too slow to serve as a trustworthy verification loop, and `src/second_brain_ingester/ingest/components/pdf_loader.py` is still too large for safe incremental review.
 - Phase output: bounded progress or status messages for long-running local runs, emitted stage timing data, and a smaller logical structure for the PDF loader with unchanged ingest behavior.
-- Phase 2.5 status: blocked on 2026-04-22. Implementation work landed, but the real Ollama verification gate is still red because the local Ollama endpoint could not be reached. Recovery evidence is recorded in [phase-2-5-runtime-visibility-recovery.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-2-5-runtime-visibility-recovery.md).
+- Phase 2.5 status: closed on 2026-04-23. Implementation work landed, the local Ollama endpoint is reachable again, and the revised bounded operability proof is green on the short technical `.txt` slice. Recovery evidence is recorded in [phase-2-5-runtime-visibility-recovery.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-2-5-runtime-visibility-recovery.md).
 - Local checkpoint:
   work is isolated on branch `feature/secondbrain-recovery-phase-2-5-runtime-visibility`.
 - Blocker:
-  `devbox run --recompute=false ollama-preflight` failed with a Docker image lookup error for `ollama/ollama`,
-  `curl -sS http://localhost:11434/api/tags` could not connect,
-  so the technical PDF real-model smoke run cannot yet clear the exit gate.
+  cleared by redefining the bounded technical operability proof to use the short technical `.txt` fixture documented in [phase-2-5-short-head-first-pdf-vs-txt-comparison.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-2-5-short-head-first-pdf-vs-txt-comparison.md).
 - Additional evidence:
   `devbox run --recompute=false app-anyone-chapter-pdf`
   now emits `Loading source`, `Generating chunks`, `Extracting notes`, and `Writing artifacts` before the run directory is written.
+  `devbox run --recompute=false phase-2-5-runtime-test` passed.
+  `devbox run --recompute=false ollama-preflight` listed `llama3.3:70b`, `qwen3:8b`, and `smollm2:1.7b`.
+  `devbox run --recompute=false app-head-first-sa-chapter-pdf-source-ollama-smoke`
+  emitted `Extracting chunk 1/76`, completed chunk 1, and started chunk 2 before the bounded verification window expired.
+  The short technical comparison note in [phase-2-5-short-head-first-pdf-vs-txt-comparison.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-2-5-short-head-first-pdf-vs-txt-comparison.md)
+  shows that the checked-in `.txt` fixture is materially cleaner than the PDF extracted-source markdown content and is the better bounded real-model smoke input.
+  `devbox run --recompute=false 02-head-first-sa-chapter-short-txt-ollama-smoke`
+  completed successfully in 6 chunks, recorded `Completed extraction. (312.544s)`, and wrote artifacts to
+  `vault_output/devbox-02-head-first-sa-chapter-short-txt-ollama-smoke-run/head-first-software-architecture-ch2-short-b00c0323`.
 - Next safe slice:
-  keep local Ollama reachable on `http://localhost:11434`,
-  run `devbox run --recompute=false app-head-first-sa-chapter-pdf-source-ollama-smoke`,
-  and use `smollm2:1.7b` as the bounded operability proof before revisiting the slower `qwen3:8b` path.
+  start Phase 3 boundary-aware chunking only,
+  and use the saved short technical PDF-vs-txt comparison note to separate ingest noise from chunk-boundary problems.
 - [x] Capture the current long-run operator pain in a short note:
-  the recovery note now records the still-red technical Ollama verification path and the exact local environment failure that blocks it.
+  the recovery note records the earlier full technical-PDF slowdown and the revised bounded short technical `.txt` proof that closed the operability gate for this phase.
 - [x] Record the current operational assumption explicitly:
-  technical PDF real-model quality is still only partially validated,
-  and runtime operability remains red until the slow path can be verified against a working local Ollama endpoint.
+  full technical-PDF real-model quality is still only partially validated,
+  but Phase 2.5 runtime operability is now green on the revised bounded short technical `.txt` slice.
 - [x] Add bounded status reporting around the major runtime milestones only:
   source load,
   chunk generation,
@@ -195,7 +201,7 @@ This checklist tracks only the active recovery slice and the immediately followi
   one bounded status or logging assertion where practical,
   one bounded timing-field assertion where practical,
   and existing loader regressions kept green.
-- [ ] Verification:
+- [x] Verification:
   one bounded check that timing fields exist and are plausible,
   one loader-focused regression suite,
   one technical PDF Ollama smoke run,
@@ -203,8 +209,10 @@ This checklist tracks only the active recovery slice and the immediately followi
   Result:
   the timing and loader checks are green,
   the narrative non-regression run is green,
-  but the technical PDF Ollama smoke run is still blocked by the missing local Ollama endpoint.
-- [ ] Exit gate: a human can tell which major step a long-running run is in before output exists, stage timing data exists for the major runtime milestones, and the loader code is split into smaller reviewable pieces without changing ingest output.
+  `ollama-preflight` is green again,
+  the full technical PDF Ollama path remains too expensive for a bounded loop on this machine,
+  and the revised bounded short technical `.txt` Ollama smoke run is green.
+- [x] Exit gate: a human can tell which major step a long-running run is in before output exists, stage timing data exists for the major runtime milestones, and the loader code is split into smaller reviewable pieces without changing ingest output.
 
 ## Hold line
 
@@ -229,14 +237,6 @@ This checklist tracks only the active recovery slice and the immediately followi
   one library choice remains deferred,
   the artifact shape stays as one extracted-source markdown file,
   and this slice did not attempt table or image understanding.
-
-
-  - devbox run --recompute=false app-anyone-chapter-pdf: passed and now prints stage
-    markers before artifact output
-  - devbox run --recompute=false ollama-preflight: failed with a local Docker/Ollama image
-    error
-  - curl -sS http://localhost:11434/api/tags: failed to connect
-
-  So the next safe slice is still to restore local Ollama reachability and rerun devbox
-  run --recompute=false app-head-first-sa-chapter-pdf-source-ollama before closing Phase
-  2.5.
+- [x] Preserve the short technical PDF-vs-txt comparison for future chunking work:
+  the `.txt` fixture is currently the cleaner bounded real-model smoke input,
+  while the PDF extracted-source markdown artifact remains useful ingest evidence and may motivate a cleaner markdown extraction step before Phase 3 chunk optimization on noisy PDFs.

@@ -67,6 +67,8 @@ Use `devbox run ollama-preflight` to start the Docker-backed Ollama fallback and
 Use `devbox run app-anyone-chapter-pdf-ollama` for the bounded Phase 1 real-model smoke run on the approved narrative PDF fixture with `qwen3:8b`.
 Use `devbox run app-head-first-sa-chapter-pdf-source-ollama` when you want the technical PDF run to use Ollama and still emit the extracted-source markdown artifact.
 Use `devbox run app-head-first-sa-chapter-pdf-source-ollama-smoke` for the bounded Phase 2.5 operability proof on the technical PDF fixture with `smollm2:1.7b` when you want to prove the path is working before optimizing throughput.
+Use `devbox run 01-head-first-sa-chapter-short-pdf-source` to write the short technical PDF extracted-source markdown artifact without relying on a real model, so you can compare the PDF-extracted markdown against the checked-in `.txt` fixture first.
+Use `devbox run 02-head-first-sa-chapter-short-txt-ollama-smoke` after that comparison when you want the bounded real-model smoke run to operate only on the short technical `.txt` fixture with `smollm2:1.7b`.
 Use `devbox run pdf-recovery-test` for the bounded PDF recovery suite that protects the loader path, the local ingest PDF smoke path, and the extracted-source CLI artifact path.
 Use `devbox run phase-2-ingest-test` for the bounded Phase 2 regression suite that covers narrative and technical PDF extraction plus extracted-source artifact warnings.
 Use `devbox run phase-2-5-runtime-test` for the bounded Phase 2.5 regression suite that covers stage-status output, durable timing fields, and PDF loader non-regression.
@@ -113,6 +115,8 @@ devbox run app-head-first-sa-chapter-pdf
 devbox run app-head-first-sa-chapter-pdf-source-ollama
 devbox run app-head-first-sa-chapter-pdf-source-ollama-smoke
 devbox run app-head-first-sa-chapter-pdf-source
+devbox run 01-head-first-sa-chapter-short-pdf-source
+devbox run 02-head-first-sa-chapter-short-txt-ollama-smoke
 devbox run app-anyone-chapter-linker
 devbox run app-anyone-chapter-srq
 ```

@@ -166,11 +166,41 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
   prefer one library choice and one bounded artifact shape for non-text assets,
   not full table understanding or image interpretation in the same slice.
 
+### Phase 2.5: Runtime visibility and loader decomposition
+
+- Target: make long-running local PDF and Ollama runs observable enough to trust in-flight execution, and reduce `PdfSourceLoader` change risk before more ingest or chunking work lands.
+- Phase gate: Phase 2 ingest hardening is green, but real technical-PDF Ollama runs still provide too little status visibility, the technical PDF real-model path is still too slow to act as a trustworthy verification loop, and `src/second_brain_ingester/ingest/components/pdf_loader.py` remains too large to review safely as one unit.
+- Phase output: bounded progress or status messages on long-running runs, emitted stage timing data, and a smaller loader structure split into logical helpers or modules without changing ingest behavior.
+- Exit gate:
+  a human can tell which major step a long-running local run is in before output files appear,
+  the technical-PDF Ollama path emits at least a few meaningful progress markers during execution,
+  stage start and end timestamps exist for the major runtime milestones,
+  stage durations can be derived for load, chunk, extract, and write work,
+  and `PdfSourceLoader` no longer concentrates all parsing and decode logic in one oversized file.
+- Constraint:
+  do not change chunking behavior, note extraction prompts, or routing behavior in this phase.
+- Evidence loop:
+  1. capture the current silent long-run pain on the technical PDF Ollama path,
+  2. explicitly record that technical-PDF real-model operability is not yet validated when runs remain too slow or opaque,
+  3. add bounded status reporting around load, chunk, extract, and write milestones,
+  4. emit timestamps for those same milestones so per-stage durations are durable,
+  5. split the loader into smaller logical units while preserving current output,
+  6. rerun the same technical and narrative checks and confirm behavior is unchanged apart from visibility.
+- Lean verification:
+  one bounded test for status or logging behavior where practical,
+  one bounded check that timing fields exist and are plausible,
+  one loader-focused regression suite,
+  one technical PDF Ollama smoke run,
+  one narrative PDF non-regression run.
+
 ### Phase 3: Boundary-aware chunking
 
 - Target: replace fixed-width chunking with paragraph-first and sentence-aware chunking.
-- Phase gate: PDF ingest is stable enough that parser failures are visible and bounded.
+- Phase gate: Phase 2.5 is green and PDF ingest is stable enough that parser failures are visible and bounded.
 - Phase output: new chunking behavior plus a short before/after chunk quality note on the same fixture set.
+- Planning note:
+  before tuning chunk boundaries on noisy technical PDFs, review the short-fixture comparison in [phase-2-5-short-head-first-pdf-vs-txt-comparison.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-2-5-short-head-first-pdf-vs-txt-comparison.md).
+  If the PDF extracted-source markdown remains materially noisier than the checked-in `.txt`, consider a clean markdown extraction step before chunk optimization so the chunker is not evaluated on avoidable ingest noise.
 - Exit gate:
   broken-start counts fall on the narrative PDF,
   technical chunks no longer over-fragment mixed-content pages as often,
@@ -215,6 +245,28 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
   and the metrics are visible in a durable note or report.
 - Constraint:
   do not add LangGraph or broad orchestration in this phase.
+
+### Phase 6: Quality reporting and closeout
+
+- Target: emit durable evaluation and performance-reporting artifacts and align docs with the real supported workflow.
+- Phase gate: runtime timing data already exists from Phase 2.5 and quality-relevant pipeline behavior is stable enough to report honestly.
+- Phase output: honest documentation plus repeatable quality and timing reporting for supported offline-first runs.
+- Exit gate:
+  the project reports provider and model usage,
+  routing outcomes,
+  confidence warnings,
+  per-fixture quality results,
+  and per-stage timing summaries for the major runtime milestones,
+  with enough metadata to compare runs over time.
+- Evidence loop:
+  1. gather the emitted timing and quality signals from stable runs,
+  2. publish them in a durable report or manifest shape,
+  3. compare at least a small set of runs on the same fixtures,
+  4. update docs so the supported reporting contract is explicit.
+- Lean verification:
+  one report-generation check,
+  one run artifact review for timing and quality fields,
+  one documentation pass that matches the real workflow.
 
 ### Deferred work outside the critical path
 
