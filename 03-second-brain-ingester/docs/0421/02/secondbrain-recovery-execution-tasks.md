@@ -253,6 +253,44 @@ This checklist tracks only the active recovery slice and the immediately followi
   and the technical extracted-source rerun is green with cleaner sentence-led chunk starts despite a higher total chunk count.
 - [x] Exit gate: broken-start counts fall on the narrative PDF, technical chunks no longer over-fragment mixed-content pages as often, and chunker behavior is covered by focused tests.
 
+## Phase 4: Extraction quality recovery
+
+- Target: improve note usefulness after ingest and chunking are no longer the main blockers.
+- Phase gate: Phase 3 is closed and the extractor can now evaluate cleaner chunk boundaries on the same fixture set.
+- Phase output: better extraction prompting and output normalization plus a durable quality comparison note.
+- Phase 4 status: blocked on 2026-04-23 on branch `feature/secondbrain-recovery-phase-4-extraction-quality`. Recovery evidence is recorded in [phase-4-extraction-verification-recovery.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-4-extraction-verification-recovery.md).
+- Local checkpoint:
+  bounded extraction-quality code and tests are prepared on branch `feature/secondbrain-recovery-phase-4-extraction-quality`, but the approved narrative real-model verification loop is not yet bounded enough to close the phase honestly.
+- [x] Keep this slice extraction-only:
+  no loader changes,
+  no chunking changes,
+  and no routing or orchestration changes.
+- [x] Allow the extractor boundary to return zero notes for connective or low-signal chunks instead of forcing one placeholder note per chunk.
+- [x] Tighten extractor guidance so titles are concept-led, summaries are complete, and generic chunk-labeled notes are discouraged.
+- [x] Add the smallest focused safeguards needed when model output is weak:
+  normalize generic titles from summary text,
+  normalize unstructured bodies into the expected markdown sections,
+  and keep slug generation deterministic.
+- [x] Add the smallest focused test coverage for the new extraction behavior:
+  one empty-notes parsing assertion,
+  one generic-title normalization assertion,
+  one extraction-flow assertion that zero-note runs still write a valid artifact set.
+- [x] Add one bounded Devbox regression command for Phase 4 and document it in `README.md` in the same change.
+- [x] Verification:
+  `devbox run phase-4-extraction-test`
+  Result:
+  the bounded Phase 4 regression suite passed with 9 tests.
+- [ ] Rerun the approved narrative PDF through the real local Ollama path and capture whether weak titles and transitional notes fall relative to the Phase 1 output.
+  Blocker:
+  `devbox run app-anyone-chapter-pdf-ollama` reached the real local path and completed chunks 1 through 3, but the approved narrative `qwen3:8b` rerun remains too expensive for a bounded review loop on this machine.
+- [ ] Rerun the bounded technical real-model fixture and capture whether titles stop collapsing to generic `Chunk N` labels.
+- [ ] Write one short before/after extraction-quality note under `docs/0421/02/` with concrete narrative and technical note examples.
+- [ ] Exit gate:
+  titles are meaning-based,
+  summaries are not fragmentary,
+  one chunk may yield zero/one/many notes,
+  and the narrative plus technical fixtures both show usable notes by the rubric.
+
 ## Hold line
 
 - [ ] Do not start Ollama/provider wiring until Phase 0.5 is closed with evidence.

@@ -30,10 +30,8 @@ def parse_extraction_response(chunk_id: str, raw_payload: str) -> ExtractionResp
         raise ExtractionResponseParseError(f"Invalid extraction payload: {exc.msg}") from exc
 
     raw_notes = payload.get("notes")
-    if not isinstance(raw_notes, list) or not raw_notes:
-        raise ExtractionResponseParseError(
-            "Extraction payload must include a non-empty notes list."
-        )
+    if not isinstance(raw_notes, list):
+        raise ExtractionResponseParseError("Extraction payload must include a notes list.")
 
     notes: list[ExtractedNoteDraft] = []
     for raw_note in raw_notes:

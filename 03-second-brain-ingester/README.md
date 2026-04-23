@@ -17,6 +17,7 @@ devbox run pdf-recovery-test
 devbox run phase-2-ingest-test
 devbox run phase-2-5-runtime-test
 devbox run phase-3-chunking-test
+devbox run phase-4-extraction-test
 devbox run ollama-preflight
 devbox run help
 ```
@@ -74,6 +75,7 @@ Use `devbox run pdf-recovery-test` for the bounded PDF recovery suite that prote
 Use `devbox run phase-2-ingest-test` for the bounded Phase 2 regression suite that covers narrative and technical PDF extraction plus extracted-source artifact warnings.
 Use `devbox run phase-2-5-runtime-test` for the bounded Phase 2.5 regression suite that covers stage-status output, durable timing fields, and PDF loader non-regression.
 Use `devbox run phase-3-chunking-test` for the bounded Phase 3 regression suite that covers paragraph-first chunking, sentence-aware fallback, and local ingest non-regression.
+Use `devbox run phase-4-extraction-test` for the bounded Phase 4 regression suite that covers zero-note chunks, title/body normalization for weak model outputs, and extraction-flow non-regression.
 
 ## Devbox scripts
 
@@ -91,6 +93,7 @@ devbox run phase-1-ollama-test
 devbox run phase-2-ingest-test
 devbox run phase-2-5-runtime-test
 devbox run phase-3-chunking-test
+devbox run phase-4-extraction-test
 devbox run ingest-test
 devbox run pdf-recovery-test
 devbox run extractor-test

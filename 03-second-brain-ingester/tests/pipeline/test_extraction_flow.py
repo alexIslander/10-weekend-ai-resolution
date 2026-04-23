@@ -39,3 +39,26 @@ def test_extraction_flow_writes_populated_atomic_note(tmp_path: Path) -> None:
     assert "## Summary" in note_text
     assert "## Related links" in note_text
     assert "## Source metadata" in note_text
+
+
+def test_extraction_flow_writes_no_notes_when_extractor_returns_none(tmp_path: Path) -> None:
+    class EmptyExtractor:
+        def extract(self, *_args: object, **_kwargs: object) -> list[object]:
+            return []
+
+    runner = LocalPipelineRunner(
+        ingest=IngestOrchestrator(
+            loaders=[TextSourceLoader()],
+            chunk_generator=DeterministicChunkGenerator(max_chunk_chars=120),
+        ),
+        notes=NotesOrchestrator(extractor=EmptyExtractor()),
+        output=OutputOrchestrator(
+            writer=DeterministicMarkdownWriter(output_root=tmp_path),
+            reporter=PlaceholderQualityReporter(),
+        ),
+    )
+
+    state = runner.run(Path("tests/fixtures/sample.txt"), tmp_path)
+
+    assert state.output is not None
+    assert state.output.note_paths == []

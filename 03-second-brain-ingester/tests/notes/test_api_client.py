@@ -42,6 +42,16 @@ def test_parse_extraction_response_rejects_invalid_payload() -> None:
         )
 
 
+def test_parse_extraction_response_accepts_empty_notes() -> None:
+    response = parse_extraction_response(
+        chunk_id="chunk-001",
+        raw_payload='{"notes":[]}',
+    )
+
+    assert response.chunk_id == "chunk-001"
+    assert response.notes == []
+
+
 def test_ollama_api_client_posts_to_generate_endpoint(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
