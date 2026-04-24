@@ -282,7 +282,7 @@ This checklist tracks only the active recovery slice and the immediately followi
   the bounded Phase 4 regression suite passed with 9 tests.
 - [ ] Rerun the approved narrative PDF through the real local Ollama path and capture whether weak titles and transitional notes fall relative to the Phase 1 output.
   Blocker:
-  `devbox run app-anyone-chapter-pdf-ollama` reached the real local path and completed chunks 1 through 3, but the approved narrative `qwen3:8b` rerun remains too expensive for a bounded review loop on this machine.
+  `devbox run app-anyone-chapter-pdf-ollama` still reaches the real local path cleanly, but on the refreshed 2026-04-23 verification it stayed in `Extracting chunk 1/17: Page 1 chunk 1` for more than 150 seconds without a chunk-complete or artifact-write marker, so the approved narrative `qwen3:8b` rerun remains too expensive for a bounded review loop on this machine.
 - [ ] Rerun the bounded technical real-model fixture and capture whether titles stop collapsing to generic `Chunk N` labels.
 - [ ] Write one short before/after extraction-quality note under `docs/0421/02/` with concrete narrative and technical note examples.
 - [ ] Exit gate:
@@ -290,6 +290,13 @@ This checklist tracks only the active recovery slice and the immediately followi
   summaries are not fragmentary,
   one chunk may yield zero/one/many notes,
   and the narrative plus technical fixtures both show usable notes by the rubric.
+  Current blocker evidence:
+  `devbox run phase-4-extraction-test` is green,
+  `devbox run ollama-preflight` is green,
+  but the approved narrative real-model verification path is still not bounded enough to close the phase honestly.
+  Next safe slice:
+  add one bounded narrative verification path that keeps the approved narrative PDF and real local extractor gate,
+  then document that path in `devbox.json` and `README.md` before retrying Phase 4 closeout.
 
 ## Hold line
 
