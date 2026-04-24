@@ -39,8 +39,9 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
 4. Harden PDF ingest on the same small fixture set before changing broader flow control.
 5. Replace fixed-width chunking with boundary-aware chunking and rerun the same fixtures.
 6. Improve extraction quality only after ingest and chunk boundaries are measurable.
-7. Add one bounded routing decision only if it reduces wasted local inference and improves output quality.
-8. Keep cloud fallback, LangGraph, checkpointing, and broader orchestration off the critical path until the offline path is already useful.
+7. Freeze a per-use-case local model and quantization matrix before expanding routing or larger-model usage.
+8. Add one bounded routing decision only if it reduces wasted local inference and improves output quality.
+9. Keep cloud fallback, LangGraph, checkpointing, and broader orchestration off the critical path until the offline path is already useful.
 
 ## Scope
 
@@ -56,6 +57,7 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
 
 - The repository can run one real local PDF ingestion flow that writes useful markdown notes to disk.
 - Quality claims are grounded in before/after evidence on a small stable fixture set.
+- Local Ollama defaults can be chosen intentionally per use case instead of relying on whatever default quantization tag happens to ship.
 - The next implementation slices become small enough to review without dragging orchestration back onto the critical path.
 
 ## Execution inputs
@@ -235,10 +237,34 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
   one narrative PDF run,
   one technical PDF run.
 
-### Phase 5: Optional local routing
+### Phase 5: Local model fit and quantization selection
+
+- Target: choose the highest-quality Ollama quantization that is still safe for sustained local use on this Apple Silicon machine for each in-scope model family and use case.
+- Phase gate: extraction behavior is stable enough on the approved narrative and bounded technical fixtures that model comparisons are not dominated by unresolved ingest or chunking defects.
+- Phase output: one durable local-model matrix note plus explicit recommended Ollama tags for coding, general chat, and document-analysis runs on this machine.
+- Exit gate:
+  the repo has a written quantization selection rubric,
+  in-scope model families have at least one explicit recommended tag instead of an implicit default pull,
+  sustained single-model runs stay within the intended 22-24 GB effective model budget without swap growth or obvious memory-pressure warnings,
+  and larger or edge models are explicitly rejected or deferred with written evidence rather than left ambiguous.
+- Constraint:
+  keep this slice focused on model fit and runtime safety;
+  do not reopen extraction prompts, chunking logic, routing logic, or cloud fallback work.
+- Evidence loop:
+  1. freeze one bounded fixture set for coding, general chat, and document-analysis checks,
+  2. inventory the explicit Ollama quantization tags that are actually available for the candidate models,
+  3. run a bounded memory and latency comparison under single-model local settings,
+  4. record quality deltas and runtime safety verdicts in one written matrix,
+  5. choose the default and max-safe tag per use case.
+- Lean verification:
+  one bounded benchmark command or checklist per use case,
+  one memory-pressure capture method used consistently across runs,
+  one durable recommendation note under `docs/0421/02/`.
+
+### Phase 6: Optional local routing
 
 - Target: add one bounded router only if it saves inference and improves quality.
-- Phase gate: Phase 4 is green and the offline-first flow is already useful without routing.
+- Phase gate: Phase 5 is green and the offline-first flow is already useful without routing.
 - Phase output: one small routing decision layer plus metrics on skip, merge, retry, or low-confidence outcomes.
 - Exit gate:
   routing reduces wasted strong-model use or low-value extraction work,
@@ -246,10 +272,10 @@ Produce a real offline-first `PDF -> chunk -> extract -> markdown` path that yie
 - Constraint:
   do not add LangGraph or broad orchestration in this phase.
 
-### Phase 6: Quality reporting and closeout
+### Phase 7: Quality reporting and closeout
 
 - Target: emit durable evaluation and performance-reporting artifacts and align docs with the real supported workflow.
-- Phase gate: runtime timing data already exists from Phase 2.5 and quality-relevant pipeline behavior is stable enough to report honestly.
+- Phase gate: runtime timing data already exists from Phase 2.5, Phase 5 has frozen the supported local-model defaults, and quality-relevant pipeline behavior is stable enough to report honestly.
 - Phase output: honest documentation plus repeatable quality and timing reporting for supported offline-first runs.
 - Exit gate:
   the project reports provider and model usage,

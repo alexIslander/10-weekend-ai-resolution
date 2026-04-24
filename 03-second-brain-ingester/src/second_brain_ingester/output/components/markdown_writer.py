@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 from second_brain_ingester.common.models import PipelineResult
@@ -15,6 +16,8 @@ class DeterministicMarkdownWriter:
 
     def write(self, state: PipelineState) -> PipelineState:
         run_dir = self._output_root / state.run_id
+        if run_dir.exists():
+            shutil.rmtree(run_dir)
         run_dir.mkdir(parents=True, exist_ok=True)
 
         note_paths: list[Path] = []

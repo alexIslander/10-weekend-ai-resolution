@@ -77,12 +77,12 @@ Use `devbox run app-head-first-sa-chapter-pdf-source-ollama` when you want the t
 Use `devbox run app-head-first-sa-chapter-pdf-source-ollama-smoke` for the bounded Phase 2.5 operability proof on the technical PDF fixture with `smollm2:1.7b` when you want to prove the path is working before optimizing throughput.
 Use `devbox run 01-head-first-sa-chapter-short-pdf-source` to write the short technical PDF extracted-source markdown artifact without relying on a real model, so you can compare the PDF-extracted markdown against the checked-in `.txt` fixture first.
 Use `devbox run 02-head-first-sa-chapter-short-txt-ollama-smoke` after that comparison when you want the bounded real-model smoke run to operate only on the short technical `.txt` fixture with `smollm2:1.7b`.
-Use `devbox run 03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b` when you want the same bounded short technical `.txt` smoke path to run against `qwen3:8b` for a stronger local-model comparison.
+Use `devbox run 03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3` when you want the same bounded short technical `.txt` smoke path to run against `qwen3:8b` for a stronger local-model comparison. This command writes to `vault_output/devbox-03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3-run`.
 Use `devbox run pdf-recovery-test` for the bounded PDF recovery suite that protects the loader path, the local ingest PDF smoke path, and the extracted-source CLI artifact path.
 Use `devbox run phase-2-ingest-test` for the bounded Phase 2 regression suite that covers narrative and technical PDF extraction plus extracted-source artifact warnings.
 Use `devbox run phase-2-5-runtime-test` for the bounded Phase 2.5 regression suite that covers stage-status output, durable timing fields, and PDF loader non-regression.
 Use `devbox run phase-3-chunking-test` for the bounded Phase 3 regression suite that covers paragraph-first chunking, sentence-aware fallback, and local ingest non-regression.
-Use `devbox run phase-4-extraction-test` for the bounded Phase 4 regression suite that covers zero-note chunks, title/body normalization for weak model outputs, and extraction-flow non-regression.
+Use `devbox run phase-4-extraction-test` for the bounded Phase 4/4.5 regression suite that covers zero-note chunks, title/body normalization for weak model outputs, duplicate suppression, related-link cleanup, stale artifact cleanup, extraction-flow non-regression, and the bounded qwen3 workflow contract.
 Use `devbox run notes-test` for the broader notes-layer regression suite when you want all note-component tests without running the full pipeline suite.
 Use `devbox run anti-pattern-test` for the anti-pattern slice regression suite that covers note shaping, pipeline flow, markdown output, and CLI behavior.
 
@@ -167,7 +167,7 @@ devbox run app-head-first-sa-chapter-pdf-source-ollama-smoke
 devbox run app-head-first-sa-chapter-pdf-source
 devbox run 01-head-first-sa-chapter-short-pdf-source
 devbox run 02-head-first-sa-chapter-short-txt-ollama-smoke
-devbox run 03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b
+devbox run 03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3
 devbox run app-anyone-chapter-linker
 devbox run app-anyone-chapter-srq
 devbox run app-anyone-long

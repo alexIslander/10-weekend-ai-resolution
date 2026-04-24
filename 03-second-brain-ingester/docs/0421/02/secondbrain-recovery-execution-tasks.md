@@ -258,9 +258,9 @@ This checklist tracks only the active recovery slice and the immediately followi
 - Target: improve note usefulness after ingest and chunking are no longer the main blockers.
 - Phase gate: Phase 3 is closed and the extractor can now evaluate cleaner chunk boundaries on the same fixture set.
 - Phase output: better extraction prompting and output normalization plus a durable quality comparison note.
-- Phase 4 status: blocked on 2026-04-23 on branch `feature/secondbrain-recovery-phase-4-extraction-quality`. Recovery evidence is recorded in [phase-4-extraction-verification-recovery.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-4-extraction-verification-recovery.md).
+- Phase 4 status: closed on 2026-04-24 on branch `feature/secondbrain-recovery-phase-4-extraction-quality`. Recovery evidence is recorded in [phase-4-extraction-verification-recovery.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-4-extraction-verification-recovery.md), and the quality closeout note is recorded in [phase-4-extraction-quality-comparison.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-4-extraction-quality-comparison.md).
 - Local checkpoint:
-  bounded extraction-quality code and tests are prepared on branch `feature/secondbrain-recovery-phase-4-extraction-quality`, but the approved narrative real-model verification loop is not yet bounded enough to close the phase honestly.
+  Phase 4 extraction changes, bounded regression tests, and real-model closeout evidence are prepared on branch `feature/secondbrain-recovery-phase-4-extraction-quality`.
 - [x] Keep this slice extraction-only:
   no loader changes,
   no chunking changes,
@@ -280,23 +280,33 @@ This checklist tracks only the active recovery slice and the immediately followi
   `devbox run phase-4-extraction-test`
   Result:
   the bounded Phase 4 regression suite passed with 9 tests.
-- [ ] Rerun the approved narrative PDF through the real local Ollama path and capture whether weak titles and transitional notes fall relative to the Phase 1 output.
-  Blocker:
-  `devbox run app-anyone-chapter-pdf-ollama` still reaches the real local path cleanly, but on the refreshed 2026-04-23 verification it stayed in `Extracting chunk 1/17: Page 1 chunk 1` for more than 150 seconds without a chunk-complete or artifact-write marker, so the approved narrative `qwen3:8b` rerun remains too expensive for a bounded review loop on this machine.
-- [ ] Rerun the bounded technical real-model fixture and capture whether titles stop collapsing to generic `Chunk N` labels.
-- [ ] Write one short before/after extraction-quality note under `docs/0421/02/` with concrete narrative and technical note examples.
-- [ ] Exit gate:
+- [x] Rerun the approved narrative PDF through the real local Ollama path and capture whether weak titles and transitional notes fall relative to the Phase 1 output.
+  Result:
+  `devbox run app-anyone-chapter-pdf-ollama` completed end to end on the native local Ollama path in `299.653s` of extraction time and wrote artifacts to
+  `vault_output/devbox-app-anyone-chapter-pdf-ollama-run/how-to-talk-to-anyone-ch1-b83252c9/`.
+  The rerun produced 22 notes from 17 chunks, titles are mostly concept-led, and the output is usefully stronger than the Phase 1 narrative baseline despite some remaining duplicate-title and advice-local notes.
+- [x] Rerun the bounded technical real-model fixture and capture whether titles stop collapsing to generic `Chunk N` labels.
+  Result:
+  `devbox run 03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b` completed end to end in `173.561s` of extraction time and wrote artifacts to
+  `vault_output/devbox-03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b-run/head-first-software-architecture-ch2-short-b00c0323/`.
+  The bounded technical rerun produced 12 notes from 7 chunks and no longer collapsed note titles to generic `Chunk N` placeholders.
+- [x] Write one short before/after extraction-quality note under `docs/0421/02/` with concrete narrative and technical note examples.
+- [x] Exit gate:
   titles are meaning-based,
   summaries are not fragmentary,
   one chunk may yield zero/one/many notes,
   and the narrative plus technical fixtures both show usable notes by the rubric.
-  Current blocker evidence:
-  `devbox run phase-4-extraction-test` is green,
-  `devbox run ollama-preflight` is green,
-  but the approved narrative real-model verification path is still not bounded enough to close the phase honestly.
+  Verification:
+  `devbox run phase-4-extraction-test`
+  `devbox run app-anyone-chapter-pdf-ollama`
+  `devbox run 03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b`
+  Result:
+  the bounded Phase 4 regression suite is green,
+  the approved narrative PDF real-model rerun is green,
+  the bounded technical real-model rerun is green,
+  and the durable comparison note confirms that Phase 4 quality is now useful on both fixtures.
   Next safe slice:
-  add one bounded narrative verification path that keeps the approved narrative PDF and real local extractor gate,
-  then document that path in `devbox.json` and `README.md` before retrying Phase 4 closeout.
+  start Phase 4.5 extraction polish only.
 
 ## Hold line
 

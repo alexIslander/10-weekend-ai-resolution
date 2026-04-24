@@ -41,6 +41,8 @@ Run from `02-lit-admin-starter/`:
 - Keep headings in sentence case and keep paragraphs short.
 - Prefer ASCII characters and avoid decorative Unicode.
 - New documentation files should use kebab-case names (e.g., `project-overview.md`).
+- Prioritize the single responsibility principle in implementation code.
+- Avoid producing enormous classes or modules; split orchestration, normalization, I/O, and formatting into focused components before a file becomes hard to review.
 
 ## Testing Guidelines
 - Per-project: e.g. DualReveal’s Playwright tests live in `00-dualreveal/tests/e2e`.

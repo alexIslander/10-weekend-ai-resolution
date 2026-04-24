@@ -1,9 +1,9 @@
 # Phase 4 extraction verification recovery
 
-- Status: blocked
+- Status: recovered and closed on 2026-04-24
 - Date: 2026-04-23
 - Branch: `feature/secondbrain-recovery-phase-4-extraction-quality`
-- Blocker class: `missing bounded verification`
+- Blocker class: `missing bounded verification`, resolved
 
 ## What passed
 
@@ -84,10 +84,10 @@
 
 ### Operational issues observed
 
-- One progress line showed `Completed chunk 6/7: Ch6`, which suggests a truncated or malformed chunk title in progress output.
-- The `03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3` script wrote artifacts under the older `02-...` output directory path:
-  `vault_output/devbox-02-head-first-sa-chapter-short-txt-ollama-smoke-run/head-first-software-architecture-ch2-short-b00c0323`
-- That strongly suggests the new Devbox script is reusing the old `--output-dir` and should be corrected so run artifacts are distinguishable.
+- One earlier progress line showed `Completed chunk 6/7: Ch6`, which suggested a truncated or malformed chunk title in progress output.
+- On the refreshed 2026-04-24 rerun, the `03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b` script wrote artifacts to the distinct expected output directory:
+  `vault_output/devbox-03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b-run/head-first-software-architecture-ch2-short-b00c0323`
+- That means the earlier output-path confusion is no longer an active blocker for reviewable verification runs.
 
 ### Updated assessment
 
@@ -186,3 +186,26 @@
   related-link hygiene,
   markdown section normalization,
   and Devbox/output-path polish for reviewable verification runs.
+
+## 2026-04-24 closeout
+
+- Status: Phase 4 closed
+- Comparison note:
+  [phase-4-extraction-quality-comparison.md](/Users/scsete/workspace/2026/10-weekend-ai-resolution/03-second-brain-ingester/docs/0421/02/phase-4-extraction-quality-comparison.md)
+
+### Final verification set
+
+- `devbox run phase-4-extraction-test`
+  passed with 9 tests
+- `devbox run 03-head-first-sa-chapter-short-txt-ollama-smoke-qwen3:8b`
+  completed end to end with:
+  `Completed extraction. (173.561s)`
+- `devbox run app-anyone-chapter-pdf-ollama`
+  completed end to end with:
+  `Completed extraction. (299.653s)`
+
+### Closeout assessment
+
+- The approved narrative PDF real-model path now completes inside a reviewable manual loop on this machine.
+- The bounded technical real-model path now emits concept-led note titles instead of generic `Chunk N` placeholders.
+- The remaining quality issues are real but small enough to defer to Phase 4.5 without keeping the Phase 4 exit gate red.

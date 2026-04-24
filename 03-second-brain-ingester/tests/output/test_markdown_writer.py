@@ -49,6 +49,43 @@ def test_markdown_writer_writes_manifest_and_note(tmp_path: Path) -> None:
     assert "## Source metadata" in note_text
 
 
+def test_markdown_writer_replaces_stale_files_on_same_run_id(tmp_path: Path) -> None:
+    state = PipelineState(
+        source_metadata=SourceMetadata(
+            source_id="source-001",
+            source_type="text",
+            input_path=Path("sample.txt"),
+            title="Sample",
+            checksum_sha256="abc123",
+            byte_size=10,
+        ),
+        chunks=[ProcessedChunk("chunk-001", "source-001", 1, "body", "Chunk 1")],
+        notes=[
+            AtomicNote(
+                note_id="note-001",
+                title="Current note",
+                slug="current-note",
+                note_type="concept",
+                body="note body",
+                source_id="source-001",
+                chunk_ids=["chunk-001"],
+            )
+        ],
+    )
+    run_dir = tmp_path / state.run_id
+    stale_dir = run_dir / "atomics"
+    stale_dir.mkdir(parents=True)
+    stale_note = stale_dir / "stale-note.md"
+    stale_note.write_text("stale", encoding="utf-8")
+    writer = DeterministicMarkdownWriter(output_root=tmp_path)
+
+    written_state = writer.write(state)
+
+    assert written_state.output is not None
+    assert not stale_note.exists()
+    assert (run_dir / "atomics" / "current-note.md").exists()
+
+
 def test_markdown_writer_routes_srqs_to_dedicated_directory(tmp_path: Path) -> None:
     state = PipelineState(
         source_metadata=SourceMetadata(
