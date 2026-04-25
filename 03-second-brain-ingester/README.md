@@ -18,6 +18,7 @@ devbox run phase-2-ingest-test
 devbox run phase-2-5-runtime-test
 devbox run phase-3-chunking-test
 devbox run phase-4-extraction-test
+devbox run phase-5-model-fit-test
 devbox run ollama-native-preflight
 devbox run ollama-native-ps
 devbox run ollama-preflight
@@ -83,6 +84,7 @@ Use `devbox run phase-2-ingest-test` for the bounded Phase 2 regression suite th
 Use `devbox run phase-2-5-runtime-test` for the bounded Phase 2.5 regression suite that covers stage-status output, durable timing fields, and PDF loader non-regression.
 Use `devbox run phase-3-chunking-test` for the bounded Phase 3 regression suite that covers paragraph-first chunking, sentence-aware fallback, and local ingest non-regression.
 Use `devbox run phase-4-extraction-test` for the bounded Phase 4/4.5 regression suite that covers zero-note chunks, title/body normalization for weak model outputs, duplicate suppression, related-link cleanup, stale artifact cleanup, extraction-flow non-regression, and the bounded qwen3 workflow contract.
+Use `devbox run phase-5-model-fit-test` for the bounded Phase 5 Devbox-script contract check that protects the local model-fit command inventory.
 Use `devbox run notes-test` for the broader notes-layer regression suite when you want all note-component tests without running the full pipeline suite.
 Use `devbox run anti-pattern-test` for the anti-pattern slice regression suite that covers note shaping, pipeline flow, markdown output, and CLI behavior.
 
@@ -138,6 +140,7 @@ devbox run phase-2-ingest-test
 devbox run phase-2-5-runtime-test
 devbox run phase-3-chunking-test
 devbox run phase-4-extraction-test
+devbox run phase-5-model-fit-test
 devbox run ingest-test
 devbox run pdf-recovery-test
 devbox run extractor-test
