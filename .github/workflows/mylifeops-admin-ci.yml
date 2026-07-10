@@ -1,0 +1,56 @@
+name: MyLifeOps Admin CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/mylifeops-admin-ci.yml'
+      - '.github/workflows/mylifeops-admin-preview.yml'
+      - '.github/workflows/mylifeops-admin-production.yml'
+      - '05-MyLifeOps/admin/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/mylifeops-admin-ci.yml'
+      - '.github/workflows/mylifeops-admin-preview.yml'
+      - '.github/workflows/mylifeops-admin-production.yml'
+      - '05-MyLifeOps/admin/**'
+
+env:
+  NODE_VERSION: 22
+
+concurrency:
+  group: mylifeops-admin-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: 05-MyLifeOps/admin/package-lock.json
+
+      - name: Install dependencies
+        working-directory: 05-MyLifeOps/admin
+        run: npm ci
+
+      - name: Build production bundle
+        working-directory: 05-MyLifeOps/admin
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mylifeops-admin-dist
+          path: 05-MyLifeOps/admin/dist
