@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal OLL Solution Flows & Transition Guide</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --accent-color: #0d6efd;
+            --badge-bg: #e9ecef;
+            --badge-text: #495057;
+            --header-bg: #f1f3f5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #111827;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #6c757d;
+            margin-bottom: 24px;
+        }
+
+        /* Toolbox styling */
+        .toolbox {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 32px;
+        }
+
+        .toolbox h2 {
+            font-size: 16px;
+            margin: 0 0 10px 0;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .toolbox ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .toolbox li {
+            font-size: 14px;
+        }
+
+        .toolbox code {
+            background-color: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        /* Group section styling */
+        .group-section {
+            margin-bottom: 40px;
+        }
+
+        .group-section h2 {
+            font-size: 18px;
+            margin-bottom: 6px;
+            color: #0f172a;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .group-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 14px;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: var(--header-bg);
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .case-cell {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 180px;
+        }
+
+        .case-cell img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .case-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .case-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .case-code {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .flow-text {
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .flow-text strong {
+            color: #000;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+            text-align: center;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Minimal OLL Solution Flows & Transition Guide</h1>
+    <div class="subtitle">Solving the Yellow Face with minimal formula memorization using strictly your 4 core tools.</div>
+
+    <!-- Section 0: Toolbox -->
+    <div class="toolbox">
+        <h2>0. Minimal Formula Collection (Your Toolbox)</h2>
+        <ul>
+            <li><strong>Sune (1.2):</strong> <code>R U R' U R U2' R'</code></li>
+            <li><strong>Anti-Sune (1.1):</strong> <code>R U2' R' U' R U' R'</code></li>
+            <li><strong>Edge Trigger (ET):</strong> <code>F R U R' U' F'</code></li>
+            <li><strong>Wide Edge Trigger (WT):</strong> <code>f R U R' U' f'</code></li>
+        </ul>
+    </div>
+
+    <!-- Part 1: OCLL -->
+    <div class="group-section">
+        <h2>Part 1: OCLL Group (All 4 Edges Oriented)</h2>
+        <div class="group-desc">All 4 yellow edges are already oriented. Apply Sune / Anti-Sune (with proper U setup) to solve in 1 or 2 steps.</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case / Code</th>
+                    <th>Shortest Flow Sequence to Solved Yellow Face</th>
+                    <th>Steps</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-26.png" alt="OLL 26">
+                            <div class="case-info">
+                                <span class="case-title">1.1 (Anti-Sune)</span>
+                                <span class="case-code">OCLL6 / OLL 26</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Anti-Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">1 Step</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-27.png" alt="OLL 27">
+                            <div class="case-info">
+                                <span class="case-title">1.2 (Sune)</span>
+                                <span class="case-code">OCLL7 / OLL 27</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">1 Step</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-21.png" alt="OLL 21">
+                            <div class="case-info">
+                                <span class="case-title">1.3 (H-Shape)</span>
+                                <span class="case-code">OCLL1 / OLL 21</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Sune &rarr; U' setup &rarr; Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-22.png" alt="OLL 22">
+                            <div class="case-info">
+                                <span class="case-title">1.4 (Pi-Shape)</span>
+                                <span class="case-code">OCLL2 / OLL 22</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Sune &rarr; U' setup &rarr; Anti-Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-24.png" alt="OLL 24">
+                            <div class="case-info">
+                                <span class="case-title">1.5 (T-Shape)</span>
+                                <span class="case-code">OCLL4 / OLL 24</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Anti-Sune &rarr; U' setup &rarr; Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-25.png" alt="OLL 25">
+                            <div class="case-info">
+                                <span class="case-title">1.6 (L-Shape)</span>
+                                <span class="case-code">OCLL5 / OLL 25</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="flow-text">U' setup &rarr; Anti-Sune &rarr; Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-23.png" alt="OLL 23">
+                            <div class="case-info">
+                                <span class="case-title">1.7 (U-Shape)</span>
+                                <span class="case-code">OCLL3 / OLL 23</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Sune &rarr; U setup &rarr; Anti-Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Part 2: Group B -->
+    <div class="group-section">
+        <h2>Part 2: Group B (Two-Edge Flip Shapes — Lightning, T, S, C, W, E)</h2>
+        <div class="group-desc">Shapes with 2 flipped edges. Triggers convert edge states into Part 1 (OCLL) or intermediate 1-trigger states.</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case / Code</th>
+                    <th>Shortest Flow Sequence to Solved Yellow Face</th>
+                    <th>Steps</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-33.png" alt="OLL 33">
+                            <div class="case-info"><span class="case-title">B.1 (T1)</span><span class="case-code">OLL 33</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">1 Step</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-45.png" alt="OLL 45">
+                            <div class="case-info"><span class="case-title">B.2 (T2)</span><span class="case-code">OLL 45</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">1 Step</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-5.png" alt="OLL 5">
+                            <div class="case-info"><span class="case-title">B.3 (S1)</span><span class="case-code">OLL 5</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">U setup &rarr; Edge Trigger (ET) &rarr; 1.6 (L) &rarr; Anti-Sune + Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-6.png" alt="OLL 6">
+                            <div class="case-info"><span class="case-title">B.4 (S2)</span><span class="case-code">OLL 6</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; 1.6 (L) &rarr; U' setup &rarr; Anti-Sune + Sune &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-34.png" alt="OLL 34">
+                            <div class="case-info"><span class="case-title">B.5 (C1)</span><span class="case-code">OLL 34</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.1 (T1) &rarr; Edge Trigger (ET) &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-46.png" alt="OLL 46">
+                            <div class="case-info"><span class="case-title">B.6 (C2)</span><span class="case-code">OLL 46</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.2 (T2) &rarr; Edge Trigger (ET) &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-36.png" alt="OLL 36">
+                            <div class="case-info"><span class="case-title">B.7 (W1)</span><span class="case-code">OLL 36</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.3 (S1) &rarr; U setup &rarr; Edge Trigger &rarr; [Part 1 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-38.png" alt="OLL 38">
+                            <div class="case-info"><span class="case-title">B.8 (W2)</span><span class="case-code">OLL 38</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.4 (S2) &rarr; Edge Trigger &rarr; [Part 1 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-28.png" alt="OLL 28">
+                            <div class="case-info"><span class="case-title">B.9 (E1)</span><span class="case-code">OLL 28</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.9 &rarr; U setup &rarr; Wide Trigger &rarr; B.1 &rarr; Edge Trigger &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-57.png" alt="OLL 57">
+                            <div class="case-info"><span class="case-title">B.10 (E2)</span><span class="case-code">OLL 57</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.10 &rarr; U2 setup &rarr; Wide Trigger &rarr; B.2 &rarr; Edge Trigger &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-7.png" alt="OLL 7">
+                            <div class="case-info"><span class="case-title">B1 (Lightning 1)</span><span class="case-code">OLL 7</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.3 (P3) &rarr; Wide Trigger &rarr; B.3 &rarr; [B.3 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-8.png" alt="OLL 8">
+                            <div class="case-info"><span class="case-title">B2 (Lightning 2)</span><span class="case-code">OLL 8</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.4 (P4) &rarr; Wide Trigger &rarr; B.4 &rarr; [B.4 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-11.png" alt="OLL 11">
+                            <div class="case-info"><span class="case-title">B3 (Lightning 3)</span><span class="case-code">OLL 11</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.1 (P1) &rarr; Wide Trigger &rarr; B.1 (T1) &rarr; Edge Trigger &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-12.png" alt="OLL 12">
+                            <div class="case-info"><span class="case-title">B4 (Lightning 4)</span><span class="case-code">OLL 12</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.2 (P2) &rarr; Wide Trigger &rarr; B.5 (C1) &rarr; [B.5 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-39.png" alt="OLL 39">
+                            <div class="case-info"><span class="case-title">B5 (Lightning 5)</span><span class="case-code">OLL 39</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.7 (I3) &rarr; Wide Trigger &rarr; B.9 (E1) &rarr; [B.9 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-40.png" alt="OLL 40">
+                            <div class="case-info"><span class="case-title">B6 (Lightning 6)</span><span class="case-code">OLL 40</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.8 (I4) &rarr; Wide Trigger &rarr; B.10 (E2) &rarr; [B.10 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Part 3: Group C -->
+    <div class="group-section">
+        <h2>Part 3: Group C (P-Shapes & I-Shapes)</h2>
+        <div class="group-desc">Shapes with 2 flipped edges forming P or I shapes. Edge triggers convert them directly into Group B shapes or solve edges.</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case / Code</th>
+                    <th>Shortest Flow Sequence to Solved Yellow Face</th>
+                    <th>Steps</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-31.png" alt="OLL 31">
+                            <div class="case-info"><span class="case-title">C.1 (P1)</span><span class="case-code">OLL 31</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.1 (T1) &rarr; Edge Trigger (ET) &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">2 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-32.png" alt="OLL 32">
+                            <div class="case-info"><span class="case-title">C.2 (P2)</span><span class="case-code">OLL 32</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.5 (C1) &rarr; Wide Trigger &rarr; B.1 &rarr; Edge Trigger &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-43.png" alt="OLL 43">
+                            <div class="case-info"><span class="case-title">C.3 (P3)</span><span class="case-code">OLL 43</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.3 (S1) &rarr; [B.3 Flow to OCLL] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-44.png" alt="OLL 44">
+                            <div class="case-info"><span class="case-title">C.4 (P4)</span><span class="case-code">OLL 44</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.4 (S2) &rarr; [B.4 Flow to OCLL] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-51.png" alt="OLL 51">
+                            <div class="case-info"><span class="case-title">C.5 (I1)</span><span class="case-code">OLL 51</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.7 (W1) &rarr; [B.7 Flow to OCLL] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-56.png" alt="OLL 56">
+                            <div class="case-info"><span class="case-title">C.6 (I2)</span><span class="case-code">OLL 56</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.8 (W2) &rarr; [B.8 Flow to OCLL] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-52.png" alt="OLL 52">
+                            <div class="case-info"><span class="case-title">C.7 (I3)</span><span class="case-code">OLL 52</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.9 (E1) &rarr; [B.9 Flow to OCLL] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-55.png" alt="OLL 55">
+                            <div class="case-info"><span class="case-title">C.8 (I4)</span><span class="case-code">OLL 55</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; B.10 (E2) &rarr; [B.10 Flow to OCLL] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Part 4: Group D -->
+    <div class="group-section">
+        <h2>Part 4: Group D (Fish & Knight-Move Shapes)</h2>
+        <div class="group-desc">Fish and Knight shapes (2 flipped edges). Wide trigger transitions them into Group C (P/I shapes) or Group B.</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case / Code</th>
+                    <th>Shortest Flow Sequence to Solved Yellow Face</th>
+                    <th>Steps</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-9.png" alt="OLL 9">
+                            <div class="case-info"><span class="case-title">D.1 (F1)</span><span class="case-code">OLL 9</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.1 (P1) &rarr; Wide Trigger &rarr; B.1 &rarr; Edge Trigger &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-10.png" alt="OLL 10">
+                            <div class="case-info"><span class="case-title">D.2 (F2)</span><span class="case-code">OLL 10</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.2 (P2) &rarr; [C.2 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-35.png" alt="OLL 35">
+                            <div class="case-info"><span class="case-title">D.3 (F3)</span><span class="case-code">OLL 35</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.3 (P3) &rarr; [C.3 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-37.png" alt="OLL 37">
+                            <div class="case-info"><span class="case-title">D.4 (F4)</span><span class="case-code">OLL 37</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.4 (P4) &rarr; [C.4 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-13.png" alt="OLL 13">
+                            <div class="case-info"><span class="case-title">D.5 (K1)</span><span class="case-code">OLL 13</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.5 (I1) &rarr; [C.5 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-14.png" alt="OLL 14">
+                            <div class="case-info"><span class="case-title">D.6 (K2)</span><span class="case-code">OLL 14</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.6 (I2) &rarr; [C.6 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-16.png" alt="OLL 16">
+                            <div class="case-info"><span class="case-title">D.7 (K4)</span><span class="case-code">OLL 16</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.7 (I3) &rarr; [C.7 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-15.png" alt="OLL 15">
+                            <div class="case-info"><span class="case-title">D.8 (K3)</span><span class="case-code">OLL 15</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.8 (I4) &rarr; [C.8 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Part 5: Group E -->
+    <div class="group-section">
+        <h2>Part 5: Group E (Awkward & L-Shapes)</h2>
+        <div class="group-desc">Awkward (A) and L-shapes (2 flipped edges). Wide trigger transitions them into Group D (Fish/Knight) or Group C (P/I).</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case / Code</th>
+                    <th>Shortest Flow Sequence to Solved Yellow Face</th>
+                    <th>Steps</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-29.png" alt="OLL 29">
+                            <div class="case-info"><span class="case-title">E.1 (A1)</span><span class="case-code">OLL 29</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.1 (F1) &rarr; [D.1 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-30.png" alt="OLL 30">
+                            <div class="case-info"><span class="case-title">E.2 (A2)</span><span class="case-code">OLL 30</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.2 (F2) &rarr; [D.2 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-41.png" alt="OLL 41">
+                            <div class="case-info"><span class="case-title">E.3 (A3)</span><span class="case-code">OLL 41</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.3 (F3) &rarr; [D.3 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-42.png" alt="OLL 42">
+                            <div class="case-info"><span class="case-title">E.4 (A4)</span><span class="case-code">OLL 42</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.4 (F4) &rarr; [D.4 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-47.png" alt="OLL 47">
+                            <div class="case-info"><span class="case-title">E.5 (L1)</span><span class="case-code">OLL 47</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.5 (K1) &rarr; [D.5 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-48.png" alt="OLL 48">
+                            <div class="case-info"><span class="case-title">E.6 (L2)</span><span class="case-code">OLL 48</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.6 (K2) &rarr; [D.6 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-49.png" alt="OLL 49">
+                            <div class="case-info"><span class="case-title">E.7 (L3)</span><span class="case-code">OLL 49</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.7 (K4) &rarr; [D.7 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-50.png" alt="OLL 50">
+                            <div class="case-info"><span class="case-title">E.8 (L4)</span><span class="case-code">OLL 50</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; D.8 (K3) &rarr; [D.8 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-53.png" alt="OLL 53">
+                            <div class="case-info"><span class="case-title">E.9 (L5)</span><span class="case-code">OLL 53</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.1 (P1) &rarr; Wide Trigger &rarr; B.1 &rarr; Edge Trigger &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-54.png" alt="OLL 54">
+                            <div class="case-info"><span class="case-title">E.10 (L6)</span><span class="case-code">OLL 54</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Wide Trigger (WT) &rarr; C.2 (P2) &rarr; [C.2 Flow to Solved] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3-4 Steps</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Part 6: Group O -->
+    <div class="group-section">
+        <h2>Part 6: Group O (Dot Shapes — 4 Edges Flipped)</h2>
+        <div class="group-desc">No top yellow edges oriented (4 edges flipped). Applying 1 Edge Trigger or Wide Trigger flips 2 edges, bringing the cube into Group B/C/E.</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case / Code</th>
+                    <th>Shortest Flow Sequence to Solved Yellow Face</th>
+                    <th>Steps</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-16.png" alt="OLL 1">
+                            <div class="case-info"><span class="case-title">O1</span><span class="case-code">OLL 1</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.5 (I1) &rarr; Wide Trigger &rarr; B.7 (W1) &rarr; [B.7 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-17.png" alt="OLL 2">
+                            <div class="case-info"><span class="case-title">O2</span><span class="case-code">OLL 2</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.6 (I2) &rarr; Wide Trigger &rarr; B.8 (W2) &rarr; [B.8 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-18.png" alt="OLL 3">
+                            <div class="case-info"><span class="case-title">O3</span><span class="case-code">OLL 3</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.1 (P1) &rarr; Wide Trigger &rarr; B.1 (T1) &rarr; Edge Trigger &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-19.png" alt="OLL 4">
+                            <div class="case-info"><span class="case-title">O4</span><span class="case-code">OLL 4</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.2 (P2) &rarr; [C.2 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-17.png" alt="OLL 17">
+                            <div class="case-info"><span class="case-title">O5</span><span class="case-code">OLL 17</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.7 (I3) &rarr; Wide Trigger &rarr; B.9 (E1) &rarr; [B.9 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">4 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-18.png" alt="OLL 18">
+                            <div class="case-info"><span class="case-title">O6</span><span class="case-code">OLL 18</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.8 (I4) &rarr; Wide Trigger &rarr; B.10 (E2) &rarr; [B.10 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-19.png" alt="OLL 19">
+                            <div class="case-info"><span class="case-title">O7</span><span class="case-code">OLL 19</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.3 (P3) &rarr; [C.3 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="case-cell">
+                            <img src="img/friedrich-oll-20.png" alt="OLL 20">
+                            <div class="case-info"><span class="case-title">O8</span><span class="case-code">OLL 20</span></div>
+                        </div>
+                    </td>
+                    <td class="flow-text">Edge Trigger (ET) &rarr; C.4 (P4) &rarr; [C.4 Flow] &rarr; <strong>SOLVED</strong></td>
+                    <td><span class="step-badge">3 Steps</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
