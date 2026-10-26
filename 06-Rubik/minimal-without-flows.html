@@ -13,6 +13,12 @@
         th { background-color: #f0f0f0; font-weight: bold; }
         .case-cell { display: flex; align-items: center; gap: 12px; }
         .case-cell img { width: 32px; height: 32px; object-fit: contain; }
+        /* Hover-zoom: layout box stays 32px, only the painted image scales. */
+        .case-cell a { display: inline-flex; }
+        .case-cell img { cursor: zoom-in; border-radius: 4px; position: relative; z-index: 1;
+            transition: transform .15s ease-out, box-shadow .15s ease-out; }
+        .case-cell img:hover { transform: scale(2.5); z-index: 30; background: #fff;
+            box-shadow: 0 6px 18px rgba(0,0,0,.25); }
         .case-info { display: flex; flex-direction: column; }
         .case-title { font-weight: bold; font-size: 14px; color: #111; }
         .case-code { font-size: 11px; color: #666; }
