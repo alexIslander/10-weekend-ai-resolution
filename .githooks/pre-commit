@@ -4,3 +4,20 @@ set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel)"
 "$repo_root/scripts/validate-github-workflows.sh" --staged
+
+# 06-Rubik: the OLL guides must keep pointing at the diagram of the case they
+# declare. The check reads picture content, not filenames, so it catches the
+# swap that a filename-consistency check never would.
+if git diff --cached --name-only | grep -q '^06-Rubik/'; then
+  python_bin="$repo_root/06-Rubik/.venv/bin/python"
+  if [ -x "$python_bin" ]; then
+    if ! (cd "$repo_root/06-Rubik" && "$python_bin" -m tools.oll_refs --check >/dev/null 2>&1); then
+      echo "06-Rubik: OLL image references are broken. Diagnose with:"
+      echo "  cd 06-Rubik && .venv/bin/python -m tools.oll_refs --check"
+      echo "  (missing venv? python3 -m venv .venv && .venv/bin/pip install pymupdf pillow pytest)"
+      exit 1
+    fi
+  else
+    echo "06-Rubik: skipping OLL reference check (no .venv — see 06-Rubik/README.md)"
+  fi
+fi
