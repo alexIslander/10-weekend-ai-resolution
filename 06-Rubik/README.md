@@ -13,6 +13,24 @@ order, rows read left to right — and label every row with the PDF's own case
 name (`T1`, `P3`, `B6`, `OCLL6`). Each guide opens with an index that links to
 the groups, so a case can be found by its PDF name or its OLL number.
 
+The step column is colour-coded by the trigger the case starts with, so a
+position can be recognised by the tool it needs first:
+
+| Tool | Abbrev. | Default colour |
+| --- | --- | --- |
+| Sune | S | `#d9534f` |
+| Anti-Sune | AS | `#f0ad4e` |
+| Edge Trigger | ET | `#5cb85c` |
+| Wide Edge Trigger | WT | `#4a9fd8` |
+
+The palette is a parameter, not a copy-paste: each colour lives in one CSS
+variable (`--tool-s`, `--tool-as`, `--tool-et`, `--tool-wt`) and every step cell
+carries the trigger it opens with (`<td data-tool="et">`), so changing a
+variable repaints every row that starts with that trigger. The toolbox has a
+colour picker per trigger for the same job live in the browser, remembered in
+`localStorage`; the tag itself is derived from the step text by
+`tools/step_tools.py`, so an edited flow cannot keep a stale colour.
+
 Both columns are simulation-verified: each route was replayed on a 3x3 model
 whose positions reproduce all 57 PDF diagrams exactly. Every case solves in at
 most 3 triggers from the four-trigger toolbox, with the AUF turns spelled out.
@@ -69,6 +87,8 @@ Then, from `06-Rubik/`:
 .venv/bin/python -m tools.oll_refs --check             # same audit, CLI form
 .venv/bin/python -m tools.oll_refs --mapping           # file -> OLL case table
 .venv/bin/python -m tools.oll_refs --write             # rewrite wrong references
+.venv/bin/python -m tools.step_tools --check           # step-column colour tags
+.venv/bin/python -m tools.step_tools --write           # retag after editing a flow
 .venv/bin/python -m tools.pdf_ground_truth tests/fixtures/oll_cases.json
 .venv/bin/python -m tools.render_diagram              # redraw the diagrams
 ```
@@ -83,6 +103,8 @@ future edit to these guides.
 - `tools/pdf_ground_truth.py` — PDF → cases + signatures → fixture, and the
   PDF's group headings with their case numbers in printed order.
 - `tools/oll_refs.py` — mapping, audit, grouping check, repair, CLI.
+- `tools/step_tools.py` — tags each step cell with the trigger it starts with.
 - `tools/render_diagram.py` — draws the diagrams from the PDF signatures.
 - `tests/test_refs.py` — reference and artwork integrity tests.
+- `tests/test_step_tools.py` — step-column colour tags and palette wiring.
 - `tests/fixtures/file_to_case.json` — which OLL case each image file shows.
