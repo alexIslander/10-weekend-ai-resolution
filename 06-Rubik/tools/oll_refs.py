@@ -1,6 +1,6 @@
 """Check and repair the image references in the 06-Rubik OLL guides.
 
-The three HTML guides share one row order (26, 27, 21, 22, ... — the reference
+The two HTML guides share one row order (26, 27, 21, 22, ... — the reference
 PDF's presentation order) and one `img/` folder, so a single file-number ->
 OLL-case mapping repairs all of them.
 
@@ -8,6 +8,9 @@ The mapping is not the obvious one: `friedrich-oll-NN.png` is *not* OLL case NN
 (the art was exported in a different order, with many cases in mirror order).
 It is recovered from the artwork itself, by reading each diagram's 21-character
 signature and matching it against the signatures extracted from the PDF.
+
+The same audit also holds the guides to the PDF's layout: the same 14 group
+headings, in the same order, with the cases in each group in printed order.
 
 Usage:
 
@@ -34,7 +37,6 @@ FIXTURE = PROJECT / "tests" / "fixtures" / "oll_cases.json"
 HTML_FILES = (
     "oll-full-guide.html",
     "minimal-without-flows.html",
-    "minimal_oll_solution_flows_transition_guide.html",
 )
 
 # Redrawn diagrams share one template: 70px 3x3 block from (6,6) in an 82x82 png,
@@ -48,6 +50,8 @@ ROW_RE = re.compile(
     re.S,
 )
 DECLARED_RE = re.compile(r"\bOLL\s*(\d+)")   # "OCLL6 / OLL 26" -> 26, not 6
+HEADING_RE = re.compile(r"<h2[^>]*>(?P<text>[^<]*)</h2>")
+PART_PREFIX = re.compile(r"^Part\s+\d+\s*:\s*")
 
 
 class MappingError(RuntimeError):
@@ -140,6 +144,37 @@ def repaired(text: str, mapping: dict[int, int]) -> str:
     return ROW_RE.sub(replace, text)
 
 
+def sections(html_path: Path) -> list[tuple[str, list[int]]]:
+    """[(group heading, [OLL case numbers in that section])] as written."""
+    text = html_path.read_text()
+    marks = list(HEADING_RE.finditer(text))
+    found = []
+    for index, mark in enumerate(marks):
+        end = marks[index + 1].start() if index + 1 < len(marks) else len(text)
+        title = PART_PREFIX.sub("", mark["text"].strip())
+        olls = [declared_oll(row["code"]) for row in ROW_RE.finditer(text[mark.end():end])]
+        found.append((title, [oll for oll in olls if oll is not None]))
+    return found
+
+
+def group_problems(html_path: Path, groups: list[tuple[str, list[int]]]) -> list[str]:
+    """Return one line per difference from the PDF's groups and printed order."""
+    written = sections(html_path)
+    problems = []
+    if [title for title, _ in written] != [title for title, _ in groups]:
+        problems.append(
+            f"{html_path.name}: groups are {[t for t, _ in written]}, "
+            f"PDF has {[t for t, _ in groups]}"
+        )
+    for (title, written_olls), (pdf_title, pdf_olls) in zip(written, groups):
+        if written_olls != pdf_olls:
+            problems.append(
+                f"{html_path.name}: {title or pdf_title} lists {written_olls}, "
+                f"PDF prints {pdf_olls}"
+            )
+    return problems
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="report problems (the default)")
@@ -147,6 +182,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mapping", action="store_true", help="print the recovered mapping")
     args = parser.parse_args(argv)
 
+    from .pdf_ground_truth import extract_groups
+
+    groups = extract_groups()
     cases = load_cases()
     mapping = build_mapping(cases)
 
@@ -164,6 +202,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{name}: rewrote {len(found)} reference(s)")
             found = audit(path, mapping)
         problems.extend(found)
+        problems.extend(group_problems(path, groups))
 
     for problem in problems:
         print(problem)

@@ -61,6 +61,12 @@ def _labels(words: list[tuple]) -> list[tuple[float, float, str, int]]:
     return found
 
 
+# Group headings ("T-Shapes", "Lightning Bolts", ...) are the only 12pt bold lines.
+HEADING_FONT = "Verdana-Bold"
+HEADING_SIZE = 12.0
+SAME_ROW_Y = 20           # labels of one printed row sit within this many points
+
+
 def _column(x: float) -> int:
     return 0 if x < COLUMN_SPLIT_X else 1
 
@@ -102,6 +108,50 @@ def extract_cases(pdf_path: Path = PDF_PATH) -> list[dict]:
                     }
                 )
     return cases
+
+
+def _headings(page) -> list[tuple[float, str]]:
+    found = []
+    for block in page.get_text("dict")["blocks"]:
+        for line in block.get("lines", []):
+            for span in line["spans"]:
+                if (
+                    span["font"] == HEADING_FONT
+                    and abs(span["size"] - HEADING_SIZE) < 0.5
+                    and span["text"].strip()
+                ):
+                    found.append((span["bbox"][1], span["text"].strip()))
+    return sorted(found)
+
+
+def _printed_order(labels: list[tuple]) -> list[tuple]:
+    """Labels in reading order: rows top to bottom, each row left to right."""
+    rows: list[list[tuple]] = []
+    for label in sorted(labels, key=lambda l: l[1]):
+        if rows and abs(label[1] - rows[-1][0][1]) < SAME_ROW_Y:
+            rows[-1].append(label)
+        else:
+            rows.append([label])
+    return [label for row in rows for label in sorted(row, key=lambda l: l[0])]
+
+
+def extract_groups(pdf_path: Path = PDF_PATH) -> list[tuple[str, list[int]]]:
+    """Return [(group heading, [OLL numbers in printed order])] from the PDF."""
+    groups: list[tuple[str, list[tuple]]] = []
+    for page in pymupdf.open(pdf_path):
+        headings = _headings(page)
+        if not headings:
+            continue
+        buckets: list[list] = [[text, []] for _, text in headings]
+        for label in _labels(page.get_text("words")):
+            above = [i for i, (y, _) in enumerate(headings) if y <= label[1]]
+            if above:
+                buckets[above[-1]][1].append(label)
+        groups.extend((title, labels) for title, labels in buckets)
+    return [
+        (title, [label[3] for label in _printed_order(labels)])
+        for title, labels in groups
+    ]
 
 
 def build_fixture(cases: list[dict]) -> list[dict]:

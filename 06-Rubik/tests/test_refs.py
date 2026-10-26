@@ -31,9 +31,11 @@ from tools.oll_refs import (  # noqa: E402
     audit,
     build_mapping,
     declared_oll,
+    group_problems,
     image_files,
     load_cases,
 )
+from tools.pdf_ground_truth import extract_groups  # noqa: E402
 from tools.signature import signature  # noqa: E402
 
 GUIDES = list(HTML_FILES)
@@ -65,6 +67,12 @@ def cases() -> dict[int, dict]:
 @pytest.fixture(scope="session")
 def mapping(cases: dict[int, dict]) -> dict[int, int]:
     return build_mapping(cases)
+
+
+@pytest.fixture(scope="session")
+def pdf_groups() -> list[tuple[str, list[int]]]:
+    """The PDF's group headings and the OLL numbers under each, in printed order."""
+    return extract_groups()
 
 
 def rows_of(guide: str) -> list[tuple[int, int]]:
@@ -171,6 +179,12 @@ def test_guides_share_one_row_order():
     first = orders[GUIDES[0]]
     for guide in GUIDES[1:]:
         assert orders[guide] == first, f"{guide} has a different row order"
+
+
+@pytest.mark.parametrize("guide", GUIDES)
+def test_guides_follow_the_pdf_grouping(guide, pdf_groups):
+    """Each guide groups and orders the cases as the reference PDF prints them."""
+    assert group_problems(PROJECT / guide, pdf_groups) == []
 
 
 @pytest.mark.parametrize("guide", GUIDES)

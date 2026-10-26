@@ -1,8 +1,23 @@
 # 06-Rubik — OLL guides
 
-Three HTML guides for the "minimal OLL" method, plus `img/` with one flat
+Two HTML guides for the "minimal OLL" method, plus `img/` with one flat
 diagram per OLL case. `oll-algorithms.pdf` (Zemdegs / Klise) is the reference:
 it defines every case's name, standard OLL number, and diagram.
+
+- `oll-full-guide.html` — jump style: one trigger, then "go to case X".
+- `minimal-without-flows.html` — one flat list per case: every step, no jumps.
+
+Both guides group the cases exactly as the PDF does — the same 14 headings
+("T-Shapes", "Squares", "P-Shapes", "Lightning Bolts", ...) in the same printed
+order, rows read left to right — and label every row with the PDF's own case
+name (`T1`, `P3`, `B6`, `OCLL6`). Each guide opens with an index that links to
+the groups, so a case can be found by its PDF name or its OLL number.
+
+Both columns are simulation-verified: each route was replayed on a 3x3 model
+whose positions reproduce all 57 PDF diagrams exactly. Every case solves in at
+most 3 triggers from the four-trigger toolbox, with the AUF turns spelled out.
+Clicking any diagram opens that exact position in a cube simulator
+(alg.cubing.net) with the solution preloaded.
 
 ## Image references
 
@@ -58,14 +73,16 @@ Then, from `06-Rubik/`:
 .venv/bin/python -m tools.render_diagram              # redraw the diagrams
 ```
 
-`--check` exits non-zero when a row shows the wrong image, so it works as a
-pre-commit or CI guard for any future edit to these guides.
+`--check` exits non-zero when a row shows the wrong image or a guide drifts from
+the PDF's groups or printed order, so it works as a pre-commit or CI guard for any
+future edit to these guides.
 
 ## Layout
 
 - `tools/signature.py` — diagram signature, face detection, rotations.
-- `tools/pdf_ground_truth.py` — PDF → cases + signatures → fixture.
-- `tools/oll_refs.py` — mapping, audit, repair, CLI.
+- `tools/pdf_ground_truth.py` — PDF → cases + signatures → fixture, and the
+  PDF's group headings with their case numbers in printed order.
+- `tools/oll_refs.py` — mapping, audit, grouping check, repair, CLI.
 - `tools/render_diagram.py` — draws the diagrams from the PDF signatures.
 - `tests/test_refs.py` — reference and artwork integrity tests.
 - `tests/fixtures/file_to_case.json` — which OLL case each image file shows.

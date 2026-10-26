@@ -18,23 +18,10 @@ Within a project, keep code organized and predictable:
 - `assets/` for images or downloadable artifacts when needed.
 
 ## Build, Test, and Development Commands
-Run from the project folder (e.g. `00-dualreveal/`):
-- `npm run dev` – Next.js dev server (DualReveal).
-- `npm run build` – production bundle.
-- `npm run start` – production server.
-- `npm run test` / `npm run test:e2e` – Playwright e2e tests (DualReveal).
-
-Run from `01-lit-starter/`:
-- `npm run dev` – Vite dev server for the standalone Lit starter.
-- `npm run build` – production build to `dist/`.
-- `npm run start` – local preview of the production build.
-- `npm run test` / `npm run test:watch` – Vitest coverage for the controller and templates.
-
-Run from `02-lit-admin-starter/`:
-- `npm run dev` – Vite dev server for the Lit admin dashboard starter.
-- `npm run build` – production build to `dist/`.
-- `npm run start` – local preview of the production build.
-- `npm run test` / `npm run test:watch` – Vitest coverage for the Lit shell flow.
+Each project folder owns its own commands: read its `README.md` before running anything. This file deliberately holds no command list, so nothing goes stale here.
+- `00-dualreveal/`, `01-lit-starter/`, `02-lit-admin-starter/`: npm scripts (`dev`, `build`, `start`, `test`).
+- `03-second-brain-ingester/`, `04-spring-boot-api/`, `05-MyLifeOps/`, `06-Rubik/`: see the project `README.md`.
+- `03-barefoot-python/`: no README yet — read the project for its entrypoint.
 
 ## Coding Style & Naming Conventions
 - Documentation is Markdown; use ATX headings (`#`, `##`) and `-` for bullets.
