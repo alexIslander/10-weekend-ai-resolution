@@ -1,0 +1,344 @@
+[
+ {
+  "oll": 1,
+  "name": "O1",
+  "page": 3,
+  "signature": "....Y....010010111111"
+ },
+ {
+  "oll": 2,
+  "name": "O2",
+  "page": 3,
+  "signature": "....Y....011011111010"
+ },
+ {
+  "oll": 3,
+  "name": "O3",
+  "page": 3,
+  "signature": "....Y...Y110010011110"
+ },
+ {
+  "oll": 4,
+  "name": "O4",
+  "page": 3,
+  "signature": "..Y.Y....010110110011"
+ },
+ {
+  "oll": 5,
+  "name": "S1",
+  "page": 1,
+  "signature": "....YY.YY110000011100"
+ },
+ {
+  "oll": 6,
+  "name": "S2",
+  "page": 1,
+  "signature": ".YY.YY...000110110001"
+ },
+ {
+  "oll": 7,
+  "name": "B1",
+  "page": 3,
+  "signature": ".Y.YY.Y..100011000110"
+ },
+ {
+  "oll": 8,
+  "name": "B2",
+  "page": 3,
+  "signature": "Y..YY..Y.011100000011"
+ },
+ {
+  "oll": 9,
+  "name": "F1",
+  "page": 2,
+  "signature": ".Y.YY...Y001110100010"
+ },
+ {
+  "oll": 10,
+  "name": "F2",
+  "page": 2,
+  "signature": "..YYY..Y.110001001010"
+ },
+ {
+  "oll": 11,
+  "name": "B3",
+  "page": 3,
+  "signature": "....YYYY.110001010100"
+ },
+ {
+  "oll": 12,
+  "name": "B4",
+  "page": 3,
+  "signature": "YY..YY...001110010001"
+ },
+ {
+  "oll": 13,
+  "name": "K1",
+  "page": 2,
+  "signature": "...YYYY..110011000100"
+ },
+ {
+  "oll": 14,
+  "name": "K2",
+  "page": 2,
+  "signature": "...YYY..Y011110100000"
+ },
+ {
+  "oll": 15,
+  "name": "K3",
+  "page": 2,
+  "signature": "...YYY..Y110010001100"
+ },
+ {
+  "oll": 16,
+  "name": "K4",
+  "page": 2,
+  "signature": "..YYYY...010110100001"
+ },
+ {
+  "oll": 17,
+  "name": "O5",
+  "page": 3,
+  "signature": "Y...Y...Y011010011010"
+ },
+ {
+  "oll": 18,
+  "name": "O6",
+  "page": 3,
+  "signature": "Y.Y.Y....010111010010"
+ },
+ {
+  "oll": 19,
+  "name": "O7",
+  "page": 3,
+  "signature": "Y.Y.Y....010010011011"
+ },
+ {
+  "oll": 20,
+  "name": "O8",
+  "page": 3,
+  "signature": "Y.Y.Y.Y.Y010010010010"
+ },
+ {
+  "oll": 21,
+  "name": "OCLL1",
+  "page": 0,
+  "signature": ".Y.YYY.Y.101101000000"
+ },
+ {
+  "oll": 22,
+  "name": "OCLL2",
+  "page": 0,
+  "signature": ".Y.YYY.Y.001001101000"
+ },
+ {
+  "oll": 23,
+  "name": "OCLL3",
+  "page": 0,
+  "signature": "YYYYYY.Y.000101000000"
+ },
+ {
+  "oll": 24,
+  "name": "OCLL4",
+  "page": 0,
+  "signature": ".YYYYY.YY100100000000"
+ },
+ {
+  "oll": 25,
+  "name": "OCLL5",
+  "page": 0,
+  "signature": "YY.YYY.YY000100000100"
+ },
+ {
+  "oll": 26,
+  "name": "OCLL6",
+  "page": 0,
+  "signature": ".YYYYY.Y.000100100001"
+ },
+ {
+  "oll": 27,
+  "name": "OCLL7",
+  "page": 0,
+  "signature": ".Y.YYYYY.100001000100"
+ },
+ {
+  "oll": 28,
+  "name": "E1",
+  "page": 1,
+  "signature": "YYYYY.Y.Y000010000010"
+ },
+ {
+  "oll": 29,
+  "name": "A1",
+  "page": 2,
+  "signature": "Y.YYY..Y.010000001011"
+ },
+ {
+  "oll": 30,
+  "name": "A2",
+  "page": 2,
+  "signature": "YY..YYY..001011010000"
+ },
+ {
+  "oll": 31,
+  "name": "P1",
+  "page": 1,
+  "signature": ".YY.YY..Y100110010000"
+ },
+ {
+  "oll": 32,
+  "name": "P2",
+  "page": 1,
+  "signature": "..Y.YY.YY110100010000"
+ },
+ {
+  "oll": 33,
+  "name": "T1",
+  "page": 0,
+  "signature": "..YYYY..Y110110000000"
+ },
+ {
+  "oll": 34,
+  "name": "C1",
+  "page": 1,
+  "signature": "...YYYY.Y010010100100"
+ },
+ {
+  "oll": 35,
+  "name": "F3",
+  "page": 2,
+  "signature": "Y...YY.YY010100010100"
+ },
+ {
+  "oll": 36,
+  "name": "W1",
+  "page": 1,
+  "signature": "Y..YY..YY010100000110"
+ },
+ {
+  "oll": 37,
+  "name": "F4",
+  "page": 2,
+  "signature": "YY.YY...Y000110000110"
+ },
+ {
+  "oll": 38,
+  "name": "W2",
+  "page": 1,
+  "signature": ".YYYY.Y..100010000011"
+ },
+ {
+  "oll": 39,
+  "name": "B5",
+  "page": 3,
+  "signature": "..YYYYY..110010000001"
+ },
+ {
+  "oll": 40,
+  "name": "B6",
+  "page": 3,
+  "signature": "Y..YYY..Y011010001000"
+ },
+ {
+  "oll": 41,
+  "name": "A3",
+  "page": 2,
+  "signature": ".Y.YY.Y.Y101010000010"
+ },
+ {
+  "oll": 42,
+  "name": "A4",
+  "page": 2,
+  "signature": "Y.YYY..Y.010101000010"
+ },
+ {
+  "oll": 43,
+  "name": "P3",
+  "page": 1,
+  "signature": "Y..YY.YY.010000000111"
+ },
+ {
+  "oll": 44,
+  "name": "P4",
+  "page": 1,
+  "signature": "..Y.YY.YY010000111000"
+ },
+ {
+  "oll": 45,
+  "name": "T2",
+  "page": 0,
+  "signature": "..YYYY..Y010010101000"
+ },
+ {
+  "oll": 46,
+  "name": "C2",
+  "page": 1,
+  "signature": "YY..Y.YY.000000010111"
+ },
+ {
+  "oll": 47,
+  "name": "L1",
+  "page": 3,
+  "signature": ".Y..YY...100110010101"
+ },
+ {
+  "oll": 48,
+  "name": "L2",
+  "page": 3,
+  "signature": ".Y.YY....001011101010"
+ },
+ {
+  "oll": 49,
+  "name": "L3",
+  "page": 3,
+  "signature": ".Y..YY...001011111000"
+ },
+ {
+  "oll": 50,
+  "name": "L4",
+  "page": 3,
+  "signature": "....YY.Y.011001111000"
+ },
+ {
+  "oll": 51,
+  "name": "I1",
+  "page": 2,
+  "signature": "...YYY...011011101000"
+ },
+ {
+  "oll": 52,
+  "name": "I2",
+  "page": 2,
+  "signature": ".Y..Y..Y.100100010111"
+ },
+ {
+  "oll": 53,
+  "name": "L5",
+  "page": 3,
+  "signature": "....YY.Y.010000111101"
+ },
+ {
+  "oll": 54,
+  "name": "L6",
+  "page": 3,
+  "signature": ".Y..YY...000010111101"
+ },
+ {
+  "oll": 55,
+  "name": "I3",
+  "page": 2,
+  "signature": ".Y..Y..Y.000000111111"
+ },
+ {
+  "oll": 56,
+  "name": "I4",
+  "page": 2,
+  "signature": "...YYY...010010101101"
+ },
+ {
+  "oll": 57,
+  "name": "E2",
+  "page": 1,
+  "signature": "Y.YYYYY.Y010010000000"
+ }
+]
