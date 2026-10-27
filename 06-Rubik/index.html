@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OLL Guides — 06-Rubik</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; color: #222; line-height: 1.5; background: #fafafa; }
+        h1 { color: #111; border-bottom: 3px solid #333; padding-bottom: 8px; }
+        p { color: #555; }
+        .cards { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 24px; }
+        .card { background: #fff; border: 1px solid #ddd; border-left: 4px solid #28a745; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card h2 { margin: 0 0 6px; font-size: 18px; color: #111; }
+        .card p { margin: 0 0 12px; font-size: 14px; }
+        .card a { display: inline-block; font-weight: bold; color: #0056b3; text-decoration: none; }
+        .card a:hover { text-decoration: underline; }
+        .note { margin-top: 28px; font-size: 13px; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Minimal OLL guides</h1>
+    <p>
+        Two routes through all 57 OLL cases, built on four triggers only: Sune (S),
+        Anti-Sune (AS), Edge Trigger (ET) and Wide Edge Trigger (WT). Every case
+        solves in at most three triggers, with AUF turns spelled out. Clicking any
+        diagram opens that exact position in a cube simulator with the solution
+        preloaded.
+    </p>
+
+    <div class="cards">
+        <div class="card">
+            <h2>Full guide — jump flows</h2>
+            <p>One trigger, then "go to case X". Shorter to read, follows the route.</p>
+            <a href="./oll-full-guide.html">Open the full guide</a>
+        </div>
+        <div class="card">
+            <h2>Minimal — no flows</h2>
+            <p>One flat list per case: every step in order, no jumps.</p>
+            <a href="./minimal-without-flows.html">Open the minimal guide</a>
+        </div>
+        <div class="card">
+            <h2>Reference PDF</h2>
+            <p>Zemdegs / Klise algorithms — case names, OLL numbers and diagrams.</p>
+            <a href="./oll-algorithms.pdf">Open the reference PDF</a>
+        </div>
+    </div>
+
+    <p class="note">
+        Both guides group the cases exactly as the reference PDF does, so a case can
+        be found by its PDF name (T1, P3, B6, OCLL6) or by its OLL number.
+    </p>
+</body>
+</html>

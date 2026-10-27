@@ -108,3 +108,14 @@ future edit to these guides.
 - `tests/test_refs.py` — reference and artwork integrity tests.
 - `tests/test_step_tools.py` — step-column colour tags and palette wiring.
 - `tests/fixtures/file_to_case.json` — which OLL case each image file shows.
+
+## Published site
+
+The guides are published to GitHub Pages by `.github/workflows/rubik-pages.yml`
+on every push to `feature/06-rubik` (or `main`) that touches `06-Rubik/`:
+
+- https://alexislander.github.io/10-weekend-ai-resolution/
+
+Only the two guides, `index.html` and the reference PDF are assembled into the
+site; `index.html` is the landing page that links to both guides. `tools/`,
+`tests/` and this README stay out of the published artifact.
