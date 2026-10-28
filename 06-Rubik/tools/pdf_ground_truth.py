@@ -5,10 +5,14 @@ which, and what it looks like. Each case block on the page is a diagram image
 with its label printed beside it at the same height:
 
     [3x3 diagram]   R U2 R' U' R U' R'
+                    y' R' U' R U' R' U2 R
                     OCLL6 - 26 - Probability = 1/54
 
 so a case is recovered as (name, oll number, diagram), pairing image and label
-by nearest vertical position within the same column.
+by nearest vertical position within the same column. The algorithm the PDF
+prints first above that label ("Suggested algorithm here" in the format legend)
+is captured too: it is the one-step formula, while the second line is only an
+alternative.
 
 Run with:
 
@@ -61,6 +65,39 @@ def _labels(words: list[tuple]) -> list[tuple[float, float, str, int]]:
     return found
 
 
+# An algorithm line is printed in cube notation: moves, rotations, and round
+# brackets used to segment them. Case labels and prose never match this.
+ALG_RE = re.compile(r"^[()\[\]'\sURFDLBMESudlrfbxyz0-9w]+$")
+ALG_MOVE_RE = re.compile(r"[URFDLBMESudlrfbxyz]")
+LABEL_RE = re.compile(r"^[A-Z]{1,4}\d? - \d+ - Probability")
+
+
+def _algorithm_lines(page) -> list[tuple[float, float, str]]:
+    """Every algorithm line on the page: (x, y, text), top to bottom."""
+    found = []
+    for block in page.get_text("dict")["blocks"]:
+        for line in block.get("lines", []):
+            text = "".join(span["text"] for span in line["spans"]).strip()
+            if not text or LABEL_RE.match(text) or not ALG_RE.match(text):
+                continue
+            if not ALG_MOVE_RE.search(text):
+                continue
+            x, y = line["bbox"][0], line["bbox"][1]
+            found.append((x, y, re.sub(r"\s+", " ", text)))
+    return found
+
+
+def suggested_algorithm(label_y: float, column: int,
+                        algs: list[tuple[float, float, str]],
+                        previous_y: float) -> str | None:
+    """The formula the PDF prints first between the previous label and this one."""
+    between = [
+        (y, text) for x, y, text in algs
+        if _column(x) == column and previous_y < y < label_y
+    ]
+    return min(between)[1] if between else None
+
+
 # Group headings ("T-Shapes", "Lightning Bolts", ...) are the only 12pt bold lines.
 HEADING_FONT = "Verdana-Bold"
 HEADING_SIZE = 12.0
@@ -77,6 +114,7 @@ def extract_cases(pdf_path: Path = PDF_PATH) -> list[dict]:
     cases = []
     for page_number, page in enumerate(doc):
         labels = _labels(page.get_text("words"))
+        algs = _algorithm_lines(page)
         diagrams = [i for i in page.get_image_info(xrefs=True) if i["width"] < DIAGRAM_MAX_WIDTH]
         if page_number == 0:
             diagrams = [i for i in diagrams if i["bbox"][1] > LEGEND_MAX_Y]
@@ -94,6 +132,7 @@ def extract_cases(pdf_path: Path = PDF_PATH) -> list[dict]:
                     f"page {page_number} column {column}: "
                     f"{len(column_labels)} labels for {len(column_diagrams)} diagrams"
                 )
+            previous = 0.0
             for label, diagram in zip(column_labels, column_diagrams):
                 pixmap = page.get_pixmap(clip=pymupdf.Rect(diagram["bbox"]), dpi=PDF_DPI)
                 png = pixmap.tobytes("png")
@@ -103,10 +142,12 @@ def extract_cases(pdf_path: Path = PDF_PATH) -> list[dict]:
                         "name": label[2],
                         "oll": label[3],
                         "page": page_number,
+                        "alg": suggested_algorithm(label[1], column, algs, previous),
                         "png": png,
                         "signature": signature(art, detect_face(art)),
                     }
                 )
+                previous = label[1]
     return cases
 
 
@@ -156,7 +197,13 @@ def extract_groups(pdf_path: Path = PDF_PATH) -> list[tuple[str, list[int]]]:
 
 def build_fixture(cases: list[dict]) -> list[dict]:
     return [
-        {"oll": c["oll"], "name": c["name"], "page": c["page"], "signature": c["signature"]}
+        {
+            "oll": c["oll"],
+            "name": c["name"],
+            "page": c["page"],
+            "alg": c["alg"],
+            "signature": c["signature"],
+        }
         for c in sorted(cases, key=lambda c: c["oll"])
     ]
 

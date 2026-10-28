@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PLL Reference — 21 Cases — print</title>
+    <style>
+        @page { size: A4 portrait; margin: 9mm; }
+        body { font-family: Arial, sans-serif; font-size: 9pt; color: #111; margin: 0; }
+        h1 { font-size: 14pt; margin: 0 0 2mm; border-bottom: 2px solid #333; padding-bottom: 1mm; }
+        h2 { font-size: 10pt; margin: 4mm 0 1.5mm; border-bottom: 1px solid #999; }
+        .minimal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-bottom: 3mm; }
+        .minimal { border: 1px solid #bbb; border-left: 3px solid #007bff; padding: 1.5mm 2mm;
+            font-size: 8pt; background: #f8f9fa; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .minimal.pll { border-left-color: #8e44ad; }
+        .minimal ul { margin: 1mm 0 0 4mm; padding: 0; }
+        .minimal li { margin: 0.4mm 0; }
+        .minimal strong { font-size: 8.5pt; }
+        .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5mm; margin-bottom: 1.5mm;
+            break-inside: avoid; page-break-inside: avoid; }
+        h2 { break-after: avoid; page-break-after: avoid; }
+        .minimal-row { break-inside: avoid; page-break-inside: avoid; }
+        table.case { width: 100%; border-collapse: collapse; font-size: 8pt; table-layout: fixed; }
+        table.case td { border: 1px solid #ccc; padding: 1mm; vertical-align: middle; }
+        table.case .art { width: 22mm; }
+        table.case .alg { width: 42%; }
+        body.pll table.case .alg { width: auto; font-size: 8.5pt; }
+        table.case img { width: 10mm; height: 10mm; object-fit: contain; display: block; }
+        table.case .case-info { display: flex; flex-direction: column; }
+        table.case .case-title { font-weight: bold; font-size: 8pt; }
+        table.case .case-code { font-size: 6.5pt; color: #666; }
+        table.case .case-cell { display: flex; align-items: center; gap: 1.5mm; }
+        table.case .alg { font-family: "Courier New", monospace; font-size: 7.5pt;
+            word-break: break-word; }
+        table.case .route { font-size: 7.5pt; }
+        table.case .steps { color: #666; font-size: 6.5pt; }
+        td[data-tool="s"] { background: color-mix(in srgb, var(--tool-s) 25%, #fff); }
+        td[data-tool="as"] { background: color-mix(in srgb, var(--tool-as) 25%, #fff); }
+        td[data-tool="et"] { background: color-mix(in srgb, var(--tool-et) 25%, #fff); }
+        td[data-tool="wt"] { background: color-mix(in srgb, var(--tool-wt) 25%, #fff); }
+        :root { --tool-s: #d9534f; --tool-as: #f0ad4e; --tool-et: #5cb85c; --tool-wt: #4a9fd8; }
+        * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    </style>
+</head>
+<body class="pll">
+
+    <h1>PLL Reference — 21 Cases</h1>
+    <div class="minimal-row">
+<div class="minimal"><strong>0. Minimal OLL formulas</strong><ul><li><strong>Sune (OCLL7 / OLL 27):</strong> R U R' U R U2' R'</li><li><strong>Anti-Sune (OCLL6 / OLL 26):</strong> R U2' R' U' R U' R'</li><li><strong>Edge Trigger (ET / T2 / OLL 45):</strong> F R U R' U' F'</li><li><strong>Wide Edge Trigger (WT):</strong> f R U R' U' f'</li><li><strong>U / U' / U2:</strong> setup turns between triggers</li></ul></div>
+<div class="minimal pll"><strong>1. Minimal PLL formulas</strong><ul><li><strong>A1</strong> (corner 3-cycle): (R' F R' B2) (R F' R' B2) R2 U'</li><li><strong>U1</strong> (edge 3-cycle): F2 U M' U2 M U F2</li><li><strong>H</strong> (opposite edges swap): M2 U M2 U2 M2 U M2</li><li><strong>T</strong> (two corners + two edges): [R U R' U'] [R' F] [R2 U' R'] U' [R U R' F']</li></ul></div>
+    </div>
+
+    <h2>Minimal four</h2>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=&alg=x%20%5B%28R%27%20U%20R%27%29%20D2%5D%20%5B%28R%20U%27%20R%27%29%20D2%5D%20R2&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-a1.png" alt="PLL A1"></a><div class="case-info"><span class="case-title">A1</span></div></div></td><td class="alg">(R' F R' B2) (R F' R' B2) R2 U'</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=R%20U%27%20R%20U%20R%20U%20R%20U%27%20R%27%20U%27%20R2&alg=R2%20U%20%5BR%20U%20R%27%20U%27%5D%20%28R%27%20U%27%29%20%28R%27%20U%20R%27%29&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-u1.png" alt="PLL U1"></a><div class="case-info"><span class="case-title">U1</span></div></div></td><td class="alg">F2 U M' U2 M U F2</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=M2%20U%27%20M2%20U2%20M2%20U%27%20M2&alg=M2%20U%20M2%20U2%20M2%20U%20M2&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-h.png" alt="PLL H"></a><div class="case-info"><span class="case-title">H</span></div></div></td><td class="alg">M2 U M2 U2 M2 U M2</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=F%20R%20U%27%20R%27%20U%20R%20U%20R2%20F%27%20R%20U%20R%20U%27%20R%27&alg=%5BR%20U%20R%27%20U%27%5D%20%5BR%27%20F%5D%20%5BR2%20U%27%20R%27%5D%20U%27%20%5BR%20U%20R%27%20F%27%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-t.png" alt="PLL T"></a><div class="case-info"><span class="case-title">T</span></div></div></td><td class="alg">[R U R' U'] [R' F] [R2 U' R'] U' [R U R' F']</td></tr></table>
+    </div>
+    <h2>The other 17 cases</h2>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=&alg=x%27%20%5B%28R%20U%27%20R%29%20D2%5D%20%5B%28R%27%20U%20R%29%20D2%5D%20R2&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-a2.png" alt="PLL A2"></a><div class="case-info"><span class="case-title">A2</span></div></div></td><td class="alg">x' [(R U' R) D2] [(R' U R) D2] R2</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=R2%20U%20R%20U%20R%27%20U%27%20R%27%20U%27%20R%27%20U%20R%27&alg=%5BR%20U%27%5D%20%5BR%20U%5D%20%5BR%20U%5D%20%5BR%20U%27%5D%20R%27%20U%27%20R2&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-u2.png" alt="PLL U2"></a><div class="case-info"><span class="case-title">U2</span></div></div></td><td class="alg">[R U'] [R U] [R U] [R U'] R' U' R2</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%20L%27%20R%27%20U2%20R%20U%20R%27%20U2%20L%20U%27%20R&alg=%5BR%27%20U%20L%27%5D%20%5BU2%20R%20U%27%20R%27%20U2%5D%20%5BR%20L%20U%27%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-j1.png" alt="PLL J1"></a><div class="case-info"><span class="case-title">J1</span></div></div></td><td class="alg">[R' U L'] [U2 R U' R' U2] [R L U']</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%20R%20U%20R2%20F%27%20R%20U%20R%20U%27%20R%27%20F%20R%20U%27%20R%27&alg=%5BR%20U%20R%27%20F%27%5D%20%7B%5BR%20U%20R%27%20U%27%5D%20%5BR%27%20F%5D%20%5BR2%20U%27%20R%27%5D%20U%27%7D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-j2.png" alt="PLL J2"></a><div class="case-info"><span class="case-title">J2</span></div></div></td><td class="alg">[R U R' F'] {[R U R' U'] [R' F] [R2 U' R'] U'}</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%27%20L2%20F%27%20L%27%20U%27%20L%27%20U%20L%20F%20L%27%20U2%20L%20U2%20L%27&alg=%5BL%20U2%27%20L%27%20U2%27%5D%20%5BL%20F%27%5D%20%5BL%27%20U%27%20L%20U%5D%20%5BL%20F%5D%20L2%27%20U&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-r1.png" alt="PLL R1"></a><div class="case-info"><span class="case-title">R1</span></div></div></td><td class="alg">[L U2' L' U2'] [L F'] [L' U' L U] [L F] L2' U</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%20R2%20F%20R%20U%20R%20U%27%20R%27%20F%27%20R%20U2%20R%27%20U2%20R&alg=%5BR%27%20U2%20R%20U2%5D%20%5BR%27%20F%5D%20%5BR%20U%20R%27%20U%27%5D%20%5BR%27%20F%27%5D%20R2%20U%27&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-r2.png" alt="PLL R2"></a><div class="case-info"><span class="case-title">R2</span></div></div></td><td class="alg">[R' U2 R U2] [R' F] [R U R' U'] [R' F'] R2 U'</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=F%27%20R%27%20F%27%20R%20U%27%20R%20U%20R2%20F%20R%20d%20R%20U%27%20R&alg=%5BR%27%20U%20R%27%20d%27%5D%20%5BR%27%20F%27%5D%20%5BR2%20U%27%20R%27%20U%5D%20%5BR%27%20F%20R%20F%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-v.png" alt="PLL V"></a><div class="case-info"><span class="case-title">V</span></div></div></td><td class="alg">[R' U R' d'] [R' F'] [R2 U' R' U] [R' F R F]</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=R%27%20U%27%20R%20y%20R2%20u%20R%27%20U%20R%20U%27%20R%20u%27%20R2&alg=R2%20u%20R%27%20U%20R%27%20U%27%20R%20u%27%20R2%20%5By%27%20R%27%20U%20R%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-g1.png" alt="PLL G1"></a><div class="case-info"><span class="case-title">G1</span></div></div></td><td class="alg">R2 u R' U R' U' R u' R2 [y' R' U R]</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=R2%20u%20R%27%20U%20R%27%20U%27%20R%20u%27%20R2%20y%27%20R%27%20U%20R&alg=%5BR%27%20U%27%20R%5D%20y%20R2%20u%20R%27%20U%20R%20U%27%20R%20u%27%20R2&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-g2.png" alt="PLL G2"></a><div class="case-info"><span class="case-title">G2</span></div></div></td><td class="alg">[R' U' R] y R2 u R' U R U' R u' R2</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=R%20U%20R%27%20y%27%20R2%20u%27%20R%20U%27%20R%27%20U%20R%27%20u%20R2&alg=R2%20u%27%20R%20U%27%20R%20U%20R%27%20u%20R2%20%5By%20R%20U%27%20R%27%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-g3.png" alt="PLL G3"></a><div class="case-info"><span class="case-title">G3</span></div></div></td><td class="alg">R2 u' R U' R U R' u R2 [y R U' R']</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=R2%20u%27%20R%20U%27%20R%20U%20R%27%20u%20R2%20y%20R%20U%27%20R%27&alg=%5BR%20U%20R%27%5D%20y%27%20R2%20u%27%20R%20U%27%20R%27%20U%20R%27%20u%20R2&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-g4.png" alt="PLL G4"></a><div class="case-info"><span class="case-title">G4</span></div></div></td><td class="alg">[R U R'] y' R2 u' R U' R' U R' u R2</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=F%27%20U%20R%27%20F%27%20R%20U%27%20R%20U%20R2%20F%20R%20d%20R%20U2%20R&alg=%5BR%27%20U2%20R%27%20d%27%5D%20%5BR%27%20F%27%5D%20%5BR2%20U%27%20R%27%20U%5D%20%5BR%27%20F%20R%20U%27%20F%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-f.png" alt="PLL F"></a><div class="case-info"><span class="case-title">F</span></div></div></td><td class="alg">[R' U2 R' d'] [R' F'] [R2 U' R' U] [R' F R U' F]</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U2%20M%20U2%20M2%20U2%20M%20U%27%20M2%20U%27%20M2&alg=M2%20U%20M2%20U%20M%27%20U2%20M2%20U2%20M%27%20U2&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-z.png" alt="PLL Z"></a><div class="case-info"><span class="case-title">Z</span></div></div></td><td class="alg">M2 U M2 U M' U2 M2 U2 M' U2</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=F%20R%27%20F%27%20R%20U%20R%20U%27%20R%27%20F%20R%20U%27%20R%27%20U%20R%20U%20R%27%20F%27&alg=F%20R%20U%27%20R%27%20U%27%20%5BR%20U%20R%27%20F%27%5D%20%7B%5BR%20U%20R%27%20U%27%5D%20%5BR%27%20F%20R%20F%27%5D%7D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-y.png" alt="PLL Y"></a><div class="case-info"><span class="case-title">Y</span></div></div></td><td class="alg">F R U' R' U' [R U R' F'] {[R U R' U'] [R' F R F']}</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%27%20R%20U%27%20L%20U2%20R%27%20U%20L%27%20R%20U%27%20L%20U2%20R%27%20U%20L%27&alg=%7B%28L%20U%27%20R%29%20U2%20%28L%27%20U%20R%27%29%7D%20%7B%28L%20U%27%20R%29%20U2%20%28L%27%20U%20R%27%29%7D%20U&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-n1.png" alt="PLL N1"></a><div class="case-info"><span class="case-title">N1</span></div></div></td><td class="alg">{(L U' R) U2 (L' U R')} {(L U' R) U2 (L' U R')} U</td></tr></table>
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%20L%27%20U%20R%27%20U2%20L%20U%27%20R%20L%27%20U%20R%27%20U2%20L%20U%27%20R&alg=%7B%28R%27%20U%20L%27%29%20U2%20%28R%20U%27%20L%29%7D%20%7B%28R%27%20U%20L%27%29%20U2%20%28R%20U%27%20L%29%7D%20U%27&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-n2.png" alt="PLL N2"></a><div class="case-info"><span class="case-title">N2</span></div></div></td><td class="alg">{(R' U L') U2 (R U' L)} {(R' U L') U2 (R U' L)} U'</td></tr></table>
+    </div>
+    <div class="pair">
+            <table class="case"><tr><td class="art"><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=&alg=X%27%20%28R%20U%27%20R%27%29%20D%20%28R%20U%20R%27%29%20u2%20%28R%27%20U%20R%29%20D%20%28R%27%20U%27%20R%29&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-e.png" alt="PLL E"></a><div class="case-info"><span class="case-title">E</span></div></div></td><td class="alg">X' (R U' R') D (R U R') u2 (R' U R) D (R' U' R)</td></tr></table>
+            <span></span>
+    </div>
+
+    <p class="footer">Generated from pll-guide.html. Cases and formulas: rubikkocka.com (after Ruwix).</p>
+
+</body>
+</html>

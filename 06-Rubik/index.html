@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>OLL Guides — 06-Rubik</title>
+    <title>OLL and PLL Guides — 06-Rubik</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 30px; color: #222; line-height: 1.5; background: #fafafa; }
         h1 { color: #111; border-bottom: 3px solid #333; padding-bottom: 8px; }
@@ -14,17 +14,25 @@
         .card p { margin: 0 0 12px; font-size: 14px; }
         .card a { display: inline-block; font-weight: bold; color: #0056b3; text-decoration: none; }
         .card a:hover { text-decoration: underline; }
+        .card.pll { border-left-color: #8e44ad; }
+        .card.print { border-left-color: #555; }
         .note { margin-top: 28px; font-size: 13px; color: #666; }
     </style>
 </head>
 <body>
-    <h1>Minimal OLL guides</h1>
+    <h1>Minimal OLL and PLL guides</h1>
     <p>
         Two routes through all 57 OLL cases, built on four triggers only: Sune (S),
         Anti-Sune (AS), Edge Trigger (ET) and Wide Edge Trigger (WT). Every case
-        solves in at most three triggers, with AUF turns spelled out. Clicking any
-        diagram opens that exact position in a cube simulator with the solution
-        preloaded.
+        solves in at most three triggers, with AUF turns spelled out. Each row also
+        carries the reference PDF's own one-step formula. Clicking any diagram opens
+        that exact position in a cube simulator with the solution preloaded.
+    </p>
+    <p>
+        PLL is covered by a third guide: all 21 permutation cases with their
+        formulas, plus the four-formula minimal set (A1, U1, H, T). Every guide has
+        a print version: two cases per line, the minimal formulas side by side at
+        the top, no index.
     </p>
 
     <div class="cards">
@@ -38,16 +46,30 @@
             <p>One flat list per case: every step in order, no jumps.</p>
             <a href="./minimal-without-flows.html">Open the minimal guide</a>
         </div>
+        <div class="card pll">
+            <h2>PLL reference</h2>
+            <p>All 21 permutation cases with their formulas, and the minimal four:
+                A1, U1, H, T.</p>
+            <a href="./pll-guide.html">Open the PLL guide</a>
+        </div>
         <div class="card">
             <h2>Reference PDF</h2>
             <p>Zemdegs / Klise algorithms — case names, OLL numbers and diagrams.</p>
             <a href="./oll-algorithms.pdf">Open the reference PDF</a>
         </div>
+        <div class="card print">
+            <h2>Print versions</h2>
+            <p>Two cases per line, minimal formulas side by side, no index.</p>
+            <a href="./oll-full-guide-print.html">Full guide, print</a><br>
+            <a href="./minimal-without-flows-print.html">Minimal guide, print</a><br>
+            <a href="./pll-guide-print.html">PLL guide, print</a>
+        </div>
     </div>
 
     <p class="note">
-        Both guides group the cases exactly as the reference PDF does, so a case can
-        be found by its PDF name (T1, P3, B6, OCLL6) or by its OLL number.
+        The OLL guides group the cases exactly as the reference PDF does, so a case
+        can be found by its PDF name (T1, P3, B6, OCLL6) or by its OLL number. The
+        PLL guide follows the order of the reference page.
     </p>
 </body>
 </html>

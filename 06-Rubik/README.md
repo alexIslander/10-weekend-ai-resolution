@@ -1,17 +1,28 @@
-# 06-Rubik — OLL guides
+# 06-Rubik — OLL and PLL guides
 
-Two HTML guides for the "minimal OLL" method, plus `img/` with one flat
-diagram per OLL case. `oll-algorithms.pdf` (Zemdegs / Klise) is the reference:
-it defines every case's name, standard OLL number, and diagram.
+Guides for the "minimal OLL" method and the PLL permutation step, plus `img/`
+with one flat diagram per case. `oll-algorithms.pdf` (Zemdegs / Klise) is the
+OLL reference: it defines every case's name, standard OLL number, diagram and
+one-step formula. `source/` holds the saved PLL reference page (rubikkocka.com,
+after Ruwix), which does the same job for the 21 permutation cases.
 
 - `oll-full-guide.html` — jump style: one trigger, then "go to case X".
 - `minimal-without-flows.html` — one flat list per case: every step, no jumps.
+- `pll-guide.html` — the 21 PLL cases with their formulas and the minimal four.
+- `*-print.html` — print versions of all three: two cases per line, the minimal
+  formula blocks side by side at the top, no index.
 
 Both guides group the cases exactly as the PDF does — the same 14 headings
 ("T-Shapes", "Squares", "P-Shapes", "Lightning Bolts", ...) in the same printed
 order, rows read left to right — and label every row with the PDF's own case
 name (`T1`, `P3`, `B6`, `OCLL6`). Each guide opens with an index that links to
 the groups, so a case can be found by its PDF name or its OLL number.
+
+Each OLL row carries the reference PDF's own one-step formula in a column of its
+own, immediately before the step count (`R U2 R' U' R U' R'` for OCLL6). The
+text is copied from the PDF by `tools/pdf_ground_truth.py`, not retyped, so a
+row cannot drift from the reference or inherit a neighbour's algorithm. Where
+the PDF prints an alternative as a second line, only the suggested one is shown.
 
 The step column is colour-coded by the trigger the case starts with, so a
 position can be recognised by the tool it needs first:
@@ -22,6 +33,14 @@ position can be recognised by the tool it needs first:
 | Anti-Sune | AS | `#f0ad4e` |
 | Edge Trigger | ET | `#5cb85c` |
 | Wide Edge Trigger | WT | `#4a9fd8` |
+
+After the OLL toolbox, both OLL guides list the minimal PLL formulas — A1
+(corner 3-cycle), U1 (edge 3-cycle), H, T — and link to `pll-guide.html`. The
+PLL cases and formulas are parsed from the saved reference page into
+`tests/fixtures/pll_cases.json`; `img/pll-*.png` are copied from that snapshot.
+Every PLL diagram links to the cube simulator with the *inverse* of its
+algorithm as the setup, so the simulator opens on the case and the algorithm
+solves it.
 
 The palette is a parameter, not a copy-paste: each colour lives in one CSS
 variable (`--tool-s`, `--tool-as`, `--tool-et`, `--tool-wt`) and every step cell
@@ -91,6 +110,12 @@ Then, from `06-Rubik/`:
 .venv/bin/python -m tools.step_tools --write           # retag after editing a flow
 .venv/bin/python -m tools.pdf_ground_truth tests/fixtures/oll_cases.json
 .venv/bin/python -m tools.render_diagram              # redraw the diagrams
+.venv/bin/python -m tools.ref_algs --check            # reference-formula column
+.venv/bin/python -m tools.ref_algs --write            # rewrite that column
+.venv/bin/python -m tools.pll_refs --write            # PLL fixture + images
+.venv/bin/python -m tools.pll_refs --build            # pll-guide.html
+.venv/bin/python -m tools.print_guides --build        # the three print pages
+.venv/bin/python -m tools.print_guides --check        # print pages match the guides
 ```
 
 `--check` exits non-zero when a row shows the wrong image or a guide drifts from
@@ -104,10 +129,16 @@ future edit to these guides.
   PDF's group headings with their case numbers in printed order.
 - `tools/oll_refs.py` — mapping, audit, grouping check, repair, CLI.
 - `tools/step_tools.py` — tags each step cell with the trigger it starts with.
+- `tools/ref_algs.py` — the reference-formula column, from the PDF fixture.
+- `tools/pll_refs.py` — PLL source → fixture, images, `pll-guide.html`.
+- `tools/print_guides.py` — generates the three print pages from the online ones.
 - `tools/render_diagram.py` — draws the diagrams from the PDF signatures.
 - `tests/test_refs.py` — reference and artwork integrity tests.
 - `tests/test_step_tools.py` — step-column colour tags and palette wiring.
+- `tests/test_pll_refs.py` — PLL source, fixture, images and simulator setups.
+- `tests/test_print_guides.py` — print pages stay generated, 2-up, index-free.
 - `tests/fixtures/file_to_case.json` — which OLL case each image file shows.
+- `tests/fixtures/pll_cases.json` — the 21 PLL cases, in reference order.
 
 ## Published site
 
@@ -116,6 +147,7 @@ on every push to `feature/06-rubik` (or `main`) that touches `06-Rubik/`:
 
 - https://alexislander.github.io/10-weekend-ai-resolution/
 
-Only the two guides, `index.html` and the reference PDF are assembled into the
-site; `index.html` is the landing page that links to both guides. `tools/`,
-`tests/` and this README stay out of the published artifact.
+All guides (online and print), `index.html`, `img/` and the reference PDF are
+assembled into the site; `index.html` is the landing page that links to every
+guide. `tools/`, `tests/`, `source/` and this README stay out of the published
+artifact.

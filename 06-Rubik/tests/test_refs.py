@@ -36,6 +36,7 @@ from tools.oll_refs import (  # noqa: E402
     load_cases,
 )
 from tools.pdf_ground_truth import extract_groups  # noqa: E402
+from tools.ref_algs import ROW_RE as ROW_RE_ALG  # noqa: E402
 from tools.signature import signature  # noqa: E402
 
 GUIDES = list(HTML_FILES)
@@ -218,3 +219,27 @@ def test_each_guide_covers_all_cases_and_images_once(guide):
 @pytest.mark.parametrize("guide", GUIDES)
 def test_audit_reports_no_problems(guide, mapping):
     assert audit(PROJECT / guide, mapping) == []
+
+
+# --- the reference-formula column -------------------------------------------
+
+
+def test_every_guide_carries_the_pdf_formula():
+    """The one-step formula column is the PDF's own text, not a retyped copy."""
+    from tools.ref_algs import audit, load_algs
+
+    algs = load_algs()
+    problems = []
+    for guide in GUIDES:
+        problems.extend(audit(PROJECT / guide, algs))
+    assert problems == []
+
+
+def test_the_formula_column_sits_before_the_steps_column():
+    for guide in GUIDES:
+        for row in ROW_RE_ALG.finditer((PROJECT / guide).read_text()):
+            if 'class="ref-alg"' not in row["body"]:
+                continue
+            body = row["body"]
+            ref_at = body.index('class="ref-alg"')
+            assert ref_at < body.index("<td>", ref_at), "formula must come before Steps"
