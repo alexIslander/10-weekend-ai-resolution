@@ -39,7 +39,7 @@
     (rubikkocka.com, after Ruwix); clicking a diagram opens that exact position
     in the cube simulator, with the algorithm preloaded.</p>
 
-<div class="toolbox pll-box"><strong>0. Minimal PLL formulas</strong><ul><li><strong>A1</strong> (corner 3-cycle): <span class="alg">(R' F R' B2) (R F' R' B2) R2 U'</span></li><li><strong>U1</strong> (edge 3-cycle): <span class="alg">F2 U M' U2 M U F2</span></li><li><strong>H</strong> (opposite edges swap): <span class="alg">M2 U M2 U2 M2 U M2</span></li><li><strong>T</strong> (two corners + two edges): <span class="alg">[R U R' U'] [R' F] [R2 U' R'] U' [R U R' F']</span></li></ul></div>
+<div class="toolbox pll-box"><strong>0. Minimal PLL formulas</strong><ul><li><strong>A1</strong> (corner 3-cycle): <span class="alg">(R' F R' B2) (R F' R' B2) R2 U'</span></li><li><strong>U1</strong> (edge 3-cycle): <span class="alg">F2 U M' U2 M U F2</span></li><li><strong>H</strong> (opposite edges swap): <span class="alg">M2 U M2 U2 M2 U M2</span></li><li><strong>T</strong> (two corners + two edges): <span class="alg">[R U R' U'] [R' F] [R2 U' R'] U' [R U R' F']</span><span class="alg"> -> </span><span class="alg">[R2 U R2 U' R2 U'] D [R2 U' R2 U R2] D'</span></li></ul></div>
 
     <table>
         <tr><th>Case</th><th>Formula</th></tr>
@@ -65,7 +65,7 @@
         </tr>
         <tr>
             <td><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=F%20R%20U%27%20R%27%20U%20R%20U%20R2%20F%27%20R%20U%20R%20U%27%20R%27&alg=%5BR%20U%20R%27%20U%27%5D%20%5BR%27%20F%5D%20%5BR2%20U%27%20R%27%5D%20U%27%20%5BR%20U%20R%27%20F%27%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-t.png" alt="PLL T"></a><div class="case-info"><span class="case-title">T</span><span class="case-code">PLL</span><span class="minimal-tag">minimal</span></div></div></td>
-            <td class="formula">[R U R' U'] [R' F] [R2 U' R'] U' [R U R' F']</td>
+            <td class="formula">[R U R' U'] [R' F] [R2 U' R'] U' [R U R' F'] -> [R2 U R2 U' R2 U'] D [R2 U' R2 U R2] D'</td>
         </tr>
         <tr>
             <td><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%20L%27%20R%27%20U2%20R%20U%20R%27%20U2%20L%20U%27%20R&alg=%5BR%27%20U%20L%27%5D%20%5BU2%20R%20U%27%20R%27%20U2%5D%20%5BR%20L%20U%27%5D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-j1.png" alt="PLL J1"></a><div class="case-info"><span class="case-title">J1</span><span class="case-code">PLL</span></div></div></td>
@@ -73,7 +73,7 @@
         </tr>
         <tr>
             <td><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%20R%20U%20R2%20F%27%20R%20U%20R%20U%27%20R%27%20F%20R%20U%27%20R%27&alg=%5BR%20U%20R%27%20F%27%5D%20%7B%5BR%20U%20R%27%20U%27%5D%20%5BR%27%20F%5D%20%5BR2%20U%27%20R%27%5D%20U%27%7D&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-j2.png" alt="PLL J2"></a><div class="case-info"><span class="case-title">J2</span><span class="case-code">PLL</span></div></div></td>
-            <td class="formula">[R U R' F'] {[R U R' U'] [R' F] [R2 U' R'] U'}</td>
+            <td class="formula">[R U R' F'] {[R U R' U'] [R' F] [R2 U' R'] U'} -> [R U2 R'] U' [R U2 L'] U R' U' L</td>
         </tr>
         <tr>
             <td><div class="case-cell"><a href="https://alg.cubing.net/?puzzle=3x3x3&setup=U%27%20L2%20F%27%20L%27%20U%27%20L%27%20U%20L%20F%20L%27%20U2%20L%20U2%20L%27&alg=%5BL%20U2%27%20L%27%20U2%27%5D%20%5BL%20F%27%5D%20%5BL%27%20U%27%20L%20U%5D%20%5BL%20F%5D%20L2%27%20U&type=alg" target="_blank" rel="noopener" title="Open this position in the cube simulator"><img src="img/pll-r1.png" alt="PLL R1"></a><div class="case-info"><span class="case-title">R1</span><span class="case-code">PLL</span></div></div></td>
