@@ -8,15 +8,28 @@
         body { font-family: Arial, sans-serif; margin: 30px; color: #222; line-height: 1.5; background: #fafafa; }
         h1 { color: #111; border-bottom: 3px solid #333; padding-bottom: 8px; }
         p { color: #555; }
-        .cards { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 24px; }
-        .card { background: #fff; border: 1px solid #ddd; border-left: 4px solid #28a745; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .card h2 { margin: 0 0 6px; font-size: 18px; color: #111; }
+        section { margin-top: 44px; }
+        section > h2 { color: #222; border-bottom: 2px solid #ccc; padding-bottom: 5px;
+            margin: 0 0 4px; font-size: 20px; }
+        .lead { margin: 0 0 18px; font-size: 14px; }
+        .cards { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+        .card { background: #fff; border: 1px solid #ddd; border-left: 4px solid #28a745;
+            padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex;
+            flex-direction: column; }
+        .card h3 { margin: 0 0 6px; font-size: 18px; color: #111; }
         .card p { margin: 0 0 12px; font-size: 14px; }
         .card a { display: inline-block; font-weight: bold; color: #0056b3; text-decoration: none; }
+        .card a + a { margin-top: 4px; }
         .card a:hover { text-decoration: underline; }
+        /* Card header art: the picture sits full-bleed across the card top, cropped
+           to one band so cards of unequal text length still line up. */
+        .card-media { height: 132px; margin: -18px -18px 14px; overflow: hidden;
+            border-bottom: 1px solid #e3e5e8; background: #0f1113; }
+        .card-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .card.graph { border-left-color: #007bff; }
         .card.pll { border-left-color: #8e44ad; }
         .card.print { border-left-color: #555; }
-        .note { margin-top: 28px; font-size: 13px; color: #666; }
+        .note { margin-top: 36px; font-size: 13px; color: #666; }
     </style>
 </head>
 <body>
@@ -29,47 +42,109 @@
         that exact position in a cube simulator with the solution preloaded.
     </p>
     <p>
+        Those same routes also come as a route map: one lane per case, drawn as the
+        shapes you pass through, grouped either by the shape a lane lands on or by
+        the formula it starts with.
+    </p>
+    <p>
         PLL is covered by a third guide: all 21 permutation cases with their
         formulas, plus the four-formula minimal set (A1, U1, H, T). Every guide has
         a print version: two cases per line, the minimal formulas side by side at
         the top, no index.
     </p>
 
-    <div class="cards">
-        <div class="card">
-            <h2>Full guide — jump flows</h2>
-            <p>One trigger, then "go to case X". Shorter to read, follows the route.</p>
-            <a href="./oll-full-guide.html">Open the full guide</a>
+    <section id="guides">
+        <h2>Guides</h2>
+        <p class="lead">Every case, flat: two ways to read the same four-trigger routes.</p>
+        <div class="cards">
+            <article class="card">
+                <div class="card-media"><img src="./img/header/full.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>Full guide — jump flows</h3>
+                <p>One trigger, then "go to case X". Shorter to read, follows the route.</p>
+                <a href="./oll-full-guide.html">Open the full guide</a>
+            </article>
+            <article class="card">
+                <div class="card-media"><img src="./img/header/minimal_layer.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>Minimal — no flows</h3>
+                <p>One flat list per case: every step in order, no jumps.</p>
+                <a href="./minimal-without-flows.html">Open the minimal guide</a>
+            </article>
         </div>
-        <div class="card">
-            <h2>Minimal — no flows</h2>
-            <p>One flat list per case: every step in order, no jumps.</p>
-            <a href="./minimal-without-flows.html">Open the minimal guide</a>
+    </section>
+
+    <section id="graph">
+        <h2>Graph</h2>
+        <p class="lead">The same routes as a picture, cut two ways: by the shape a lane
+            ends on, and by the formula it starts with.</p>
+        <div class="cards">
+            <article class="card graph">
+                <div class="card-media"><img src="./img/header/graph.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>Route map — by landing shape</h3>
+                <p>Lanes grouped by the shape they reach before the last trigger:
+                    turn it into that shape, then one trigger finishes it.</p>
+                <a href="./oll-route-map.html">Open the route map</a>
+            </article>
+            <article class="card graph">
+                <div class="card-media"><img src="./img/header/minimal_grouped.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>Route map — by first formula</h3>
+                <p>The same lanes grouped by the formula they open with — the colour
+                    each case carries in the step list.</p>
+                <a href="./oll-route-map-first-step.html">Open the route map</a>
+            </article>
         </div>
-        <div class="card pll">
-            <h2>PLL reference</h2>
-            <p>All 21 permutation cases with their formulas, and the minimal four:
-                A1, U1, H, T.</p>
-            <a href="./pll-guide.html">Open the PLL guide</a>
+    </section>
+
+    <section id="references">
+        <h2>References</h2>
+        <p class="lead">Where the cases, the numbers and the formulas come from.</p>
+        <div class="cards">
+            <article class="card pll">
+                <div class="card-media"><img src="./img/header/pll.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>PLL reference</h3>
+                <p>All 21 permutation cases with their formulas, and the minimal four:
+                    A1, U1, H, T.</p>
+                <a href="./pll-guide.html">Open the PLL guide</a>
+            </article>
+            <article class="card pll">
+                <div class="card-media"><img src="./img/header/variation.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>Reference PDF</h3>
+                <p>Zemdegs / Klise algorithms — case names, OLL numbers and diagrams.</p>
+                <a href="./oll-algorithms.pdf">Open the reference PDF</a>
+            </article>
         </div>
-        <div class="card">
-            <h2>Reference PDF</h2>
-            <p>Zemdegs / Klise algorithms — case names, OLL numbers and diagrams.</p>
-            <a href="./oll-algorithms.pdf">Open the reference PDF</a>
+    </section>
+
+    <section id="printing">
+        <h2>Printing</h2>
+        <p class="lead">Paper versions: two cases per line, the minimal formulas side by
+            side at the top, no index.</p>
+        <div class="cards">
+            <article class="card print">
+                <div class="card-media"><img src="./img/header/print.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>Full guide, print</h3>
+                <p>The jump-flow guide as a two-up sheet.</p>
+                <a href="./oll-full-guide-print.html">Open the print version</a>
+            </article>
+            <article class="card print">
+                <div class="card-media"><img src="./img/header/print_a.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>Minimal guide, print</h3>
+                <p>The flat step list as a two-up sheet.</p>
+                <a href="./minimal-without-flows-print.html">Open the print version</a>
+            </article>
+            <article class="card print">
+                <div class="card-media"><img src="./img/header/print_catalog.jpeg" alt="" loading="lazy" width="1376" height="768"></div>
+                <h3>PLL guide, print</h3>
+                <p>The 21 permutation cases and the minimal four, two-up.</p>
+                <a href="./pll-guide-print.html">Open the print version</a>
+            </article>
         </div>
-        <div class="card print">
-            <h2>Print versions</h2>
-            <p>Two cases per line, minimal formulas side by side, no index.</p>
-            <a href="./oll-full-guide-print.html">Full guide, print</a><br>
-            <a href="./minimal-without-flows-print.html">Minimal guide, print</a><br>
-            <a href="./pll-guide-print.html">PLL guide, print</a>
-        </div>
-    </div>
+    </section>
 
     <p class="note">
         The OLL guides group the cases exactly as the reference PDF does, so a case
         can be found by its PDF name (T1, P3, B6, OCLL6) or by its OLL number. The
-        PLL guide follows the order of the reference page.
+        PLL guide follows the order of the reference page. The route maps carry no
+        print version yet.
     </p>
 </body>
 </html>

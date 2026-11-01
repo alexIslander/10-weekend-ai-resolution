@@ -1,0 +1,1622 @@
+{
+ "cases": [
+  {
+   "oll": 26,
+   "name": "OCLL6 (Anti-Sune)",
+   "image": "img/friedrich-oll-10.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%20R%20U2%20R%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 1,
+   "landing": 0,
+   "route": [
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 27,
+   "name": "OCLL7 (Sune)",
+   "image": "img/friedrich-oll-09.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 1,
+   "landing": 0,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 21,
+   "name": "OCLL1 (H-Shape)",
+   "image": "img/friedrich-oll-12.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%20R%20U%27%20R%27%20U%20R%20U2%20R%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 22,
+   "name": "OCLL2 (Pi-Shape)",
+   "image": "img/friedrich-oll-11.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U2%20R2%20U%20R2%20U%20R2%20U2%20R%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 24,
+   "name": "OCLL4 (T-Shape)",
+   "image": "img/friedrich-oll-13.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20r%20U%20R%20U%27%20r%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 25,
+   "name": "OCLL5 (L-Shape)",
+   "image": "img/friedrich-oll-14.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%27%20r%20U%20R%20U%27%20r%27%20F%20y%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 23,
+   "name": "OCLL3 (U-Shape)",
+   "image": "img/friedrich-oll-15.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%20D%20R%27%20U2%20R%20D%27%20R2&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 33,
+   "name": "T1",
+   "image": "img/friedrich-oll-53.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U%20R%20U%27%20R%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "ET",
+     "shape": 21,
+     "shape_name": "OCLL1",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 45,
+   "name": "T2",
+   "image": "img/friedrich-oll-52.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 1,
+   "landing": 0,
+   "route": [
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 5,
+   "name": "S1",
+   "image": "img/friedrich-oll-42.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20R%20U%27%20R%27%20U2%20r&alg=F%20R%20U%20R%27%20U%27%20F%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 6,
+   "name": "S2",
+   "image": "img/friedrich-oll-43.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%20R%20U2%20r%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20U%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 2,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 34,
+   "name": "C1",
+   "image": "img/friedrich-oll-06.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%27%20U%27%20R%27%20F%27%20R%20U%20R2%20U%27%20R%27&alg=U2%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "WT",
+     "shape": 35,
+     "shape_name": "F3",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 46,
+   "name": "C2",
+   "image": "img/friedrich-oll-05.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20F%20R%27%20F%27%20R%20U%20R&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 2,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 36,
+   "name": "W1",
+   "image": "img/friedrich-oll-55.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20x%27%20U%27%20R%20U%20l%27%20U%27%20R%27%20U%27%20R%20U%20R%27%20U%20R&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "WT",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 38,
+   "name": "W2",
+   "image": "img/friedrich-oll-54.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U%20R%20U%20R%27%20U%27%20R%20U%27%20R%27&alg=U2%20R%20U%20R%27%20U%20R%20U2%20R%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "S",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 28,
+   "name": "E1",
+   "image": "img/friedrich-oll-08.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%27%20M%27%20U%20R%20U%27%20r%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20U2%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 57,
+   "name": "E2",
+   "image": "img/friedrich-oll-07.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M%20U%20R%20U%27%20R%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 2,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "WT",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 31,
+   "name": "P1",
+   "image": "img/friedrich-oll-49.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20U%20R&alg=U%27%20F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "ET",
+     "shape": 40,
+     "shape_name": "B6",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 32,
+   "name": "P2",
+   "image": "img/friedrich-oll-48.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20B%27%20R%27%20U%27%20R%20U%20B%20U%27%20R%27&alg=U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 3,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "AS",
+     "shape": 50,
+     "shape_name": "L4",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 43,
+   "name": "P3",
+   "image": "img/friedrich-oll-51.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%27%20U%27%20F%20U%20R%20y%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "WT",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 44,
+   "name": "P4",
+   "image": "img/friedrich-oll-50.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 1,
+   "landing": 0,
+   "route": [
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 51,
+   "name": "I1",
+   "image": "img/friedrich-oll-46.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 2,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 56,
+   "name": "I4",
+   "image": "img/friedrich-oll-47.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20r%20R%27%20U%27%20R%20U%20R%27%20U%27%20R%20U%20r%27%20U%20r&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 3,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 2,
+     "shape_name": "O2",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 52,
+   "name": "I2",
+   "image": "img/friedrich-oll-45.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20B%27%20R%27%20U%27%20R%20y%20U%27%20R%20U%20R%27%20U%20R&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 2,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 55,
+   "name": "I3",
+   "image": "img/friedrich-oll-44.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%27%20R%27%20U%27%20R%20U%20R2%20F%20R2%20U%20R%27%20U%27%20R%27%20F%27%20R%20y%27&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 3,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 22,
+     "shape_name": "OCLL2",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 9,
+   "name": "F1",
+   "image": "img/friedrich-oll-35.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R2%20F%27%20R%20U%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 3,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 51,
+     "shape_name": "I1",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 10,
+   "name": "F2",
+   "image": "img/friedrich-oll-36.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20F%20R%27%20F%27%20R%20U%27%20R%20U%27%20R%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 2,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "WT",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 35,
+   "name": "F3",
+   "image": "img/friedrich-oll-40.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20F%20R%27%20F%27%20R2%20U2%20R%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 2,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 37,
+   "name": "F4",
+   "image": "img/friedrich-oll-41.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%20U%27%20R%27%20U%20R%20U%20R%27%20F%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 3,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 16,
+     "shape_name": "K4",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 13,
+   "name": "K1",
+   "image": "img/friedrich-oll-02.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20R%20y%20r%20U%27%20r%27%20U%20r%20U%20r%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 3,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "WT",
+     "shape": 41,
+     "shape_name": "A3",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 14,
+   "name": "K2",
+   "image": "img/friedrich-oll-01.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20F%27%20R%27%20F%20R%20U%27%20R%27%20F%27%20R&alg=U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "AS",
+     "shape": 35,
+     "shape_name": "F3",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 16,
+   "name": "K4",
+   "image": "img/friedrich-oll-03.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20r%27%20U%20R%20U%27%20R%27%20r%20U%27%20r%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "ET",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 15,
+   "name": "K3",
+   "image": "img/friedrich-oll-04.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20r%20U%27%20R%27%20U%20R%20r%27%20U%20r&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20U%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 2,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "ET",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 29,
+   "name": "A1",
+   "image": "img/friedrich-oll-34.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%27%20R%27%20F%27%20U%20F%20R%20U%20R%27%20U%20R%20U%27%20R%27%20y%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "WT",
+     "shape": 21,
+     "shape_name": "OCLL1",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 30,
+   "name": "A2",
+   "image": "img/friedrich-oll-37.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U2%20R%27%20U%20R%20U2%20R%27%20U%27%20F%27%20y&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20U2%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 52,
+     "shape_name": "I2",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 41,
+   "name": "A3",
+   "image": "img/friedrich-oll-38.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 42,
+   "name": "A4",
+   "image": "img/friedrich-oll-39.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20R%27%20U2%20R%20U%20R%27%20U%20R&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 40,
+     "shape_name": "B6",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "ET",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 48,
+   "name": "L2",
+   "image": "img/friedrich-oll-24.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 47,
+   "name": "L1",
+   "image": "img/friedrich-oll-25.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%27%20U%27%20L%27%20U%20L%20U%27%20L%27%20U%20L%20F&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 2,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "WT",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 49,
+   "name": "L3",
+   "image": "img/friedrich-oll-27.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%20r2%20U%27%20r2%20U%27%20r2%20U%20r%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "WT",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 50,
+   "name": "L4",
+   "image": "img/friedrich-oll-26.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%27%20r2%20U%20r2%20U%20r2%20U%27%20r&alg=U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "AS",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 53,
+   "name": "L5",
+   "image": "img/friedrich-oll-28.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U2%20R%20U%20R%27%20U%27%20R%20U%20R%27%20U%20r&alg=f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 3,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 24,
+     "shape_name": "OCLL4",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 54,
+   "name": "L6",
+   "image": "img/friedrich-oll-29.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U2%20R%27%20U%27%20R%20U%20R%27%20U%27%20R%20U%27%20r%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 3,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "WT",
+     "shape": 22,
+     "shape_name": "OCLL2",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 7,
+   "name": "B1",
+   "image": "img/friedrich-oll-30.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U2%20R%27%20U%27%20R%20U%27%20r%27&alg=U%20R%20U%20R%27%20U%20R%20U2%20R%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 2,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "S",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 8,
+   "name": "B2",
+   "image": "img/friedrich-oll-31.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U2%20R%20U%20R%27%20U%20r&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 2,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "U'",
+     "tool": "WT",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 11,
+   "name": "B3",
+   "image": "img/friedrich-oll-33.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20M%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R2%20r&alg=U2%20R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "S",
+     "shape": 40,
+     "shape_name": "B6",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 12,
+   "name": "B4",
+   "image": "img/friedrich-oll-32.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20M%27%20U%20R%27%20U2%20R%20U%20R%27%20U%20R%20M&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 39,
+   "name": "B5",
+   "image": "img/friedrich-oll-57.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20L%20U%20F%27%20U%27%20L%27%20U%20L%20F%20L%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 2,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U2",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 40,
+   "name": "B6",
+   "image": "img/friedrich-oll-56.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20F%20U%20R%20U%27%20R%27%20F%27%20R&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 2,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "ET",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 1,
+   "name": "O1",
+   "image": "img/friedrich-oll-16.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U2%20F%20R%27%20F%27%20R2%20U2%20R%27&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 3,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 50,
+     "shape_name": "L4",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "AS",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 2,
+   "name": "O2",
+   "image": "img/friedrich-oll-17.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20f%27%20F%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg",
+   "steps": 2,
+   "landing": 44,
+   "route": [
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 44,
+     "shape_name": "P4",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 3,
+   "name": "O3",
+   "image": "img/friedrich-oll-18.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20U%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 4,
+   "name": "O4",
+   "image": "img/friedrich-oll-19.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20U%27%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 2,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 18,
+   "name": "O6",
+   "image": "img/friedrich-oll-21.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M%20U2%20F%20R%27%20F%27%20R2%20U2%20R%27%20y%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 3,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "U2",
+     "tool": "ET",
+     "shape": 8,
+     "shape_name": "B2",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 19,
+   "name": "O7",
+   "image": "img/friedrich-oll-20.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20M%20U%20R%20U%27%20R%27%20U%27%20M%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg",
+   "steps": 3,
+   "landing": 27,
+   "route": [
+    {
+     "auf": "",
+     "tool": "ET",
+     "shape": 35,
+     "shape_name": "F3",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 27,
+     "shape_name": "OCLL7",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 17,
+   "name": "O5",
+   "image": "img/friedrich-oll-22.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U2%20F%20R%27%20F%27%20R%20U%27%20R%20U%27%20R%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg",
+   "steps": 3,
+   "landing": 26,
+   "route": [
+    {
+     "auf": "U",
+     "tool": "WT",
+     "shape": 16,
+     "shape_name": "K4",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "U'",
+     "tool": "ET",
+     "shape": 26,
+     "shape_name": "OCLL6",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "AS",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  },
+  {
+   "oll": 20,
+   "name": "O8",
+   "image": "img/friedrich-oll-23.png",
+   "href": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M2%20U%20R%20U%27%20R%27%20U%27%20M%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg",
+   "steps": 3,
+   "landing": 45,
+   "route": [
+    {
+     "auf": "",
+     "tool": "S",
+     "shape": 4,
+     "shape_name": "O4",
+     "remaining": 2,
+     "warn": false
+    },
+    {
+     "auf": "",
+     "tool": "WT",
+     "shape": 45,
+     "shape_name": "T2",
+     "remaining": 1,
+     "warn": false
+    },
+    {
+     "auf": "U",
+     "tool": "ET",
+     "shape": 0,
+     "shape_name": "solved",
+     "remaining": 0,
+     "warn": false
+    }
+   ]
+  }
+ ]
+}
