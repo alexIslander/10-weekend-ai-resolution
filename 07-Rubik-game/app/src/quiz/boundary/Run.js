@@ -46,6 +46,12 @@ class Run extends BElement {
                     <span class="mode-level">${label(run.mode)} · ${label(run.hintLevel)}</span>
                     <span class="score">${run.score} points</span>
                 </header>
+                ${run.hintLevel === "training"
+                    ? html`<p class="training-hint" data-oll="${position.oll}">
+                        <span class="case-name">${position.name}</span>
+                        <span>OLL ${position.oll}</span>
+                    </p>`
+                    : nothing}
                 <img class="diagram" src="${position.image}"
                      alt="Position diagram: the top face and the ring of side stickers"
                      width="82" height="82">

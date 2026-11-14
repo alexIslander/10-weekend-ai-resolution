@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
-import { accuracy, buildRun, answer } from "../app/src/quiz/core/run.mjs";
+import { accuracy, buildRun, answer, defaultHintLevel, groupsOf, poolOf } from "../app/src/quiz/core/run.mjs";
 import { emptyRecord, recordAnswer } from "../app/src/quiz/core/records.mjs";
 
 const positions = cases.positions;
@@ -78,7 +78,7 @@ test("accuracy is a whole percentage of the questions asked", () => {
 });
 
 test("an unknown mode is refused instead of silently guessing", () => {
-  assert.throws(() => buildRun(positions, { mode: "grouped", random: seeded(1) }), /unsupported mode/);
+  assert.throws(() => buildRun(positions, { mode: "endless", random: seeded(1) }), /unsupported mode/);
 });
 
 test("consecutive correct answers are worth 10, 20, 30, 40, then 50 points", () => {
@@ -148,4 +148,60 @@ test("each answer updates the position's record: attempts, correct, wrong, last 
   assert.deepEqual(twice, { attempts: 2, correct: 1, wrong: 1, lastSeenAt: seen + 1000, streak: 0 });
 
   assert.deepEqual(recordAnswer(undefined, true, seen), once, "a position never seen before needs no special casing");
+});
+
+test("the group picker lists the 14 groups in booklet order", () => {
+  const groups = groupsOf(positions);
+  assert.equal(groups.length, 14);
+  assert.deepEqual(groups, [...new Set(positions.map(({ group }) => group))]);
+  assert.deepEqual(groups.slice(0, 3), ["All Edges Oriented Correctly", "T-Shapes", "Squares"]);
+});
+
+test("a Grouped run asks exactly the positions of the chosen group, shuffled", () => {
+  const group = "T-Shapes";
+  const inGroup = positions.filter(position => position.group === group).map(({ oll }) => oll);
+  const run = buildRun(positions, { mode: "grouped", group, random: seeded(2) });
+  const replay = buildRun(positions, { mode: "grouped", group, random: seeded(2) });
+
+  assert.equal(run.length, inGroup.length);
+  assert.deepEqual(run.map(({ oll }) => oll).sort((a, b) => a - b), [...inGroup].sort((a, b) => a - b));
+  assert.deepEqual(run.map(({ oll }) => oll), replay.map(({ oll }) => oll));
+  assert.notDeepEqual(run.map(({ oll }) => oll), inGroup, "the group is shuffled, not in booklet order");
+});
+
+test("every group's pool is exactly that group's positions", () => {
+  const sizes = groupsOf(positions).map(group => poolOf(positions, { mode: "grouped", group }).length);
+  assert.deepEqual(sizes, [7, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 8]);
+});
+
+test("an unknown group is refused", () => {
+  assert.throws(() => buildRun(positions, { mode: "grouped", group: "Nope", random: seeded(1) }), /unsupported group/);
+  assert.throws(() => buildRun(positions, { mode: "grouped", random: seeded(1) }), /unsupported group/);
+});
+
+test("a Progressive run walks one-step, then two-step, then three-step, shuffled within each block", () => {
+  const run = buildRun(positions, { mode: "progressive", random: seeded(6) });
+  const replay = buildRun(positions, { mode: "progressive", random: seeded(6) });
+  const steps = run.map(({ oll }) => positions.find(position => position.oll === oll).steps);
+
+  assert.equal(run.length, 57);
+  assert.deepEqual([...steps].sort((a, b) => a - b), steps, "step counts never go backwards");
+  assert.deepEqual([4, 32, 21], [1, 2, 3].map(count => steps.filter(step => step === count).length));
+  assert.deepEqual(run.map(({ oll }) => oll), replay.map(({ oll }) => oll));
+
+  const firstBlock = run.slice(0, 4).map(({ oll }) => oll);
+  const bookletOneStep = positions.filter(({ steps: count }) => count === 1).map(({ oll }) => oll);
+  assert.deepEqual([...firstBlock].sort((a, b) => a - b), [...bookletOneStep].sort((a, b) => a - b));
+  assert.notDeepEqual(firstBlock, bookletOneStep, "the one-step block is shuffled too");
+});
+
+test("a non-grouped run asks all 57 positions whatever group is offered", () => {
+  assert.equal(poolOf(positions, { mode: "random", group: "T-Shapes" }).length, 57);
+  assert.equal(poolOf(positions, { mode: "progressive" }).length, 57);
+});
+
+test("Progressive starts at Training, every other mode at Test", () => {
+  assert.equal(defaultHintLevel("progressive"), "training");
+  assert.equal(defaultHintLevel("random"), "test");
+  assert.equal(defaultHintLevel("grouped"), "test");
 });

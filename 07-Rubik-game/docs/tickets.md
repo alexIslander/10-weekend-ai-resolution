@@ -15,7 +15,7 @@ The build broken into tracer bullets, published as sub-issues of spec #2 and lab
 | 10 | Adaptive mode: worst positions first | #6, #7 | Priority ordering, weak-spots button |
 | 11 | Keyboard answering | after #10 | Keys 1–4 answer, focus moves to next, Enter advances |
 
-Frontier: **#6** (after #3, #4 and #5 landed). #8 and #9 are independent of each other and
+Frontier: **#7** (after #3–#6 landed). #8 and #9 are independent of each other and
 can be worked in either order once #6 lands; #10 needs #7 because the weak-spots button
 lives there. #11 is a deliberate addition after the plan: keyboard answering was listed
 as out of scope in `spec.md`, and the game is better with it — it is sequenced last so

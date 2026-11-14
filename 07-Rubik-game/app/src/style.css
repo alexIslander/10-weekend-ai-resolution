@@ -167,6 +167,55 @@ q-play, q-run, q-finish, q-scores{
     font-size: 12px;
     color: var(--color-on-surface);
 }
+
+/* the play screen's choices: three modes, two hint levels, one group */
+.field{
+    display: grid;
+    gap: var(--spacing-sm);
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+.field legend{
+    padding: 0;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.choices{
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+.choice{
+    min-height: 44px;
+    padding: 0 var(--spacing-md);
+    font: inherit;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-accent-border);
+    border-radius: var(--rounded-md);
+    cursor: pointer;
+}
+.choice[aria-pressed="true"]{
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.start select{
+    min-height: 44px;
+    padding: 0 var(--spacing-sm);
+    font: inherit;
+    color: var(--color-on-surface-strong);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--rounded-md);
+}
+.hint-note{
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-on-surface);
+}
 .start-button, .again{
     justify-self: start;
     min-height: 44px;
@@ -247,6 +296,19 @@ q-play, q-run, q-finish, q-scores{
     gap: var(--spacing-md);
     width: min(34rem, 100%);
 }
+.training-hint{
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-md);
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-on-surface);
+}
+.training-hint .case-name{
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+
 .run .diagram{
     justify-self: start;
 }

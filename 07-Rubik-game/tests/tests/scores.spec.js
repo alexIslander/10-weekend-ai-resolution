@@ -79,9 +79,10 @@ test('the scores page is one tap from play and shows a board per hint level', as
 
   await expect(page.locator('.scores')).toBeVisible();
   // ADR-0004: a mode on the scores page, with a column per hint level
-  await expect(page.locator('.mode[data-mode="random"]')).toBeVisible();
-  await expect(page.locator('.mode h3')).toHaveText('Random');
-  await expect(page.locator('.board h4')).toHaveText(['Training', 'Test']);
+  const random = page.locator('.mode[data-mode="random"]');
+  await expect(random).toBeVisible();
+  await expect(random.locator('h3')).toHaveText('Random');
+  await expect(random.locator('.board h4')).toHaveText(['Training', 'Test']);
   await expect(board(page, 'test').locator('.board-row')).toHaveCount(1);
   await expect(board(page, 'training').locator('.board-row')).toHaveCount(0);
   await expect(board(page, 'training')).toContainText('no finished runs yet');

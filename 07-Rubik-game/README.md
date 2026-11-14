@@ -10,9 +10,10 @@ trigger, step, route, AUF, group, hint level. The feature spec is
 [docs/spec.md](docs/spec.md), the settled decisions are
 [docs/adr/0001](docs/adr/0001-ask-for-the-first-trigger.md)–[0004](docs/adr/0004-boards-split-by-mode-and-hint-level.md),
 and the build order is [docs/tickets.md](docs/tickets.md). Built so far: the app
-shell and generated position data (#3), the scored `Random` run at `Test` (#4) —
-name, 57 positions, streak ladder, finish screen, per-position records — and
-boards derived from finished runs (#5) with a `scores` page.
+shell and generated position data (#3); the scored run (#4) — name, streak
+ladder, finish screen, per-position records; boards derived from finished runs
+(#5) with a `scores` page; and the three shipping modes with a selectable hint
+level (#6) — `Random`, `Grouped`, `Progressive` at `Training` or `Test`.
 
 ## Serve
 
@@ -95,7 +96,7 @@ app/src/
     core/random.mjs     the injected shuffle
     entity/             cases.json (generated), Positions.js, RunReducer.js, PlayersReducer.js
     control/            RunControl.js: the actions the screens dispatch
-    boundary/Play.js    `q-play`: the name prompt, and the way into a run
+    boundary/Play.js    `q-play`: name, mode, group, hint level, and the way into a run
     boundary/Run.js     `q-run`: question, progress, score, feedback, reveal
     boundary/Finish.js  `q-finish`: score, correct, accuracy, elapsed, the way to the board
     boundary/Scores.js  `q-scores`: a mode per section, a column per hint level
@@ -110,8 +111,14 @@ tests/                  Playwright e2e
 `quiz/core` is the only place that decides *what happens*: no DOM, no store, no
 imports outside itself. Components render its output; controls dispatch.
 
-A run is `Random` at `Test` until #6: every one of the 57 positions once, in a
-shuffled order, with the case name kept out of sight until the answer. A correct
+A run is one mode at one hint level, both chosen on the play screen. `Random`
+asks all 57 positions shuffled; `Grouped` asks one of the 14 booklet groups,
+shuffled; `Progressive` asks the 4 one-step positions, then the 32 two-step,
+then the 21 three-step, shuffled within each block. `Progressive` starts at
+`Training`, the other modes at `Test`, and the hint level can be overridden for
+any mode: `Training` keeps the case name and OLL number on screen while asking,
+`Test` shows nothing identifying until the answer. The reveal is the same at
+both levels. A correct
 answer is 10 points times a streak multiplier that climbs to 5 (**ADR-0004**);
 a miss scores nothing and resets the multiplier. Either way the answer reveals
 the position — its case name, OLL number, group, step count and route — before
@@ -124,7 +131,8 @@ Persistence decision asks: a reload resumes the run on screen and keeps the
 records, and an unfinished or reloaded run writes no score.
 
 Boards are a view, never a second copy: `core/boards.mjs` derives them from the
-finished runs on every render — one board per mode and hint level (**ADR-0004**),
+finished runs on every render — one board per mode and hint level, six today
+(**ADR-0004**),
 ranked by score, a tie going to the faster run. The `scores` page presents a
 mode as one section with a column per hint level, so a `Training` score is never
 read as a `Test` one; each row shows rank, name, score, the date the run

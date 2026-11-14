@@ -93,7 +93,9 @@ test("every mode carries one board per hint level, in plan order", () => {
 
 test("a board can be read for any mode, but only the modes that ship get a page", () => {
   assert.deepEqual(boardOf(players, { mode: "grouped", hintLevel: "test" }).map(({ score }) => score), [999]);
-  assert.deepEqual(boardsOf(players).map(({ mode }) => mode), ["random"], "only the modes that ship get a page");
+  const offered = boardsOf(players).map(({ mode }) => mode);
+  assert.deepEqual(offered, MODES, "only the modes that ship get a page");
+  assert.ok(!offered.includes("adaptive"), "a mode the game cannot run yet is not offered");
 });
 
 test("a board's anchor is one spelling that the page and the finish screen share", () => {
