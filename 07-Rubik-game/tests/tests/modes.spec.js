@@ -7,7 +7,7 @@ const cases = require('../../app/src/quiz/entity/cases.json');
 // the game is played on a phone, in portrait
 test.use({ viewport: { width: 390, height: 844 } });
 
-const groups = [...new Set(cases.positions.map(({ group }) => group))];
+const groups = cases.groups;
 
 const open = page => page.goto('localhost:3000');
 

@@ -24,8 +24,16 @@ export const defaultHintLevel = mode => (mode === "progressive" ? "training" : "
 /** What a correct answer at this streak is multiplied by. */
 export const multiplierFor = streak => Math.min(streak, STREAK_CAP);
 
-/** The 14 groups, in the booklet's order: the first position to carry each name fixes it. */
-export const groupsOf = positions => [...new Set(positions.map(({ group }) => group))];
+/**
+ * The group a run uses: the chosen one for Grouped, nothing for a mode that
+ * asks everything. A group the data no longer carries falls back to the first,
+ * so a stale persisted choice cannot break the screen.
+ * @param {string[]} groups the 14 group names, in booklet order
+ * @param {{mode?: string, group?: string|null}} choices
+ * @returns {string|undefined}
+ */
+export const groupFor = (groups, { mode, group }) =>
+  mode === "grouped" ? (groups.includes(group) ? group : groups[0]) : undefined;
 
 /**
  * The positions a mode draws from — all of them, or one group's; a grouped run

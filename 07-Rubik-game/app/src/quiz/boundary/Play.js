@@ -1,8 +1,9 @@
 import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
 import { groupChosen, hintLevelChosen, modeChosen, nameTyped, startRun } from "../control/RunControl.js";
-import { groupsOf, HINT_LEVELS, MODES, poolOf } from "../core/run.mjs";
-import { positions } from "../entity/Positions.js";
+import { groupFor, HINT_LEVELS, MODES, poolOf } from "../core/run.mjs";
+import { groups, positions } from "../entity/Positions.js";
+import { idleState } from "../entity/RunReducer.js";
 import "./Run.js";
 import { label } from "./format.js";
 
@@ -17,14 +18,13 @@ import { label } from "./format.js";
 class Play extends BElement {
 
     extractState({ run }) {
-        return run ?? { phase: "idle", name: "", mode: "random", hintLevel: "test", group: null };
+        return run ?? idleState();
     }
 
     view() {
         if (this.state.phase !== "idle") return html`<q-run></q-run>`;
         const { name = "", mode, hintLevel } = this.state;
-        const groups = groupsOf(positions);
-        const group = this.state.group ?? groups[0];
+        const group = groupFor(groups, this.state);
         const count = poolOf(positions, { mode, group }).length;
         return html`
             <form class="start" @submit=${event => this.start(event)}>

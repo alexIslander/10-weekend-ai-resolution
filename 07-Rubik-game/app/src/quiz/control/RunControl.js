@@ -1,7 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 import store from "../../store.js";
-import { answer, buildRun, groupsOf, HINT_LEVELS, MODES } from "../core/run.mjs";
-import { positions } from "../entity/Positions.js";
+import { answer, buildRun, groupFor, HINT_LEVELS, MODES } from "../core/run.mjs";
+import { groups, positions } from "../entity/Positions.js";
 
 export const nameTypedAction = createAction("nameTypedAction");
 export const modeChosenAction = createAction("modeChosenAction");
@@ -36,7 +36,7 @@ export const hintLevelChosen = (hintLevel) => {
 
 /** Chooses the group a Grouped run drills. */
 export const groupChosen = (group) => {
-    if (!groupsOf(positions).includes(group)) return;
+    if (!groups.includes(group)) return;
     store.dispatch(groupChosenAction(group));
 }
 
@@ -52,7 +52,7 @@ export const startRun = (name, { random = Math.random, now = Date.now } = {}) =>
     const player = name.trim();
     if (!player) return false;
     const { run } = store.getState();
-    const group = run.mode === "grouped" ? (run.group ?? groupsOf(positions)[0]) : undefined;
+    const group = groupFor(groups, run);
     store.dispatch(runStartedAction({
         name: player,
         mode: run.mode,

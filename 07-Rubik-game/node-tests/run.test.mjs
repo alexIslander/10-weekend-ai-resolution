@@ -9,7 +9,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
-import { accuracy, buildRun, answer, defaultHintLevel, groupsOf, poolOf } from "../app/src/quiz/core/run.mjs";
+import { groups, positions as generatedPositions } from "../app/src/quiz/entity/Positions.js";
+import { accuracy, buildRun, answer, defaultHintLevel, groupFor, poolOf } from "../app/src/quiz/core/run.mjs";
 import { emptyRecord, recordAnswer } from "../app/src/quiz/core/records.mjs";
 
 const positions = cases.positions;
@@ -150,11 +151,14 @@ test("each answer updates the position's record: attempts, correct, wrong, last 
   assert.deepEqual(recordAnswer(undefined, true, seen), once, "a position never seen before needs no special casing");
 });
 
-test("the group picker lists the 14 groups in booklet order", () => {
-  const groups = groupsOf(positions);
+test("the group picker lists the 14 groups the data carries, in booklet order", () => {
+  assert.deepEqual(generatedPositions, positions, "the entity hands out the generated file's positions");
   assert.equal(groups.length, 14);
-  assert.deepEqual(groups, [...new Set(positions.map(({ group }) => group))]);
+  assert.deepEqual(groups, cases.groups);
   assert.deepEqual(groups.slice(0, 3), ["All Edges Oriented Correctly", "T-Shapes", "Squares"]);
+  // every group is used, so the picker never offers an empty run
+  const used = new Set(positions.map(position => position.group));
+  assert.deepEqual([...used].sort(), [...groups].sort());
 });
 
 test("a Grouped run asks exactly the positions of the chosen group, shuffled", () => {
@@ -170,7 +174,7 @@ test("a Grouped run asks exactly the positions of the chosen group, shuffled", (
 });
 
 test("every group's pool is exactly that group's positions", () => {
-  const sizes = groupsOf(positions).map(group => poolOf(positions, { mode: "grouped", group }).length);
+  const sizes = groups.map(group => poolOf(positions, { mode: "grouped", group }).length);
   assert.deepEqual(sizes, [7, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 8]);
 });
 
@@ -204,4 +208,11 @@ test("Progressive starts at Training, every other mode at Test", () => {
   assert.equal(defaultHintLevel("progressive"), "training");
   assert.equal(defaultHintLevel("random"), "test");
   assert.equal(defaultHintLevel("grouped"), "test");
+});
+
+test("a grouped choice falls back to the first group when it is missing or stale", () => {
+  assert.equal(groupFor(groups, { mode: "random" }), undefined, "a mode that asks everything has no group");
+  assert.equal(groupFor(groups, { mode: "grouped", group: null }), groups[0]);
+  assert.equal(groupFor(groups, { mode: "grouped", group: "T-Shapes" }), "T-Shapes");
+  assert.equal(groupFor(groups, { mode: "grouped", group: "A group the booklet dropped" }), groups[0]);
 });

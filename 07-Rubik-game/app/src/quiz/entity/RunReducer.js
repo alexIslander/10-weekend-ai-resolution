@@ -7,7 +7,7 @@ import { defaultHintLevel } from "../core/run.mjs";
  * where it is, and what it is worth so far. The questions come from the core,
  * so nothing here decides an order or a score.
  */
-const idleState = () => ({
+export const idleState = () => ({
     phase: "idle",
     mode: "random",
     hintLevel: "test",
