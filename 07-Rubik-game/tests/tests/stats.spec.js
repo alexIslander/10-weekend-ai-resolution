@@ -31,36 +31,26 @@ const record = (attempts, correct, lastSeenAt = DAY) => ({
   streak: 0
 });
 
-/** The run slice as the play screen leaves it: idle, under the last name used. */
-const idle = (name = '') => ({
-  phase: 'idle',
-  mode: 'random',
-  hintLevel: 'test',
-  group: null,
-  name,
-  questions: [],
-  index: 0,
-  given: null,
-  score: 0,
-  streak: 0,
-  correct: 0,
-  complete: false,
-  startedAt: null,
-  finishedAt: null
-});
-
 /**
- * Puts a whole store state in localStorage, the way the template persists it.
- * The app writes only on a dispatch, so the next load starts from this state.
+ * Puts the players in localStorage, the way the template persists them, then
+ * loads the play screen and types the name the stats page will report on — the
+ * same two taps a player makes. Nothing is seeded on a later reload.
  */
-const seed = async (page, players, runState, path = '/stats') => {
-  const state = runState ? { run: runState, players } : { players };
-  await page.goto(`localhost:3000${path}`);
-  await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify(value)), [KEY, state]);
+const openPlay = async (page, players, name = 'ada') => {
+  await page.goto('localhost:3000');
+  await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify({ players: value })), [KEY, players]);
   await page.reload();
+  if (name) await page.getByLabel('Name').fill(name);
 };
 
-const storedState = page => page.evaluate(key => JSON.parse(localStorage.getItem(key) || 'null'), KEY);
+/** The play screen, one tap later: the stats page. */
+const openStats = async (page, players, name = 'ada') => {
+  await openPlay(page, players, name);
+  await page.getByRole('link', { name: 'stats' }).click();
+  await expect(page.locator('.stats')).toBeVisible();
+};
+
+const storedPlayers = page => page.evaluate(key => (JSON.parse(localStorage.getItem(key) || 'null') || {}).players, KEY);
 
 const modeRow = (page, mode) => page.locator(`tr[data-mode="${mode}"]`);
 const groupRow = (page, group) => page.locator(`tr[data-group="${group}"]`);
@@ -80,24 +70,25 @@ const records = () => {
   return { [first.oll]: record(4, 1), [second.oll]: record(2, 2) };
 };
 
-test('the stats page is one tap from play and totals up the history', async ({ page }) => {
-  await seed(page, {
-    ada: { name: 'ada', positions: records(), runs: [run({ score: 120, correct: 40 })] }
-  }, idle('ada'));
+const adaWithARun = () => ({
+  ada: { name: 'ada', positions: records(), runs: [run({ score: 120, correct: 40 })] }
+});
 
-  await page.goto('localhost:3000');
+test('the stats page is one tap from play and totals up the history', async ({ page }) => {
+  await openPlay(page, adaWithARun());
+
   await page.getByRole('link', { name: 'stats' }).click();
 
   await expect(page.locator('.stats')).toBeVisible();
   await expect(page.locator('.stats-player')).toHaveText('ada');
-  // four answers on the first position and two on the second: six attempts, three right
+  // four answers on the first position and two on the second: six answers, three right
   await expect(page.locator('.total-runs')).toHaveText('1');
   await expect(page.locator('.total-answered')).toHaveText('6');
   await expect(page.locator('.total-accuracy')).toHaveText('50%');
 });
 
 test('a mode row reports its own finished runs, accuracy and best score', async ({ page }) => {
-  await seed(page, {
+  await openStats(page, {
     ada: { name: 'ada', positions: {}, runs: [
       run({ score: 120, correct: 40 }),
       run({ score: 250, correct: 30, hintLevel: 'training' }),
@@ -105,7 +96,7 @@ test('a mode row reports its own finished runs, accuracy and best score', async 
       // a run that never finished counts for nothing, however good it looks
       run({ score: 9999, correct: 57, finishedAt: null })
     ] }
-  }, idle('ada'));
+  });
 
   // 40 + 30 right out of 57 + 57 asked: 61%, and the better of the two scores
   await expect(modeRow(page, 'random').locator('td')).toHaveText(['2', '61%', '250']);
@@ -115,9 +106,7 @@ test('a mode row reports its own finished runs, accuracy and best score', async 
 });
 
 test('the group table covers all 14 groups in booklet order, and a group rolls up its positions', async ({ page }) => {
-  await seed(page, {
-    ada: { name: 'ada', positions: records(), runs: [run({ score: 120, correct: 40 })] }
-  }, idle('ada'));
+  await openStats(page, adaWithARun());
 
   await expect(page.locator('tr[data-group]')).toHaveCount(14);
   await expect(page.locator('tr[data-group] th')).toHaveText(cases.groups);
@@ -128,9 +117,7 @@ test('the group table covers all 14 groups in booklet order, and a group rolls u
 });
 
 test('weak spots list the worst positions with attempts, accuracy and when they were last seen', async ({ page }) => {
-  await seed(page, {
-    ada: { name: 'ada', positions: records(), runs: [run({ score: 120, correct: 40 })] }
-  }, idle('ada'));
+  await openStats(page, adaWithARun());
 
   const rows = weakRows(page);
   await expect(rows).toHaveCount(2);
@@ -154,7 +141,7 @@ test('weak spots stop at ten rows, however many positions have been answered', a
   cases.positions.slice(0, 14).forEach((candidate, index) => {
     positions[candidate.oll] = record(4, index % 4, DAY + index);
   });
-  await seed(page, { ada: { name: 'ada', positions, runs: [run({ score: 120, correct: 40 })] } }, idle('ada'));
+  await openStats(page, { ada: { name: 'ada', positions, runs: [run({ score: 120, correct: 40 })] } });
 
   await expect(weakRows(page)).toHaveCount(10);
   // four positions at 0%, four at 25%, and the first two at 50% fill the ten rows
@@ -164,8 +151,8 @@ test('weak spots stop at ten rows, however many positions have been answered', a
   await expect(weakRows(page).nth(9)).toHaveAttribute('data-accuracy', '50');
 });
 
-test('a weak spot starts a one-question drill on exactly that position, which lands on no board', async ({ page }) => {
-  await seed(page, { ada: { name: 'ada', positions: records(), runs: [] } }, idle('ada'));
+test('a weak spot starts a one-question drill on that position, whose score lands on no board', async ({ page }) => {
+  await openStats(page, { ada: { name: 'ada', positions: records(), runs: [] } });
 
   const target = position(26);
   await weakRows(page).first().getByRole('link').click();
@@ -175,24 +162,32 @@ test('a weak spot starts a one-question drill on exactly that position, which la
   await expect(page.locator('.run-status .mode-level')).toHaveText('Drill · Test');
   await expect(page.locator('img.diagram')).toHaveAttribute('src', target.image);
 
-  await optionFor(page, target.route[0].trigger).click();
+  // answer it wrong: a drill is still a question with a right answer to show
+  const wrong = ['S', 'AS', 'ET', 'WT'].find(trigger => trigger !== target.route[0].trigger);
+  await optionFor(page, wrong).click();
+  await expect(page.locator('.verdict')).toHaveAttribute('data-verdict', 'incorrect');
+  await expect(page.locator('.verdict')).toContainText(target.route[0].trigger);
+
   await page.getByRole('button', { name: 'see the result' }).click();
 
   const finish = page.locator('.finish');
   await expect(finish).toBeVisible();
   await expect(finish).toHaveAttribute('data-total', '1');
-  // a drill is practice, not a score: there is no board for it to link to
+  await expect(finish).toHaveAttribute('data-correct', '0');
+  // practice, not a score: there is no board for it to link to
   await expect(finish.locator('.board-link')).toHaveCount(0);
 
-  // the answer still went into the record the stats page reads
-  const state = await storedState(page);
-  expect(state.players.ada.positions['26'].attempts).toBe(5);
-  expect(state.players.ada.runs).toHaveLength(1);
-  expect(state.players.ada.runs[0].mode).toBe('drill');
+  // the answer went into the record the stats page reads...
+  await page.getByRole('link', { name: 'stats' }).click();
+  await expect(page.locator('.weak-row[data-oll="26"]')).toContainText('5 attempts');
+  await expect(page.locator('.weak-row[data-oll="26"]')).toContainText('20%');
+  // ...and the drill's score is on no board at all
+  await page.getByRole('link', { name: 'scores' }).click();
+  await expect(page.locator('.board-row')).toHaveCount(0);
 });
 
 test('the play screen after a drill comes back with the name, on a mode the picker offers', async ({ page }) => {
-  await seed(page, { ada: { name: 'ada', positions: records(), runs: [] } }, idle('ada'));
+  await openStats(page, { ada: { name: 'ada', positions: records(), runs: [] } });
 
   await weakRows(page).first().getByRole('link').click();
   await optionFor(page, position(26).route[0].trigger).click();
@@ -204,44 +199,17 @@ test('the play screen after a drill comes back with the name, on a mode the pick
   await expect(page.locator('.mode-line')).toHaveText('Random · Test · 57 positions');
 });
 
-test('reset stats clears the records and runs but keeps the name', async ({ page }) => {
-  await seed(page, {
-    ada: { name: 'ada', positions: records(), runs: [run({ score: 120, correct: 40 })] },
-    bob: { name: 'bob', positions: {}, runs: [run({ score: 60, correct: 20 })] }
-  }, idle('ada'));
+test('a player with answers but no finished run still sees the practice, and is told nothing finished', async ({ page }) => {
+  await openStats(page, { ada: { name: 'ada', positions: records(), runs: [] } });
 
-  await page.getByRole('button', { name: 'reset stats' }).click();
-
-  await expect(page.locator('.stats .empty')).toContainText('no answers yet');
-  await expect(weakRows(page)).toHaveCount(0);
-  const { players } = await storedState(page);
-  expect(players.ada).toEqual({ name: 'ada', positions: {}, runs: [] });
-  expect(players.bob.runs, 'another player is untouched').toHaveLength(1);
-
-  // the name is kept, so the stats page still knows whose it is
-  await expect(page.locator('.stats')).toHaveAttribute('data-name', 'ada');
+  // the ticket's empty state for "no runs" is this line, without hiding the answers
+  await expect(page.locator('.stats .empty')).toContainText('no finished runs yet');
+  await expect(page.locator('.total-runs')).toHaveText('0');
+  await expect(weakRows(page)).toHaveCount(2);
 });
 
-test('delete player removes the name, its records and its rows on every board', async ({ page }) => {
-  await seed(page, {
-    ada: { name: 'ada', positions: records(), runs: [run({ score: 120, correct: 40 })] },
-    bob: { name: 'bob', positions: {}, runs: [run({ score: 60, correct: 20 })] }
-  }, idle('ada'));
-
-  await page.getByRole('button', { name: 'delete player' }).click();
-
-  await expect(page.locator('.stats .empty')).toContainText('no player yet');
-  const { players, run: runState } = await storedState(page);
-  expect(players.ada).toBeUndefined();
-  expect(players.bob.runs).toHaveLength(1);
-  expect(runState.name, 'the device forgets the deleted name').toBe('');
-
-  await page.getByRole('link', { name: 'scores' }).click();
-  await expect(page.locator('#board-random-test .board-row .name')).toHaveText(['bob']);
-});
-
-test('a player with no answers sees an empty state and no tables', async ({ page }) => {
-  await seed(page, { ada: { name: 'ada', positions: {}, runs: [] } }, idle('ada'));
+test('a player with no history at all gets an empty page, not a table of zeros', async ({ page }) => {
+  await openStats(page, { ada: { name: 'ada', positions: {}, runs: [] } });
 
   await expect(page.locator('.stats .empty')).toContainText('no answers yet');
   await expect(page.locator('.stat-table')).toHaveCount(0);
@@ -251,8 +219,54 @@ test('a player with no answers sees an empty state and no tables', async ({ page
 });
 
 test('with no name at all the stats page points at the play screen', async ({ page }) => {
-  await seed(page, {}, idle(''));
+  await openStats(page, {}, '');
 
   await expect(page.locator('.stats .empty')).toContainText('no player yet');
   await expect(page.getByRole('button', { name: 'delete player' })).toHaveCount(0);
+});
+
+test('reset stats clears the records and runs, keeps the name, and leaves other players alone', async ({ page }) => {
+  await openStats(page, {
+    ada: { name: 'ada', positions: records(), runs: [run({ score: 120, correct: 40 })] },
+    bob: { name: 'bob', positions: {}, runs: [run({ score: 60, correct: 20 })] }
+  });
+
+  await page.getByRole('button', { name: 'reset stats' }).click();
+
+  await expect(page.locator('.stats .empty')).toContainText('no answers yet');
+  await expect(weakRows(page)).toHaveCount(0);
+  await expect(page.locator('.stats')).toHaveAttribute('data-name', 'ada');
+
+  // the runs are gone from the boards, and another player is untouched
+  await page.getByRole('link', { name: 'scores' }).click();
+  await expect(page.locator('#board-random-test .board-row .name')).toHaveText(['bob']);
+
+  // the name is kept: the next run is still recorded under it
+  await page.getByRole('link', { name: 'play' }).click();
+  await expect(page.getByLabel('Name')).toHaveValue('ada');
+  expect(Object.keys(await storedPlayers(page)).sort()).toEqual(['ada', 'bob']);
+});
+
+test('delete player removes the name, its records and its rows from the boards', async ({ page }) => {
+  await openStats(page, {
+    ada: { name: 'ada', positions: records(), runs: [
+      run({ score: 120, correct: 40 }),
+      run({ score: 90, correct: 30, hintLevel: 'training' })
+    ] },
+    bob: { name: 'bob', positions: {}, runs: [run({ score: 60, correct: 20 })] }
+  });
+
+  await page.getByRole('button', { name: 'delete player' }).click();
+
+  await expect(page.locator('.stats .empty')).toContainText('no player yet');
+
+  // ada's rows leave both boards she was on, bob's row stays
+  await page.getByRole('link', { name: 'scores' }).click();
+  await expect(page.locator('#board-random-test .board-row .name')).toHaveText(['bob']);
+  await expect(page.locator('#board-random-training .board-row')).toHaveCount(0);
+
+  // the device forgets the name too: play reopens with an empty field
+  await page.getByRole('link', { name: 'play' }).click();
+  await expect(page.getByLabel('Name')).toHaveValue('');
+  expect(Object.keys(await storedPlayers(page))).toEqual(['bob']);
 });

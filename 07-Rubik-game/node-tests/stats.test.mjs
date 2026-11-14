@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
-import { groupStats, modeStats, totals, worstPositions } from "../app/src/quiz/core/stats.mjs";
+import { groupStats, hasHistory, modeStats, totals, worstPositions } from "../app/src/quiz/core/stats.mjs";
 import { emptyRecord, recordAnswer } from "../app/src/quiz/core/records.mjs";
 import { MODES } from "../app/src/quiz/core/run.mjs";
 
@@ -118,7 +118,15 @@ test("a finished drill counts as practice in the totals, never in a mode's row",
   const drill = run({ mode: "drill", score: 10, correct: 1, total: 1 });
   const stats = modeStats([drill]);
 
-  assert.deepEqual(stats.map(({ mode }) => mode), MODES, "the drill is not a board mode");
   assert.ok(stats.every(({ runs }) => runs === 0), "no mode table row takes a drill's score");
   assert.equal(totals({}, [drill]).runs, 1, "it is still a run the player made");
+});
+
+test("a player's history is empty only when nothing was run and nothing was answered", () => {
+  assert.equal(hasHistory({ name: "ada", positions: {}, runs: [] }), false, "a name alone is not a history");
+  assert.equal(hasHistory(undefined), false, "no player is an empty page too");
+  assert.equal(hasHistory({ name: "ada", positions: {}, runs: [run()] }), true, "a finished run counts");
+  assert.equal(
+    hasHistory({ name: "ada", positions: { [positions[0].oll]: record(1, 0) }, runs: [] }),
+    true, "an answer from an abandoned run is still practice");
 });

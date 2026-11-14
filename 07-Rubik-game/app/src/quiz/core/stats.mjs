@@ -8,8 +8,16 @@ import { accuracy, MODES } from "./run.mjs";
 /**
  * @typedef {import("./run.mjs").FinishedRun} FinishedRun
  * @typedef {import("./records.mjs").PositionRecord} PositionRecord
- * @typedef {{oll: number, name: string, group: string}} Position
+ * @typedef {{oll: number, name: string, group: string}} PositionRef the fields the rollups read
  */
+
+/**
+ * Whether a player's history holds anything worth reporting: a finished run, or
+ * at least one answer. Both are practice; an empty record is the only empty page.
+ * @param {{runs?: object[], positions?: Object<number, object>}|undefined} player
+ */
+export const hasHistory = (player) =>
+  (player?.runs?.length ?? 0) > 0 || Object.keys(player?.positions ?? {}).length > 0;
 
 /** A run counts once it reached its finish screen. */
 const finished = run => Number.isFinite(run.finishedAt);
@@ -54,7 +62,7 @@ export const groupStats = (positions, records = {}) => {
 /**
  * The positions worth practising: lowest accuracy first, the position with more
  * evidence first on a tie, and never one that was never asked.
- * @param {Position[]} positions
+ * @param {PositionRef[]} positions
  * @param {Object<number, PositionRecord>} records
  * @param {number} limit how many rows at most
  */

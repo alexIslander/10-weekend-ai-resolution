@@ -23,3 +23,6 @@ stats page have history to read on the day they are built.
 - An abandoned run is discarded; only a finished run reaches a board.
 - Wrong answers are revealed and the run moves on. There is no re-queue — that
   is what `Adaptive` and the stats page are for.
+- A `Drill` — one position, launched from a weak spot — is a run that carries a
+  mode, so its answer is recorded, but it is not one of the six: the picker
+  never offers it and no board ranks it.

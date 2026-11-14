@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
+import { playerDeletedAction } from "../control/PlayersControl.js";
 import { answerGivenAction, groupChosenAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runStartedAction } from "../control/RunControl.js";
 import { defaultHintLevel, nextRun } from "../core/run.mjs";
 
@@ -50,6 +51,9 @@ export const run = createReducer(idleState(), (builder) => {
             state.phase = "finished";
             state.finishedAt = at;
         }
+    }).addCase(playerDeletedAction, (state, { payload: name }) => {
+        // the name was only ever a player's: once that player is gone, so is it
+        if (state.name === name) state.name = "";
     }).addCase(runResetAction, (state) => {
         // the next run starts the way this one did, under the same name — a
         // drill hands the screen back to the picker's default

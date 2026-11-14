@@ -2,16 +2,13 @@ import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
 import { deletePlayer, resetStats } from "../control/PlayersControl.js";
 import { startDrill } from "../control/RunControl.js";
-import { groupStats, modeStats, totals, worstPositions } from "../core/stats.mjs";
+import { groupStats, hasHistory, modeStats, totals, worstPositions } from "../core/stats.mjs";
 import { positions } from "../entity/Positions.js";
-import { date, label } from "./format.js";
-
-/** How many weak spots the list shows; the core decides which, this screen only asks. */
-const WEAK_SPOTS = 10;
+import { date, label, percentage } from "./format.js";
 
 /**
  * The stats page: what the player's answers add up to. Accuracy per mode, the
- * rollup over the 14 groups, the ten positions worth practising next, and the
+ * rollup over the 14 groups, the positions worth practising next, and the
  * lifetime totals — all read from the records the run screen writes, never
  * stored a second time.
  *
@@ -31,44 +28,41 @@ class Stats extends BElement {
         return html`
             <article class="stats" data-name="${name}">
                 <h2>Stats</h2>
-                ${player && this.hasHistory(player)
-                    ? html`
-                        <p class="stats-player">${player.name}</p>
-                        ${this.totalsView(player)}
-                        ${this.modesView(player)}
-                        ${this.groupsView(player)}
-                        ${this.weakView(player)}
-                        ${this.dangerView(player.name)}`
-                    : html`
-                        ${this.emptyView(name)}
-                        ${player ? this.dangerView(player.name) : nothing}`}
+                ${hasHistory(player) ? this.historyView(player) : this.emptyView(name)}
+                ${player ? this.dangerView(player.name) : nothing}
             </article>
         `;
     }
 
-    /** A record exists for the name; a name with nothing recorded still gets a page. */
-    hasHistory(player) {
-        return player.runs.length > 0 || Object.keys(player.positions).length > 0;
-    }
-
     emptyView(name) {
         return html`
-            <p class="empty">${name
-                ? "no answers yet —"
-                : "no player yet —"}
+            <p class="empty">${name ? "no answers yet —" : "no player yet —"}
                 <a href="/">${name ? "start a run" : "type a name on the play screen"}</a>
             </p>
         `;
     }
 
-    /** Lifetime totals: how many runs, how many answers, and how many of them were right. */
+    historyView(player) {
+        return html`
+            <p class="stats-player">${player.name}</p>
+            ${player.runs.length === 0
+                ? html`<p class="empty">no finished runs yet — the answers below come from runs that did not finish</p>`
+                : nothing}
+            ${this.totalsView(player)}
+            ${this.modesView(player)}
+            ${this.groupsView(player)}
+            ${this.weakView(player)}
+        `;
+    }
+
+    /** Lifetime totals: runs finished, answers given, and how many of those were right. */
     totalsView(player) {
         const { runs, answered, accuracy } = totals(player.positions, player.runs);
         return html`
             <dl class="totals">
                 <dt>Runs</dt><dd class="total-runs">${runs}</dd>
-                <dt>Positions answered</dt><dd class="total-answered">${answered}</dd>
-                <dt>Accuracy</dt><dd class="total-accuracy">${accuracy}%</dd>
+                <dt>Answers given</dt><dd class="total-answered">${answered}</dd>
+                <dt>Accuracy</dt><dd class="total-accuracy">${percentage(accuracy)}</dd>
             </dl>
         `;
     }
@@ -91,7 +85,7 @@ class Stats extends BElement {
                             <tr data-mode="${row.mode}">
                                 <th scope="row">${label(row.mode)}</th>
                                 <td>${row.runs}</td>
-                                <td>${row.accuracy}%</td>
+                                <td>${percentage(row.accuracy)}</td>
                                 <td>${row.best}</td>
                             </tr>`)}
                     </tbody>
@@ -118,7 +112,7 @@ class Stats extends BElement {
                             <tr data-group="${row.group}">
                                 <th scope="row">${row.group}</th>
                                 <td>${row.attempts}</td>
-                                <td>${row.accuracy}%</td>
+                                <td>${percentage(row.accuracy)}</td>
                             </tr>`)}
                     </tbody>
                 </table>
@@ -126,8 +120,9 @@ class Stats extends BElement {
         `;
     }
 
+    /** The ten weakest positions, as the core ranks them: lowest accuracy first. */
     weakView(player) {
-        const rows = worstPositions(positions, player.positions, WEAK_SPOTS);
+        const rows = worstPositions(positions, player.positions);
         return html`
             <section class="stat-section">
                 <h3>Weak spots</h3>
@@ -148,13 +143,13 @@ class Stats extends BElement {
             <li class="weak-row" data-oll="${oll}" data-accuracy="${accuracy}">
                 <a class="drill" href="/" @click=${event => { if (!startDrill(oll)) event.preventDefault(); }}>
                     <span class="weak-name">${name}</span>
-                    <span class="weak-accuracy">${accuracy}%</span>
+                    <span class="weak-accuracy">${percentage(accuracy)}</span>
                     <span class="weak-detail">
                         <span class="weak-oll">OLL ${oll}</span>
                         <span class="weak-group">${group}</span>
                         <span class="weak-attempts">${attempts} ${attempts === 1 ? "attempt" : "attempts"}</span>
                     </span>
-                    <span class="weak-seen">last seen ${Number.isFinite(lastSeenAt) ? date(lastSeenAt) : "never"}</span>
+                    <span class="weak-seen">last seen ${date(lastSeenAt)}</span>
                 </a>
             </li>
         `;

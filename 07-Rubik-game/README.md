@@ -150,7 +150,8 @@ independent histories.
 The `stats` page reads the same records. Accuracy per mode comes from finished
 runs only — an abandoned run never inflates it — while the group table, the weak
 spots and the totals count every answer, which is what makes practice visible
-even before a run is finished. All 14 groups are listed in booklet order, a
+even before a run is finished. The totals therefore read runs, answers given and
+the accuracy over those answers. All 14 groups are listed in booklet order, a
 group never played reading zero. The weak-spot list is the ten answered
 positions with the lowest accuracy, ties going to the position with more
 evidence; it never invents a row for a position that was never asked, and each
@@ -165,7 +166,8 @@ reopens on `Random` afterwards.
 the next run starts from zero under the same identity. `delete player` removes
 the record and the remembered name outright: the name's rows leave every board
 and the device keeps no trace of it. A name with no answers yet gets an empty
-state rather than a page of zeros.
+state rather than a page of zeros, and a player who has answers but no finished
+run is told so above the tables instead of being shown an empty page.
 
 Elapsed is wall-clock from the start of the run, so a run resumed after a reload
 carries its downtime. It ranks ties only and is never a deadline, so the cost is

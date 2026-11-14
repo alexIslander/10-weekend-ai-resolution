@@ -10,6 +10,9 @@ export const date = milliseconds => {
     return `${finished.getFullYear()}-${pad(finished.getMonth() + 1)}-${pad(finished.getDate())}`;
 };
 
+/** A core accuracy as a player reads it, e.g. `33%`. */
+export const percentage = value => `${value}%`;
+
 /** Elapsed time as a player reads it, never as a countdown (ADR-0004). */
 export const duration = milliseconds => {
     const seconds = Math.max(0, Math.round(milliseconds / 1000));

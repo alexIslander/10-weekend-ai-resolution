@@ -1,6 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
 import store from "../../store.js";
-import { nameTypedAction } from "./RunControl.js";
 
 export const statsResetAction = createAction("statsResetAction");
 export const playerDeletedAction = createAction("playerDeletedAction");
@@ -31,6 +30,5 @@ export const deletePlayer = (name) => {
     const player = (name ?? "").trim();
     if (!player) return false;
     store.dispatch(playerDeletedAction(player));
-    store.dispatch(nameTypedAction(""));
     return true;
 }

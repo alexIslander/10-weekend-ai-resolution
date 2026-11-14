@@ -66,6 +66,15 @@ _Avoid_: Hard, exam, quiz, blind
 One play of a mode from the first position to the last, ending in one score.
 _Avoid_: Game, session, round
 
+**Drill**:
+A run of one position, started from a `weak spot`: the question is asked at
+`Test` and the answer is recorded, but no board ranks its score.
+_Avoid_: Practice run, retry, single run
+
+**Weak spot**:
+A position the player has answered and sits among the lowest accuracies of.
+_Avoid_: Weak position, problem case
+
 **Priority**:
 A position's rank inside an `Adaptive` run — how much it is worth practising
 next, judged from the player's record of it.

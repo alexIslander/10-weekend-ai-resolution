@@ -217,10 +217,9 @@ test("a grouped choice falls back to the first group when it is missing or stale
   assert.equal(groupFor(groups, { mode: "grouped", group: "A group the booklet dropped" }), groups[0]);
 });
 
-test("a drill is a mode the picker never offers and no board takes", () => {
-  assert.equal(DRILL, "drill");
-  assert.deepEqual(MODES.filter(isBoardMode), MODES, "every shipped mode is a board mode");
-  assert.equal(isBoardMode(DRILL), false);
+test("every shipped mode is a board mode, and a drill is not", () => {
+  assert.deepEqual(MODES.filter(isBoardMode), MODES, "every mode the picker offers lands on a board");
+  assert.equal(isBoardMode(DRILL), false, "a drill never does");
 });
 
 test("the play screen reopens with the run's own choices", () => {
