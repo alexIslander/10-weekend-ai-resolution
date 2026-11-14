@@ -58,7 +58,8 @@ export const answerWith = (trigger, { now = Date.now } = {}) => {
         index: run.index,
         total: run.questions.length,
         score: run.score,
-        streak: run.streak
+        streak: run.streak,
+        correct: run.correct
     });
     store.dispatch(answerGivenAction({ given: trigger, question, outcome, name: run.name, at: now() }));
 }

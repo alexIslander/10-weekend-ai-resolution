@@ -30,12 +30,15 @@ export const buildRun = (positions, { mode = "random", random }) => {
   return shuffle(positions, random).map(position => askPosition(position, random));
 };
 
+/** Correct answers as a whole percentage, for a result screen or a stats row. */
+export const accuracy = (correct, total) => (total === 0 ? 0 : Math.round((correct / total) * 100));
+
 /**
  * Judges an answer inside a run and says what it was worth.
  * @param {{expected: string}} question
  * @param {string} given the trigger the player tapped
- * @param {{index: number, total: number, score: number, streak: number}} progress
- * @returns {{correct: boolean, expected: string, points: number, streak: number, score: number, complete: boolean}}
+ * @param {{index: number, total: number, score: number, streak: number, correct: number}} progress
+ * @returns {{correct: boolean, expected: string, points: number, streak: number, score: number, correctCount: number, complete: boolean}}
  */
 export const answer = (question, given, progress) => {
   const { correct, expected } = evaluateAnswer(question, given);
@@ -47,13 +50,7 @@ export const answer = (question, given, progress) => {
     points,
     streak,
     score: progress.score + points,
+    correctCount: progress.correct + (correct ? 1 : 0),
     complete: progress.index + 1 >= progress.total,
   };
 };
-
-/**
- * The multiplier the next correct answer would earn, for the score line on
- * screen.
- * @param {number} streak
- */
-export const nextMultiplier = streak => multiplierFor(streak + 1);

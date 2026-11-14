@@ -11,8 +11,7 @@ trigger, step, route, AUF, group, hint level. The feature spec is
 [docs/adr/0001](docs/adr/0001-ask-for-the-first-trigger.md)–[0004](docs/adr/0004-boards-split-by-mode-and-hint-level.md),
 and the build order is [docs/tickets.md](docs/tickets.md). Built so far: the app
 shell and generated position data (#3), and the scored `Random` run at `Test`
-(#4) — name, 57 positions, streak ladder, finish screen, per-position records in
-memory.
+(#4) — name, 57 positions, streak ladder, finish screen, per-position records.
 
 ## Serve
 
@@ -27,8 +26,8 @@ cd app
 npx serve -s src        # http://localhost:3000, falls back to index.html for client-side routes
 ```
 
-The fallback matters: `/` renders the drill, and a reload of any nested route
-must reach `index.html`. `zws.sh --single` (from the template) or browsersync
+The fallback matters: `/` renders the play screen, and a reload of any nested
+route must reach `index.html`. `zws.sh --single` (from the template) or browsersync
 serve the same directory.
 
 ## Test
@@ -110,11 +109,17 @@ imports outside itself. Components render its output; controls dispatch.
 A run is `Random` at `Test` until #6: every one of the 57 positions once, in a
 shuffled order, with the case name kept out of sight until the answer. A correct
 answer is 10 points times a streak multiplier that climbs to 5 (**ADR-0004**);
-a miss scores nothing, resets the multiplier and reveals the position so it can
-be studied. Every answer updates the player's per-position record
+a miss scores nothing and resets the multiplier. Either way the answer reveals
+the position — its case name, OLL number, group, step count and route — before
+the next question. Every answer updates the player's per-position record
 (`attempts`, `correct`, `wrong`, `lastSeenAt`, `streak`), and a finished run is
 appended to that player's history — the data the boards (#5) and stats (#7)
 will read.
+
+State lives in the template's single localStorage key, exactly as the spec's
+Persistence decision asks: a reload resumes the run on screen and keeps the
+records, and an unfinished run writes no score. Presentation of those records —
+the boards — is #5.
 
 ## Deviations from the template
 
@@ -124,7 +129,7 @@ ticket asked for it or because a test needed it, and each is deliberate:
 
 - `app/src/bookmarks/` is gone, together with its reducer, route, nav entry,
   page title and Playwright spec. Its component styles in `style.css` are
-  replaced by the drill's.
+  replaced by the run screen's.
 - `app/src/style.css` keeps the template's tokens, grid and container queries;
   the phone layout is made full-bleed by a media query, because the body cannot
   query its own container size.

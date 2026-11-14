@@ -1,8 +1,7 @@
 import BElement from "../../BElement.js";
 import { html } from "lit-html";
 import { resetRun } from "../control/RunControl.js";
-
-const percent = (part, total) => (total === 0 ? 0 : Math.round((part / total) * 100));
+import { accuracy } from "../core/run.mjs";
 
 /** Elapsed time as a player reads it, never as a countdown (ADR-0004). */
 const duration = milliseconds => {
@@ -30,7 +29,7 @@ class Finish extends BElement {
                 <dl class="result">
                     <dt>Score</dt><dd class="final-score">${score}</dd>
                     <dt>Correct</dt><dd>${correct} of ${total}</dd>
-                    <dt>Accuracy</dt><dd>${percent(correct, total)}%</dd>
+                    <dt>Accuracy</dt><dd>${accuracy(correct, total)}%</dd>
                     <dt>Elapsed</dt><dd>${duration((finishedAt ?? 0) - (startedAt ?? 0))}</dd>
                 </dl>
                 <button class="again" @click=${() => resetRun()}>start another run</button>

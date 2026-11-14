@@ -5,6 +5,9 @@ import { evaluateAnswer } from "../core/drill.mjs";
 import { positionOf } from "../entity/Positions.js";
 import "./Finish.js";
 
+/** `test` -> `Test`, `progressive` -> `Progressive`: one rule for every mode and level. */
+const label = value => (value ? value.charAt(0).toUpperCase() + value.slice(1) : "");
+
 /** How the four triggers read with a thumb on them. */
 const TRIGGER_NAMES = {
     S: "Sune",
@@ -15,8 +18,8 @@ const TRIGGER_NAMES = {
 
 /**
  * The run screen: one position at a time, the four triggers shuffled per
- * question, progress and score on top, immediate feedback. A miss reveals the
- * position so it can be studied; a hit moves straight on.
+ * question, progress, mode and score on top, immediate feedback. Every answer
+ * reveals the position so it can be studied; the next question is one tap away.
  *
  * Renders the core's questions; every rule lives in core/run.mjs.
  */
@@ -42,6 +45,7 @@ class Run extends BElement {
             <article class="run" data-index="${run.index + 1}" data-total="${total}">
                 <header class="run-status">
                     <span class="progress">${run.index + 1} / ${total}</span>
+                    <span class="mode-level">${label(run.mode)} · ${label(run.hintLevel)}</span>
                     <span class="score">${run.score} points</span>
                 </header>
                 <img class="diagram" src="${position.image}"
@@ -57,7 +61,7 @@ class Run extends BElement {
                         </button>`)}
                 </div>
                 ${verdict ? this.verdictView(verdict) : nothing}
-                ${verdict && !verdict.correct ? this.revealView(position) : nothing}
+                ${verdict ? this.revealView(position) : nothing}
                 ${verdict
                     ? html`<button class="next" @click=${() => nextQuestion()}>
                         ${run.index + 1 === total ? "see the result" : "next position"}

@@ -27,5 +27,5 @@ gives for the diagram on screen, and can therefore answer right or wrong on
 purpose instead of guessing. It runs at a portrait phone viewport in Chromium,
 Firefox and WebKit; the full 57-position run runs once, in Chromium.
 
-Browser-free tests (the generated data and the drill's rules) are `node --test`
+Browser-free tests (the generated data and the run's rules) are `node --test`
 from the project root, not here — nothing needs installing for those.

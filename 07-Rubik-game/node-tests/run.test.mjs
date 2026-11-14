@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
-import { buildRun, answer } from "../app/src/quiz/core/run.mjs";
+import { accuracy, buildRun, answer } from "../app/src/quiz/core/run.mjs";
 import { emptyRecord, recordAnswer } from "../app/src/quiz/core/records.mjs";
 
 const positions = cases.positions;
@@ -23,12 +23,18 @@ const seeded = seed => {
   };
 };
 
-const start = { index: 0, total: 57, score: 0, streak: 0 };
+const start = { index: 0, total: 57, score: 0, streak: 0, correct: 0 };
 
 /** Answers a question correctly and returns the progress after it. */
 const step = (progress, question) => {
   const outcome = answer(question, question.expected, progress);
-  return { index: progress.index + 1, total: progress.total, score: outcome.score, streak: outcome.streak };
+  return {
+    index: progress.index + 1,
+    total: progress.total,
+    score: outcome.score,
+    streak: outcome.streak,
+    correct: outcome.correctCount
+  };
 };
 
 test("a Random run asks each of the 57 positions exactly once", () => {
@@ -58,6 +64,19 @@ test("every question carries the four triggers as options", () => {
   }
 });
 
+test("the options come in a different order from question to question", () => {
+  const run = buildRun(positions, { mode: "random", random: seeded(4) });
+  const orders = new Set(run.map(({ options }) => options.join(" ")));
+  assert.ok(orders.size > 1, "the four triggers were offered in one fixed order");
+});
+
+test("accuracy is a whole percentage of the questions asked", () => {
+  assert.equal(accuracy(0, 57), 0);
+  assert.equal(accuracy(56, 57), 98);
+  assert.equal(accuracy(57, 57), 100);
+  assert.equal(accuracy(0, 0), 0);
+});
+
 test("an unknown mode is refused instead of silently guessing", () => {
   assert.throws(() => buildRun(positions, { mode: "grouped", random: seeded(1) }), /unsupported mode/);
 });
@@ -69,7 +88,7 @@ test("consecutive correct answers are worth 10, 20, 30, 40, then 50 points", () 
   for (let count = 0; count < 6; count++) {
     const outcome = answer(question, "AS", progress);
     points.push(outcome.points);
-    progress = { index: progress.index + 1, total: 57, score: outcome.score, streak: outcome.streak };
+    progress = { ...progress, index: progress.index + 1, score: outcome.score, streak: outcome.streak, correct: outcome.correctCount };
   }
   assert.deepEqual(points, [10, 20, 30, 40, 50, 50], "the multiplier caps at 5");
 });
@@ -78,7 +97,7 @@ test("a wrong answer scores nothing and puts the ladder back at the first rung",
   const question = { oll: 26, expected: "AS" };
   let progress = start;
   for (let count = 0; count < 4; count++) progress = step(progress, question);
-  assert.deepEqual(progress, { index: 4, total: 57, score: 100, streak: 4 });
+  assert.deepEqual(progress, { index: 4, total: 57, score: 100, streak: 4, correct: 4 });
 
   const miss = answer(question, "S", progress);
   assert.equal(miss.correct, false);
@@ -86,26 +105,27 @@ test("a wrong answer scores nothing and puts the ladder back at the first rung",
   assert.equal(miss.streak, 0);
   assert.equal(miss.score, 100, "a miss never subtracts");
 
-  const next = answer(question, "AS", { index: 5, total: 57, score: miss.score, streak: miss.streak });
+  const next = answer(question, "AS", { index: 5, total: 57, score: miss.score, streak: miss.streak, correct: 4 });
   assert.equal(next.points, 10, "the next correct answer starts again at 10");
 });
 
 test("a miss reports the trigger that would have been right", () => {
   const question = { oll: 26, expected: "AS" };
   const miss = answer(question, "ET", start);
-  assert.deepEqual(miss, { correct: false, expected: "AS", points: 0, streak: 0, score: 0, complete: false });
+  assert.deepEqual(miss, { correct: false, expected: "AS", points: 0, streak: 0, score: 0, correctCount: 0, complete: false });
 });
 
 test("the run is complete exactly after the last position", () => {
   const run = buildRun(positions, { mode: "random", random: seeded(5) });
-  let progress = { index: 0, total: run.length, score: 0, streak: 0 };
+  let progress = { index: 0, total: run.length, score: 0, streak: 0, correct: 0 };
   run.forEach((question, index) => {
     const outcome = answer(question, question.expected, progress);
     assert.equal(outcome.complete, index === run.length - 1, `question ${index + 1}`);
-    progress = { index: progress.index + 1, total: run.length, score: outcome.score, streak: outcome.streak };
+    progress = { ...progress, index: progress.index + 1, score: outcome.score, streak: outcome.streak, correct: outcome.correctCount };
   });
   // four answers build the ladder (10+20+30+40), the remaining 53 are at the cap
   assert.equal(progress.score, 100 + 53 * 50);
+  assert.equal(progress.correct, 57);
 });
 
 test("a missed position is not asked again in the same run", () => {

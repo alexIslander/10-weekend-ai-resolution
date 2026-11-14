@@ -65,6 +65,7 @@ test('a run offers the first of 57 positions, four triggers and no case name', a
 
   await expect(progress(page)).toHaveText('1 / 57');
   await expect(score(page)).toHaveText('0 points');
+  await expect(page.locator('.run-status .mode-level')).toHaveText('Random · Test');
 
   const diagram = page.getByRole('img', { name: /position diagram/i });
   await expect(diagram).toHaveAttribute('src', /^\/img\/friedrich-oll-\d+\.png$/);
@@ -137,11 +138,18 @@ test('a correct answer is worth ten points and moves on', async ({ page }) => {
   await expect(score(page)).toHaveText('10 points');
   await expect(progress(page)).toHaveText('1 / 57');
 
+  // the reveal follows every answer, hit or miss, so the position can be studied
+  const reveal = page.locator('.reveal');
+  await expect(reveal).toBeVisible();
+  await expect(reveal.getByRole('heading')).not.toBeEmpty();
+  expect((await page.locator('.route li.trigger').first().innerText()).trim()).toBe(trigger);
+
   await next(page).click();
 
   await expect(progress(page)).toHaveText('2 / 57');
   await expect(score(page)).toHaveText('10 points');
   await expect(page.locator('.verdict')).toHaveCount(0);
+  await expect(page.locator('.reveal')).toHaveCount(0);
   await expect(page.locator('.option:enabled')).toHaveCount(4);
 });
 
