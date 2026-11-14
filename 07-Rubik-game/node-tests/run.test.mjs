@@ -12,17 +12,9 @@ import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
 import { groups, positions as generatedPositions } from "../app/src/quiz/entity/Positions.js";
 import { accuracy, buildRun, answer, defaultHintLevel, DRILL, groupFor, isBoardMode, MODES, nextRun, poolOf } from "../app/src/quiz/core/run.mjs";
 import { emptyRecord, recordAnswer } from "../app/src/quiz/core/records.mjs";
+import { seeded } from "./seeded.mjs";
 
 const positions = cases.positions;
-
-/** A repeatable random source, so a run can be replayed test by test. */
-const seeded = seed => {
-  let state = seed;
-  return () => {
-    state = (state * 1664525 + 1013904223) % 4294967296;
-    return state / 4294967296;
-  };
-};
 
 const start = { index: 0, total: 57, score: 0, streak: 0, correct: 0 };
 

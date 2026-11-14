@@ -96,12 +96,12 @@ class Run extends BElement {
      */
     routeAnswer(run) {
         const open = run.given === null;
+        const chips = run.chips ?? [];
         return html`
             <ol class="chosen" aria-label="Your route">
-                ${run.chips.length === 0
+                ${chips.length === 0
                     ? html`<li class="chosen-empty">no steps yet — tap the triggers in order</li>`
-                    : run.chips.map(trigger => html`
-                        <li class="chip" data-trigger="${trigger}">${trigger}</li>`)}
+                    : chips.map(trigger => html`<li class="chip">${trigger}</li>`)}
             </ol>
             <div class="options">
                 ${TRIGGERS.map(trigger => html`
@@ -109,7 +109,7 @@ class Run extends BElement {
                         ${TRIGGER_NAMES[trigger]}<span class="code">${trigger}</span>
                     </button>`)}
             </div>
-            <button class="submit" ?disabled=${!open || run.chips.length === 0}
+            <button class="submit" ?disabled=${!open || chips.length === 0}
                     @click=${() => submitRoute()}>submit the route</button>
         `;
     }

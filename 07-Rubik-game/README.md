@@ -133,8 +133,10 @@ with a different answer: the four triggers append to a list of chips the player
 can read, and a separate `submit the route` is the only thing that judges it.
 A one-chip answer is complete for a one-step position, a wrong first chip is
 judged no earlier than any other, and the list never says how long the route is,
-so the screen gives nothing away that the diagram does not. Credit is
-all-or-nothing: the submitted sequence must be the position's route exactly,
+so the screen gives nothing away that the diagram does not. The four triggers
+sit in a fixed pad rather than a shuffled order: that pad is how the route is
+typed, and the question here is the sequence, not which button carries it.
+Credit is all-or-nothing: the submitted sequence must be the position's route exactly,
 trigger for trigger, and only then does the reveal — which is the same one the
 trigger drills show, AUF turns included — teach what was missed. Either way the answer reveals
 the position — its case name, OLL number, group, step count and route — before

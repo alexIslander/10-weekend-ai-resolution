@@ -68,14 +68,17 @@ test('Route is a mode like the others, asking for the whole sequence at Test', a
   await expect(page.locator('.option')).toHaveCount(4);
 });
 
-test('chips append in tap order, and nothing is judged before submit', async ({ page }) => {
+test('chips append in tap order, and a wrong first chip is not judged early', async ({ page }) => {
   await open(page);
   await startRoute(page);
 
-  await optionFor(page, 'S').click();
-  await optionFor(page, 'AS').click();
+  // a chip that cannot be right, then a second one: the screen still says nothing
+  const position = await positionOnScreen(page);
+  const first = ['S', 'AS', 'ET', 'WT'].find(trigger => trigger !== position.route[0].trigger);
+  await optionFor(page, first).click();
+  await optionFor(page, position.route[0].trigger).click();
 
-  await expect(chips(page)).toHaveText(['S', 'AS']);
+  await expect(chips(page)).toHaveText([first, position.route[0].trigger]);
   await expect(page.locator('.verdict')).toHaveCount(0);
   await expect(page.locator('.reveal')).toHaveCount(0);
   await expect(page.locator('.option.correct, .option.wrong')).toHaveCount(0);
@@ -95,6 +98,29 @@ test('the screen gives the route length away neither before nor during the answe
   await optionFor(page, 'ET').click();
   await expect(page.locator('[data-steps]')).toHaveCount(0);
   await expect(page.locator('.reveal')).toHaveCount(0);
+});
+
+test('a route submitted too short is wrong, and the whole route is still revealed', async ({ page }) => {
+  await open(page);
+  await startRoute(page);
+
+  const position = await positionOnScreen(page);
+  const triggers = triggersOf(position);
+
+  if (triggers.length === 1) {
+    // a one-step position has no shorter route to submit: the button waits for the chip
+    await expect(submit(page)).toBeDisabled();
+    await optionFor(page, triggers[0]).click();
+    await expect(submit(page)).toBeEnabled();
+    return;
+  }
+
+  await tapAll(page, triggers.slice(0, -1));
+  await submit(page).click();
+
+  await expect(page.locator('.verdict')).toHaveAttribute('data-verdict', 'incorrect');
+  await expect(score(page)).toHaveText('0 points');
+  expect(await page.locator('.reveal .route li.trigger').allTextContents()).toEqual(triggers);
 });
 
 test('the exact route is accepted, and the reveal shows every step with its turns', async ({ page }) => {
@@ -176,4 +202,9 @@ test('a finished Route run lands on its own board, without retyping the name', a
   const board = page.locator('#board-route-test');
   await expect(board.locator('.board-row .name')).toHaveText(['ada']);
   await expect(board.locator('.board-row .score')).toHaveText(['10']);
+
+  // and the finished run reaches the stats like any other mode's
+  await page.getByRole('link', { name: 'stats' }).click();
+  await expect(page.locator('tr[data-mode="route"] td')).toHaveText(['1', '100%', '10']);
+  await expect(page.locator('.total-runs')).toHaveText('1');
 });

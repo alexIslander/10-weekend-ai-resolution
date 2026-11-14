@@ -9,15 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { askPosition, evaluateAnswer, TRIGGERS } from "../app/src/quiz/core/drill.mjs";
-
-/** A repeatable random source, so a run can be replayed test by test. */
-const seeded = seed => {
-  let state = seed;
-  return () => {
-    state = (state * 1664525 + 1013904223) % 4294967296;
-    return state / 4294967296;
-  };
-};
+import { seeded } from "./seeded.mjs";
 
 /** A position as the generated file carries it: three steps, first one a two-turn ET. */
 const position = {

@@ -13,17 +13,9 @@ import assert from "node:assert/strict";
 import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
 import { askRoute, evaluateAnswer } from "../app/src/quiz/core/drill.mjs";
 import { answer, buildRun, defaultHintLevel } from "../app/src/quiz/core/run.mjs";
+import { seeded } from "./seeded.mjs";
 
 const positions = cases.positions;
-
-/** A repeatable random source, so a run can be replayed test by test. */
-const seeded = seed => {
-  let state = seed;
-  return () => {
-    state = (state * 1664525 + 1013904223) % 4294967296;
-    return state / 4294967296;
-  };
-};
 
 /** A position as the generated file carries it, from the triggers alone. */
 const positionOf = (...triggers) => ({

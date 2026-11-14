@@ -41,7 +41,8 @@ export const run = createReducer(idleState(), (builder) => {
         Object.assign(state, idleState(), payload);
         state.phase = "running";
     }).addCase(chipAppendedAction, (state, { payload: trigger }) => {
-        if (state.given === null) state.chips.push(trigger);
+        // `?? []` reads a run persisted before this mode existed
+        if (state.given === null) state.chips = [...(state.chips ?? []), trigger];
     }).addCase(answerGivenAction, (state, { payload: { given, outcome } }) => {
         state.given = given;
         state.score = outcome.score;

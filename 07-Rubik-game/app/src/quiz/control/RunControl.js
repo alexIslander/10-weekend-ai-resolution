@@ -141,7 +141,7 @@ export const chipTapped = (trigger) => {
  */
 export const submitRoute = (sources) => {
     const { run } = store.getState();
-    if (run.chips.length === 0) return false;
+    if (!run.chips?.length) return false;
     return answerCurrent([...run.chips], sources);
 }
 
