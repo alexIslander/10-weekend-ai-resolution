@@ -1,0 +1,298 @@
+/* component layer: consumes the design tokens from /tokens.css (generated from DESIGN.md) */
+
+*, *::before, *::after{
+    box-sizing: border-box;
+}
+
+html{
+    height: 100%;
+}
+body{
+    min-height: 100%;
+    width: 80%;
+    margin: 0 10% 0 10%;
+    container-type: inline-size;
+
+    font-family: system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-on-surface);
+    background-color: var(--color-surface);
+}
+
+main{
+    min-height: 100dvh;
+
+    display: grid;
+    border-left: 2px solid var(--color-accent-border);
+}
+
+/* portrait first: the phone gets the whole width, the drill needs it */
+@container (max-width: 40em){
+    /* the container is the body, so a full-bleed layout is set on the body itself */
+    main{
+        grid-template-rows: auto auto 1fr auto;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+        "status"
+        "menu"
+        "view"
+        "footer";
+        padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+    nav li{
+        display: inline;
+    }
+    header{
+        margin: var(--spacing-md) 0;
+    }
+    .view{
+        padding: 0;
+    }
+}
+
+@container (min-width: 40em){
+    main{
+        grid-template-rows: 1fr 6fr 1fr;
+        grid-template-columns: 1fr 4fr;
+        grid-template-areas:
+        "status status"
+        "menu view"
+        "footer footer";
+    }
+}
+
+/* the body is the container, so it cannot query itself: a media query makes
+   the phone layout full-bleed and the side border unnecessary */
+@media (max-width: 40em){
+    body{
+        width: 100%;
+        margin: 0;
+    }
+    main{
+        border-left: none;
+    }
+}
+
+header{
+    grid-area: status;
+    margin: var(--spacing-md) auto;
+}
+footer{
+    display: flex;
+    grid-area: footer;
+    align-items: end;
+    gap: var(--spacing-xs);
+}
+
+nav{
+    grid-area: menu;
+}
+
+.view{
+    overflow: auto;
+    min-height: 80%;
+}
+
+h1{
+    margin: 0;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.125;
+    color: var(--color-on-surface-strong);
+}
+h2{
+    margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-on-surface);
+}
+
+a{
+    color: var(--color-secondary);
+    text-decoration: none;
+}
+
+:focus-visible{
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+nav ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+nav a{
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--rounded-md);
+    color: var(--color-on-surface);
+}
+nav a:hover{
+    background-color: var(--color-neutral);
+    color: var(--color-on-surface-strong);
+}
+
+q-drill{
+    display: block;
+    width: 100%;
+    padding-top: var(--spacing-md);
+}
+
+.drill{
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-md);
+    width: min(34rem, 100%);
+}
+
+/* the diagram is an 82x82 booklet drawing: scale it, never crop it, so the
+   top face and the whole ring of side stickers stay visible */
+.diagram{
+    width: min(72vw, 20rem);
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+    image-rendering: pixelated;
+    border-radius: var(--rounded-md);
+    background-color: var(--color-surface);
+}
+
+.options{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+    width: 100%;
+}
+
+.option{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    /* thumb-sized: the game is played at speed */
+    min-height: 56px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font: inherit;
+    font-weight: 700;
+    text-align: left;
+    color: var(--color-on-surface-strong);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--rounded-md);
+    cursor: pointer;
+}
+.option:hover:enabled{
+    background-color: var(--color-neutral);
+}
+.option .code{
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-on-surface);
+}
+.option:disabled{
+    opacity: 0.55;
+    cursor: default;
+}
+.option.correct{
+    opacity: 1;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+}
+.option.correct .code{
+    color: var(--color-on-primary);
+}
+.option.wrong{
+    opacity: 1;
+    color: var(--color-danger);
+    background-color: var(--color-danger-surface);
+    border-color: var(--color-danger);
+}
+
+.verdict{
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.verdict[data-verdict="incorrect"]{
+    color: var(--color-danger);
+}
+
+.reveal{
+    display: grid;
+    gap: var(--spacing-sm);
+    width: 100%;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-accent-border);
+}
+.reveal h3{
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-on-surface-strong);
+}
+.reveal dl{
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--spacing-xs) var(--spacing-md);
+    margin: 0;
+}
+.reveal dt{
+    color: var(--color-on-surface);
+}
+.reveal dd{
+    margin: 0;
+    color: var(--color-on-surface-strong);
+    font-weight: 700;
+}
+
+.route{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.route li{
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--rounded-sm);
+    font-weight: 700;
+}
+.route .trigger{
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+}
+.route .auf{
+    color: var(--color-on-neutral);
+    background-color: var(--color-neutral);
+}
+.route .arrow{
+    padding: 0;
+    font-weight: 400;
+    color: var(--color-on-surface);
+}
+
+.simulator{
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
+
+.next{
+    justify-self: start;
+    min-height: 44px;
+    padding: 0 var(--spacing-md);
+    font: inherit;
+    font-weight: 700;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--rounded-md);
+    cursor: pointer;
+}
+.next:hover{
+    background-color: color-mix(in oklab, var(--color-primary), black 8%);
+}

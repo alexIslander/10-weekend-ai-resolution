@@ -1,0 +1,1114 @@
+{
+  "groups": [
+    "All Edges Oriented Correctly",
+    "T-Shapes",
+    "Squares",
+    "C-Shapes",
+    "W-Shapes",
+    "Corners Correct, Edges Flipped",
+    "P-Shapes",
+    "I-Shapes",
+    "Fish Shapes",
+    "Knight Move Shapes",
+    "Awkward Shapes",
+    "L-Shapes",
+    "Lightning Bolts",
+    "No Edges Flipped Correctly"
+  ],
+  "positions": [
+    {
+      "oll": 26,
+      "name": "OCLL6 (Anti-Sune)",
+      "image": "/img/friedrich-oll-10.png",
+      "group": "All Edges Oriented Correctly",
+      "steps": 1,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%20R%20U2%20R%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 27,
+      "name": "OCLL7 (Sune)",
+      "image": "/img/friedrich-oll-09.png",
+      "group": "All Edges Oriented Correctly",
+      "steps": 1,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 21,
+      "name": "OCLL1 (H-Shape)",
+      "image": "/img/friedrich-oll-12.png",
+      "group": "All Edges Oriented Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "AS"
+        },
+        {
+          "auf": "none",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%20R%20U%27%20R%27%20U%20R%20U2%20R%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 22,
+      "name": "OCLL2 (Pi-Shape)",
+      "image": "/img/friedrich-oll-11.png",
+      "group": "All Edges Oriented Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U2%20R2%20U%20R2%20U%20R2%20U2%20R%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 24,
+      "name": "OCLL4 (T-Shape)",
+      "image": "/img/friedrich-oll-13.png",
+      "group": "All Edges Oriented Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "U'",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20r%20U%20R%20U%27%20r%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 25,
+      "name": "OCLL5 (L-Shape)",
+      "image": "/img/friedrich-oll-14.png",
+      "group": "All Edges Oriented Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "U2",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%27%20r%20U%20R%20U%27%20r%27%20F%20y%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 23,
+      "name": "OCLL3 (U-Shape)",
+      "image": "/img/friedrich-oll-15.png",
+      "group": "All Edges Oriented Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "U",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%20D%20R%27%20U2%20R%20D%27%20R2&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 33,
+      "name": "T1",
+      "image": "/img/friedrich-oll-53.png",
+      "group": "T-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U%20R%20U%27%20R%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 45,
+      "name": "T2",
+      "image": "/img/friedrich-oll-52.png",
+      "group": "T-Shapes",
+      "steps": 1,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 5,
+      "name": "S1",
+      "image": "/img/friedrich-oll-42.png",
+      "group": "Squares",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U'",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20R%20U%27%20R%27%20U2%20r&alg=F%20R%20U%20R%27%20U%27%20F%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 6,
+      "name": "S2",
+      "image": "/img/friedrich-oll-43.png",
+      "group": "Squares",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%20R%20U2%20r%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20U%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 34,
+      "name": "C1",
+      "image": "/img/friedrich-oll-06.png",
+      "group": "C-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%27%20U%27%20R%27%20F%27%20R%20U%20R2%20U%27%20R%27&alg=U2%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 46,
+      "name": "C2",
+      "image": "/img/friedrich-oll-05.png",
+      "group": "C-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U'",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20F%20R%27%20F%27%20R%20U%20R&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 36,
+      "name": "W1",
+      "image": "/img/friedrich-oll-55.png",
+      "group": "W-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20x%27%20U%27%20R%20U%20l%27%20U%27%20R%27%20U%27%20R%20U%20R%27%20U%20R&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 38,
+      "name": "W2",
+      "image": "/img/friedrich-oll-54.png",
+      "group": "W-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "S"
+        },
+        {
+          "auf": "U",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U%20R%20U%20R%27%20U%27%20R%20U%27%20R%27&alg=U2%20R%20U%20R%27%20U%20R%20U2%20R%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 28,
+      "name": "E1",
+      "image": "/img/friedrich-oll-08.png",
+      "group": "Corners Correct, Edges Flipped",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U2",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%27%20M%27%20U%20R%20U%27%20r%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20U2%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 57,
+      "name": "E2",
+      "image": "/img/friedrich-oll-07.png",
+      "group": "Corners Correct, Edges Flipped",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U2",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M%20U%20R%20U%27%20R%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 31,
+      "name": "P1",
+      "image": "/img/friedrich-oll-49.png",
+      "group": "P-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20U%20R&alg=U%27%20F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 32,
+      "name": "P2",
+      "image": "/img/friedrich-oll-48.png",
+      "group": "P-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "AS"
+        },
+        {
+          "auf": "none",
+          "trigger": "AS"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20B%27%20R%27%20U%27%20R%20U%20B%20U%27%20R%27&alg=U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 43,
+      "name": "P3",
+      "image": "/img/friedrich-oll-51.png",
+      "group": "P-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U2",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%27%20U%27%20F%20U%20R%20y%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 44,
+      "name": "P4",
+      "image": "/img/friedrich-oll-50.png",
+      "group": "P-Shapes",
+      "steps": 1,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 51,
+      "name": "I1",
+      "image": "/img/friedrich-oll-46.png",
+      "group": "I-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 56,
+      "name": "I4",
+      "image": "/img/friedrich-oll-47.png",
+      "group": "I-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20r%20R%27%20U%27%20R%20U%20R%27%20U%27%20R%20U%20r%27%20U%20r&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 52,
+      "name": "I2",
+      "image": "/img/friedrich-oll-45.png",
+      "group": "I-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "U'",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20B%27%20R%27%20U%27%20R%20y%20U%27%20R%20U%20R%27%20U%20R&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 55,
+      "name": "I3",
+      "image": "/img/friedrich-oll-44.png",
+      "group": "I-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%27%20R%27%20U%27%20R%20U%20R2%20F%20R2%20U%20R%27%20U%27%20R%27%20F%27%20R%20y%27&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 9,
+      "name": "F1",
+      "image": "/img/friedrich-oll-35.png",
+      "group": "Fish Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R2%20F%27%20R%20U%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 10,
+      "name": "F2",
+      "image": "/img/friedrich-oll-36.png",
+      "group": "Fish Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20F%20R%27%20F%27%20R%20U%27%20R%20U%27%20R%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 35,
+      "name": "F3",
+      "image": "/img/friedrich-oll-40.png",
+      "group": "Fish Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20F%20R%27%20F%27%20R2%20U2%20R%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 37,
+      "name": "F4",
+      "image": "/img/friedrich-oll-41.png",
+      "group": "Fish Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%20U%27%20R%27%20U%20R%20U%20R%27%20F%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 13,
+      "name": "K1",
+      "image": "/img/friedrich-oll-02.png",
+      "group": "Knight Move Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20R%20y%20r%20U%27%20r%27%20U%20r%20U%20r%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 14,
+      "name": "K2",
+      "image": "/img/friedrich-oll-01.png",
+      "group": "Knight Move Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "AS"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20F%27%20R%27%20F%20R%20U%27%20R%27%20F%27%20R&alg=U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 16,
+      "name": "K4",
+      "image": "/img/friedrich-oll-03.png",
+      "group": "Knight Move Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20r%27%20U%20R%20U%27%20R%27%20r%20U%27%20r%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 15,
+      "name": "K3",
+      "image": "/img/friedrich-oll-04.png",
+      "group": "Knight Move Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20r%20U%27%20R%27%20U%20R%20r%27%20U%20r&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20U%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 29,
+      "name": "A1",
+      "image": "/img/friedrich-oll-34.png",
+      "group": "Awkward Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%27%20R%27%20F%27%20U%20F%20R%20U%20R%27%20U%20R%20U%27%20R%27%20y%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 30,
+      "name": "A2",
+      "image": "/img/friedrich-oll-37.png",
+      "group": "Awkward Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "AS"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U2",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U2%20R%27%20U%20R%20U2%20R%27%20U%27%20F%27%20y&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20U2%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 41,
+      "name": "A3",
+      "image": "/img/friedrich-oll-38.png",
+      "group": "Awkward Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 42,
+      "name": "A4",
+      "image": "/img/friedrich-oll-39.png",
+      "group": "Awkward Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "AS"
+        },
+        {
+          "auf": "U'",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20R%27%20U2%20R%20U%20R%27%20U%20R&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 48,
+      "name": "L2",
+      "image": "/img/friedrich-oll-24.png",
+      "group": "L-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 47,
+      "name": "L1",
+      "image": "/img/friedrich-oll-25.png",
+      "group": "L-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U2",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%27%20U%27%20L%27%20U%20L%20U%27%20L%27%20U%20L%20F&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 49,
+      "name": "L3",
+      "image": "/img/friedrich-oll-27.png",
+      "group": "L-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U'",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%20r2%20U%27%20r2%20U%27%20r2%20U%20r%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 50,
+      "name": "L4",
+      "image": "/img/friedrich-oll-26.png",
+      "group": "L-Shapes",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "AS"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%27%20r2%20U%20r2%20U%20r2%20U%27%20r&alg=U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 53,
+      "name": "L5",
+      "image": "/img/friedrich-oll-28.png",
+      "group": "L-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "U'",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U2%20R%20U%20R%27%20U%27%20R%20U%20R%27%20U%20r&alg=f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 54,
+      "name": "L6",
+      "image": "/img/friedrich-oll-29.png",
+      "group": "L-Shapes",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U2%20R%27%20U%27%20R%20U%20R%27%20U%27%20R%20U%27%20r%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 7,
+      "name": "B1",
+      "image": "/img/friedrich-oll-30.png",
+      "group": "Lightning Bolts",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "S"
+        },
+        {
+          "auf": "U2",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U2%20R%27%20U%27%20R%20U%27%20r%27&alg=U%20R%20U%20R%27%20U%20R%20U2%20R%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 8,
+      "name": "B2",
+      "image": "/img/friedrich-oll-31.png",
+      "group": "Lightning Bolts",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U'",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U2%20R%20U%20R%27%20U%20r&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 11,
+      "name": "B3",
+      "image": "/img/friedrich-oll-33.png",
+      "group": "Lightning Bolts",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20M%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R2%20r&alg=U2%20R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 12,
+      "name": "B4",
+      "image": "/img/friedrich-oll-32.png",
+      "group": "Lightning Bolts",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20M%27%20U%20R%27%20U2%20R%20U%20R%27%20U%20R%20M&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 39,
+      "name": "B5",
+      "image": "/img/friedrich-oll-57.png",
+      "group": "Lightning Bolts",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "AS"
+        },
+        {
+          "auf": "U2",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20L%20U%20F%27%20U%27%20L%27%20U%20L%20F%20L%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 40,
+      "name": "B6",
+      "image": "/img/friedrich-oll-56.png",
+      "group": "Lightning Bolts",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20F%20U%20R%20U%27%20R%27%20F%27%20R&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 1,
+      "name": "O1",
+      "image": "/img/friedrich-oll-16.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "ET"
+        },
+        {
+          "auf": "U'",
+          "trigger": "AS"
+        },
+        {
+          "auf": "none",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U2%20F%20R%27%20F%27%20R2%20U2%20R%27&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 2,
+      "name": "O2",
+      "image": "/img/friedrich-oll-17.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20f%27%20F%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
+    },
+    {
+      "oll": 3,
+      "name": "O3",
+      "image": "/img/friedrich-oll-18.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U'",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20U%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 4,
+      "name": "O4",
+      "image": "/img/friedrich-oll-19.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 2,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20U%27%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    },
+    {
+      "oll": 18,
+      "name": "O6",
+      "image": "/img/friedrich-oll-21.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U2",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M%20U2%20F%20R%27%20F%27%20R2%20U2%20R%27%20y%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 19,
+      "name": "O7",
+      "image": "/img/friedrich-oll-20.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "none",
+          "trigger": "S"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20M%20U%20R%20U%27%20R%27%20U%27%20M%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
+    },
+    {
+      "oll": 17,
+      "name": "O5",
+      "image": "/img/friedrich-oll-22.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "U",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U'",
+          "trigger": "ET"
+        },
+        {
+          "auf": "none",
+          "trigger": "AS"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U2%20F%20R%27%20F%27%20R%20U%27%20R%20U%27%20R%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
+    },
+    {
+      "oll": 20,
+      "name": "O8",
+      "image": "/img/friedrich-oll-23.png",
+      "group": "No Edges Flipped Correctly",
+      "steps": 3,
+      "route": [
+        {
+          "auf": "none",
+          "trigger": "S"
+        },
+        {
+          "auf": "none",
+          "trigger": "WT"
+        },
+        {
+          "auf": "U",
+          "trigger": "ET"
+        }
+      ],
+      "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M2%20U%20R%20U%27%20R%27%20U%27%20M%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
+    }
+  ]
+}
