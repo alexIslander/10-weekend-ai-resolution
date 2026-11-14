@@ -94,7 +94,7 @@ test("every mode carries one board per hint level, in plan order", () => {
 
 test("a board can be read for any mode, but only the modes that ship get a page", () => {
   assert.deepEqual(boardOf(players, { mode: "grouped", hintLevel: "test" }).map(({ score }) => score), [999]);
-  assert.deepEqual(boardsOf(players).map(({ mode }) => mode), ["random", "grouped", "progressive"],
+  assert.deepEqual(boardsOf(players).map(({ mode }) => mode), ["random", "grouped", "progressive", "route"],
     "the page offers exactly the modes that ship");
 });
 

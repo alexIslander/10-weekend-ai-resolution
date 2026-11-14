@@ -13,9 +13,10 @@ and the build order is [docs/tickets.md](docs/tickets.md). Built so far: the app
 shell and generated position data (#3); the scored run (#4) — name, streak
 ladder, finish screen, per-position records; boards derived from finished runs
 (#5) with a `scores` page; the three shipping modes with a selectable hint level
-(#6) — `Random`, `Grouped`, `Progressive` at `Training` or `Test`; and the
-`stats` page (#7) — accuracy per mode and group, the ten weak spots with
-one-question drills, lifetime totals, reset and delete.
+(#6) — `Random`, `Grouped`, `Progressive` at `Training` or `Test`; the `stats`
+page (#7) — accuracy per mode and group, the ten weak spots with one-question
+drills, lifetime totals, reset and delete; and `Route` (#8), the mode that asks
+for the whole sequence of triggers.
 
 ## Serve
 
@@ -118,13 +119,24 @@ imports outside itself. Components render its output; controls dispatch.
 A run is one mode at one hint level, both chosen on the play screen. `Random`
 asks all 57 positions shuffled; `Grouped` asks one of the 14 booklet groups,
 shuffled; `Progressive` asks the 4 one-step positions, then the 32 two-step,
-then the 21 three-step, shuffled within each block. `Progressive` starts at
+then the 21 three-step, shuffled within each block; `Route` asks all 57 shuffled
+but wants the whole sequence rather than its first step. `Progressive` starts at
 `Training`, the other modes at `Test`, and the hint level can be overridden for
 any mode: `Training` keeps the case name and OLL number on screen while asking,
 `Test` shows nothing identifying until the answer. The reveal is the same at
 both levels. A correct
 answer is 10 points times a streak multiplier that climbs to 5 (**ADR-0004**);
-a miss scores nothing and resets the multiplier. Either way the answer reveals
+a miss scores nothing and resets the multiplier.
+
+`Route` is the same run in every other way — its own boards, its own records —
+with a different answer: the four triggers append to a list of chips the player
+can read, and a separate `submit the route` is the only thing that judges it.
+A one-chip answer is complete for a one-step position, a wrong first chip is
+judged no earlier than any other, and the list never says how long the route is,
+so the screen gives nothing away that the diagram does not. Credit is
+all-or-nothing: the submitted sequence must be the position's route exactly,
+trigger for trigger, and only then does the reveal — which is the same one the
+trigger drills show, AUF turns included — teach what was missed. Either way the answer reveals
 the position — its case name, OLL number, group, step count and route — before
 the next question. Every answer updates the player's per-position record
 (`attempts`, `correct`, `wrong`, `lastSeenAt`, `streak`), and a finished run is

@@ -102,7 +102,8 @@ test('a mode row reports its own finished runs, accuracy and best score', async 
   await expect(modeRow(page, 'random').locator('td')).toHaveText(['2', '61%', '250']);
   await expect(modeRow(page, 'grouped').locator('td')).toHaveText(['1', '75%', '30']);
   await expect(modeRow(page, 'progressive').locator('td')).toHaveText(['0', '0%', '0']);
-  await expect(page.locator('tr[data-mode]')).toHaveCount(3);
+  await expect(modeRow(page, 'route').locator('td')).toHaveText(['0', '0%', '0']);
+  await expect(page.locator('tr[data-mode]')).toHaveCount(4);
 });
 
 test('the group table covers all 14 groups in booklet order, and a group rolls up its positions', async ({ page }) => {

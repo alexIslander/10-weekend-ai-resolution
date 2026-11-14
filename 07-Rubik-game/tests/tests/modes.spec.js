@@ -39,12 +39,13 @@ const answerCorrectly = async page => {
 
 const advance = page => page.getByRole('button', { name: /next position|see the result/ }).click();
 
-test('the mode picker offers three modes, starting at Random and Test', async ({ page }) => {
+test('the mode picker offers every shipping mode, starting at Random and Test', async ({ page }) => {
   await open(page);
 
   await expect(page.getByRole('button', { name: 'Random' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('button', { name: 'Grouped' })).toHaveAttribute('aria-pressed', 'false');
   await expect(page.getByRole('button', { name: 'Progressive' })).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByRole('button', { name: 'Route' })).toHaveAttribute('aria-pressed', 'false');
   await expect(page.getByRole('button', { name: 'Test' })).toHaveAttribute('aria-pressed', 'true');
   await expect(modeLine(page)).toHaveText('Random · Test · 57 positions');
   // a group is only offered by the mode that needs one
@@ -155,10 +156,10 @@ test('the scores page holds a board per mode and hint level', async ({ page }) =
   await open(page);
   await page.getByRole('link', { name: 'scores' }).click();
 
-  await expect(page.locator('.mode h3')).toHaveText(['Random', 'Grouped', 'Progressive']);
-  for (const mode of ['random', 'grouped', 'progressive']) {
+  await expect(page.locator('.mode h3')).toHaveText(['Random', 'Grouped', 'Progressive', 'Route']);
+  for (const mode of ['random', 'grouped', 'progressive', 'route']) {
     await expect(page.locator(`.mode[data-mode="${mode}"] .board h4`)).toHaveText(['Training', 'Test']);
   }
-  await expect(page.locator('.board')).toHaveCount(6);
+  await expect(page.locator('.board')).toHaveCount(8);
   await expect(page.locator('.board .empty').first()).toHaveText('no finished runs yet');
 });
