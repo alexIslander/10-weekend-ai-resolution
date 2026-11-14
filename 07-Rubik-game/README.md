@@ -12,8 +12,10 @@ trigger, step, route, AUF, group, hint level. The feature spec is
 and the build order is [docs/tickets.md](docs/tickets.md). Built so far: the app
 shell and generated position data (#3); the scored run (#4) — name, streak
 ladder, finish screen, per-position records; boards derived from finished runs
-(#5) with a `scores` page; and the three shipping modes with a selectable hint
-level (#6) — `Random`, `Grouped`, `Progressive` at `Training` or `Test`.
+(#5) with a `scores` page; the three shipping modes with a selectable hint level
+(#6) — `Random`, `Grouped`, `Progressive` at `Training` or `Test`; and the
+`stats` page (#7) — accuracy per mode and group, the ten weak spots with
+one-question drills, lifetime totals, reset and delete.
 
 ## Serve
 
@@ -28,8 +30,8 @@ cd app
 npx serve -s src        # http://localhost:3000, falls back to index.html for client-side routes
 ```
 
-The fallback matters: `/` renders the play screen, `/scores` the boards, and a
-reload of either must reach `index.html`. `zws.sh --single` (from the template) or browsersync
+The fallback matters: `/` renders the play screen, `/stats` the stats page and
+`/scores` the boards, and a reload of any of them must reach `index.html`. `zws.sh --single` (from the template) or browsersync
 serve the same directory.
 
 ## Test
@@ -92,13 +94,15 @@ app/src/
     core/drill.mjs      pure ESM: one question and its verdict, random injected
     core/run.mjs        pure ESM: which positions a run asks, what an answer is worth
     core/boards.mjs     pure ESM: how finished runs rank on a board
+    core/stats.mjs      pure ESM: per-mode, per-group, worst-N and lifetime rollups
     core/records.mjs    pure ESM: how an answer changes a position's record
     core/random.mjs     the injected shuffle
     entity/             cases.json (generated), Positions.js, RunReducer.js, PlayersReducer.js
-    control/            RunControl.js: the actions the screens dispatch
+    control/            RunControl.js, PlayersControl.js: the actions the screens dispatch
     boundary/Play.js    `q-play`: name, mode, group, hint level, and the way into a run
     boundary/Run.js     `q-run`: question, progress, score, feedback, reveal
     boundary/Finish.js  `q-finish`: score, correct, accuracy, elapsed, the way to the board
+    boundary/Stats.js   `q-stats`: totals, per-mode and per-group accuracy, weak spots
     boundary/Scores.js  `q-scores`: a mode per section, a column per hint level
     boundary/format.js  how screens write labels, dates and durations
 scripts/
@@ -142,6 +146,26 @@ so the finish screen's "see the board" lands on the board the run just joined
 without retyping the name. A name is identity, not authentication: typing a new
 one starts writing that name's records, and two names on one device keep
 independent histories.
+
+The `stats` page reads the same records. Accuracy per mode comes from finished
+runs only — an abandoned run never inflates it — while the group table, the weak
+spots and the totals count every answer, which is what makes practice visible
+even before a run is finished. All 14 groups are listed in booklet order, a
+group never played reading zero. The weak-spot list is the ten answered
+positions with the lowest accuracy, ties going to the position with more
+evidence; it never invents a row for a position that was never asked, and each
+row shows its attempts, accuracy and the date it was last seen. A row is a link:
+it starts a one-question drill on exactly that position, at `Test`, because the
+point is to recall the trigger. A drill is a run in the books — its answer lands
+in the record — but not a mode the picker offers and not a score any board takes,
+so its finish screen shows the result without a board link, and the play screen
+reopens on `Random` afterwards.
+
+`reset stats` clears the current player's records and runs and keeps the name, so
+the next run starts from zero under the same identity. `delete player` removes
+the record and the remembered name outright: the name's rows leave every board
+and the device keeps no trace of it. A name with no answers yet gets an empty
+state rather than a page of zeros.
 
 Elapsed is wall-clock from the start of the run, so a run resumed after a reload
 carries its downtime. It ranks ties only and is never a deadline, so the cost is
