@@ -25,6 +25,13 @@ export const initRouter = (outlet, routeConfig) => {
             .filter(([, value]) => value !== undefined)
             .forEach(([name, value]) => routeComponent.setAttribute(name, value));
         outlet.replaceChildren(routeComponent);
+        // an intercepted navigation never reaches the browser's own fragment
+        // scrolling, so a deep link such as /scores#board-random-test is
+        // scrolled here, after the routed element has rendered
+        if (url.hash) {
+            const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+            target?.scrollIntoView({ block: 'start' });
+        }
         return true;
     };
 

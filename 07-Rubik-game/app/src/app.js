@@ -4,6 +4,7 @@
  */
 import { initRouter } from "./router.js";
 import './quiz/boundary/Play.js';
+import './quiz/boundary/Scores.js';
 import store from "./store.js";
 import { save } from "./localstorage/control/StorageControl.js";
 
@@ -15,6 +16,7 @@ store.subscribe(_ => {
     save(state);
 })
 initRouter(document.querySelector('.view'), [
-    { path: '/', component: 'q-play' }
+    { path: '/', component: 'q-play' },
+    { path: '/scores', component: 'q-scores' }
 ]);
 console.log("router initialized");

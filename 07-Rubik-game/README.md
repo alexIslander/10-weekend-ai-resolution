@@ -10,8 +10,9 @@ trigger, step, route, AUF, group, hint level. The feature spec is
 [docs/spec.md](docs/spec.md), the settled decisions are
 [docs/adr/0001](docs/adr/0001-ask-for-the-first-trigger.md)–[0004](docs/adr/0004-boards-split-by-mode-and-hint-level.md),
 and the build order is [docs/tickets.md](docs/tickets.md). Built so far: the app
-shell and generated position data (#3), and the scored `Random` run at `Test`
-(#4) — name, 57 positions, streak ladder, finish screen, per-position records.
+shell and generated position data (#3), the scored `Random` run at `Test` (#4) —
+name, 57 positions, streak ladder, finish screen, per-position records — and
+boards derived from finished runs (#5) with a `scores` page.
 
 ## Serve
 
@@ -26,8 +27,8 @@ cd app
 npx serve -s src        # http://localhost:3000, falls back to index.html for client-side routes
 ```
 
-The fallback matters: `/` renders the play screen, and a reload of any nested
-route must reach `index.html`. `zws.sh --single` (from the template) or browsersync
+The fallback matters: `/` renders the play screen, `/scores` the boards, and a
+reload of either must reach `index.html`. `zws.sh --single` (from the template) or browsersync
 serve the same directory.
 
 ## Test
@@ -89,13 +90,15 @@ app/src/
   quiz/
     core/drill.mjs      pure ESM: one question and its verdict, random injected
     core/run.mjs        pure ESM: which positions a run asks, what an answer is worth
+    core/boards.mjs     pure ESM: how finished runs rank on a board
     core/records.mjs    pure ESM: how an answer changes a position's record
     core/random.mjs     the injected shuffle
     entity/             cases.json (generated), Positions.js, RunReducer.js, PlayersReducer.js
     control/            RunControl.js: the actions the screens dispatch
     boundary/Play.js    `q-play`: the name prompt, and the way into a run
     boundary/Run.js     `q-run`: question, progress, score, feedback, reveal
-    boundary/Finish.js  `q-finish`: score, correct, accuracy, elapsed
+    boundary/Finish.js  `q-finish`: score, correct, accuracy, elapsed, the way to the board
+    boundary/Scores.js  `q-scores`: one board per mode and hint level
 scripts/
   generate-cases.mjs    booklet -> cases.json + img/
   assert-cases.mjs      what the generated file must satisfy (used by both)
@@ -113,13 +116,20 @@ a miss scores nothing and resets the multiplier. Either way the answer reveals
 the position — its case name, OLL number, group, step count and route — before
 the next question. Every answer updates the player's per-position record
 (`attempts`, `correct`, `wrong`, `lastSeenAt`, `streak`), and a finished run is
-appended to that player's history — the data the boards (#5) and stats (#7)
-will read.
+appended to that player's history — the data the boards and stats (#7) read.
 
 State lives in the template's single localStorage key, exactly as the spec's
 Persistence decision asks: a reload resumes the run on screen and keeps the
-records, and an unfinished run writes no score. Presentation of those records —
-the boards — is #5.
+records, and an unfinished or reloaded run writes no score.
+
+Boards are a view, never a second copy: `core/boards.mjs` derives them from the
+finished runs on every render — one board per mode and hint level (**ADR-0004**),
+ranked by score, a tie going to the faster run. The `scores` page shows every
+board the game offers; a board with no finished run says so. Each board is
+anchored as `#board-<mode>-<hint level>`, so the finish screen's "see the board"
+lands on the board the run just joined without retyping the name. A name is
+identity, not authentication: typing a new one starts writing that name's
+records, and two names on one device keep independent histories.
 
 ## Deviations from the template
 
@@ -137,5 +147,7 @@ ticket asked for it or because a test needed it, and each is deliberate:
   the drill now uses.
 - `tests/playwright.config.js` enables the `webServer` block the template leaves
   commented out, so one command runs the suite against the static server.
-- `app/src/router.js` is the template's; only the route example in its doc
-  comment is renamed, so no sample context name survives.
+- `app/src/router.js` is the template's, with two changes: the route example in
+  its doc comment is renamed (so no sample context name survives), and an
+  intercepted navigation with a fragment scrolls to it — the Navigation API's
+  own fragment handling never runs once the navigation is intercepted.

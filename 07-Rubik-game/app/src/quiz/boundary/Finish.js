@@ -11,8 +11,8 @@ const duration = milliseconds => {
 };
 
 /**
- * The finish screen: what the run was worth. Score, correct count, accuracy and
- * elapsed time — nothing else, and no board yet (that is a later ticket).
+ * The finish screen: what the run was worth — score, correct count, accuracy and
+ * elapsed time — and the way to the board this run just landed on.
  */
 class Finish extends BElement {
 
@@ -21,7 +21,7 @@ class Finish extends BElement {
     }
 
     view() {
-        const { score, correct, questions, startedAt, finishedAt } = this.state;
+        const { score, correct, questions, startedAt, finishedAt, mode, hintLevel } = this.state;
         const total = questions ? questions.length : 0;
         return html`
             <section class="finish" data-score="${score}" data-correct="${correct}" data-total="${total}">
@@ -32,6 +32,7 @@ class Finish extends BElement {
                     <dt>Accuracy</dt><dd>${accuracy(correct, total)}%</dd>
                     <dt>Elapsed</dt><dd>${duration((finishedAt ?? 0) - (startedAt ?? 0))}</dd>
                 </dl>
+                <a class="board-link" href="/scores#board-${mode}-${hintLevel}">see the board</a>
                 <button class="again" @click=${() => resetRun()}>start another run</button>
             </section>
         `;

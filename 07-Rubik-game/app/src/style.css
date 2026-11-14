@@ -136,7 +136,7 @@ nav a:hover{
     color: var(--color-on-surface-strong);
 }
 
-q-play, q-run, q-finish{
+q-play, q-run, q-finish, q-scores{
     display: block;
     width: 100%;
     padding-top: var(--spacing-md);
@@ -183,8 +183,18 @@ q-play, q-run, q-finish{
     opacity: 0.5;
     cursor: default;
 }
-.start-button:hover:enabled, .again:hover{
+.start-button:hover:enabled{
     background-color: color-mix(in oklab, var(--color-primary), black 8%);
+}
+
+/* the board is the next step after a run; another run is the alternative */
+.again{
+    color: var(--color-primary);
+    background-color: transparent;
+    border: 1px solid var(--color-primary);
+}
+.again:hover{
+    background-color: var(--color-neutral);
 }
 
 .run-status{
@@ -387,4 +397,83 @@ q-play, q-run, q-finish{
 }
 .next:hover{
     background-color: color-mix(in oklab, var(--color-primary), black 8%);
+}
+
+.board-link{
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    min-height: 44px;
+    padding: 0 var(--spacing-md);
+    font-weight: 700;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-radius: var(--rounded-md);
+}
+.board-link:hover{
+    background-color: color-mix(in oklab, var(--color-primary), black 8%);
+}
+
+.scores{
+    display: grid;
+    gap: var(--spacing-md);
+    width: min(34rem, 100%);
+}
+.scores h2{
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-on-surface-strong);
+}
+.scores-intro{
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-on-surface);
+}
+
+.board{
+    display: grid;
+    gap: var(--spacing-sm);
+    scroll-margin-top: var(--spacing-md);
+}
+.board h3{
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.board .empty{
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-on-surface);
+}
+.board-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+.board-table th{
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 12px;
+    font-weight: 400;
+    text-align: left;
+    color: var(--color-on-surface);
+    border-bottom: 1px solid var(--color-accent-border);
+}
+.board-table td{
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-bottom: 1px solid var(--color-accent-border);
+}
+.board-table .rank,
+.board-table .score{
+    width: 1%;
+    text-align: right;
+    white-space: nowrap;
+}
+.board-table .name{
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.board-table .date{
+    font-size: 12px;
+    color: var(--color-on-surface);
 }

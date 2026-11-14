@@ -15,6 +15,9 @@ export const STREAK_CAP = 5;
 /** The modes the game knows today; later tickets add the rest (ADR-0002). */
 export const MODES = ["random"];
 
+/** The two hint levels every mode runs at (ADR-0002). */
+export const HINT_LEVELS = ["training", "test"];
+
 /** What a correct answer at this streak is multiplied by. */
 export const multiplierFor = streak => Math.min(streak, STREAK_CAP);
 
