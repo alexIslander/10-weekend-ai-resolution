@@ -98,7 +98,8 @@ app/src/
     boundary/Play.js    `q-play`: the name prompt, and the way into a run
     boundary/Run.js     `q-run`: question, progress, score, feedback, reveal
     boundary/Finish.js  `q-finish`: score, correct, accuracy, elapsed, the way to the board
-    boundary/Scores.js  `q-scores`: one board per mode and hint level
+    boundary/Scores.js  `q-scores`: a mode per section, a column per hint level
+    boundary/format.js  how screens write labels, dates and durations
 scripts/
   generate-cases.mjs    booklet -> cases.json + img/
   assert-cases.mjs      what the generated file must satisfy (used by both)
@@ -124,12 +125,20 @@ records, and an unfinished or reloaded run writes no score.
 
 Boards are a view, never a second copy: `core/boards.mjs` derives them from the
 finished runs on every render — one board per mode and hint level (**ADR-0004**),
-ranked by score, a tie going to the faster run. The `scores` page shows every
-board the game offers; a board with no finished run says so. Each board is
-anchored as `#board-<mode>-<hint level>`, so the finish screen's "see the board"
-lands on the board the run just joined without retyping the name. A name is
-identity, not authentication: typing a new one starts writing that name's
-records, and two names on one device keep independent histories.
+ranked by score, a tie going to the faster run. The `scores` page presents a
+mode as one section with a column per hint level, so a `Training` score is never
+read as a `Test` one; each row shows rank, name, score, the date the run
+finished, and its elapsed time, which is what makes a tie readable. A board with
+no finished run says so. Each board is anchored as `#board-<mode>-<hint level>`,
+so the finish screen's "see the board" lands on the board the run just joined
+without retyping the name. A name is identity, not authentication: typing a new
+one starts writing that name's records, and two names on one device keep
+independent histories.
+
+Elapsed is wall-clock from the start of the run, so a run resumed after a reload
+carries its downtime. It ranks ties only and is never a deadline, so the cost is
+a slightly unkind tie-break rather than a wrong score; measuring play time
+properly belongs with the stats ticket.
 
 ## Deviations from the template
 

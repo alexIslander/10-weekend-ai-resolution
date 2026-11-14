@@ -3,12 +3,7 @@
  * one board per mode and hint level, ranked by score, ties broken by the faster
  * run. Plain ESM, no DOM, no store.
  */
-import { HINT_LEVELS, MODES } from "./run.mjs";
-
-export { HINT_LEVELS, MODES };
-
-/** A run's duration: the tie-break on a board, never a countdown on screen. */
-const elapsedOf = run => Math.max(0, run.finishedAt - run.startedAt);
+import { elapsedOf, HINT_LEVELS, MODES } from "./run.mjs";
 
 const rowOf = (player, run) => ({
   name: player.name,
@@ -49,3 +44,10 @@ export const boardsOf = (players) =>
     mode,
     boards: HINT_LEVELS.map(hintLevel => ({ hintLevel, rows: boardOf(players, { mode, hintLevel }) }))
   }));
+
+/**
+ * A board's anchor on the scores page, so the finish screen and the page agree
+ * on one spelling of it.
+ * @param {{mode: string, hintLevel: string}} board which board
+ */
+export const boardId = ({ mode, hintLevel }) => `board-${mode}-${hintLevel}`;

@@ -430,50 +430,76 @@ q-play, q-run, q-finish, q-scores{
     color: var(--color-on-surface);
 }
 
-.board{
+.mode{
     display: grid;
     gap: var(--spacing-sm);
-    scroll-margin-top: var(--spacing-md);
 }
-.board h3{
+.mode h3{
     margin: 0;
     font-size: 14px;
     font-weight: 700;
     color: var(--color-on-surface-strong);
+}
+/* ADR-0004: a mode is one section with a column per hint level, side by side */
+.mode-boards{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+.board{
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xs);
+    scroll-margin-top: var(--spacing-md);
+}
+.board h4{
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-on-surface);
 }
 .board .empty{
     margin: 0;
     font-size: 12px;
     color: var(--color-on-surface);
 }
-.board-table{
-    width: 100%;
-    border-collapse: collapse;
+.board-rows{
+    display: grid;
+    gap: var(--spacing-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.board-row{
+    display: grid;
+    grid-template-columns: 1.25rem 1fr;
+    column-gap: var(--spacing-xs);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-accent-border);
     font-variant-numeric: tabular-nums;
 }
-.board-table th{
-    padding: var(--spacing-xs) var(--spacing-sm);
+.board-row .rank{
+    grid-column: 1;
     font-size: 12px;
-    font-weight: 400;
-    text-align: left;
     color: var(--color-on-surface);
-    border-bottom: 1px solid var(--color-accent-border);
 }
-.board-table td{
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-bottom: 1px solid var(--color-accent-border);
+.board-row .name,
+.board-row .score,
+.board-row .meta{
+    grid-column: 2;
 }
-.board-table .rank,
-.board-table .score{
-    width: 1%;
-    text-align: right;
-    white-space: nowrap;
+.board-row .name{
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+    overflow-wrap: anywhere;
 }
-.board-table .name{
+.board-row .score{
+    font-size: 14px;
     font-weight: 700;
     color: var(--color-on-surface-strong);
 }
-.board-table .date{
+.board-row .meta{
+    display: grid;
     font-size: 12px;
     color: var(--color-on-surface);
 }

@@ -78,8 +78,10 @@ test('the scores page is one tap from play and shows a board per hint level', as
   await page.getByRole('link', { name: 'scores' }).click();
 
   await expect(page.locator('.scores')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Random · Test', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Random · Training', exact: true })).toBeVisible();
+  // ADR-0004: a mode on the scores page, with a column per hint level
+  await expect(page.locator('.mode[data-mode="random"]')).toBeVisible();
+  await expect(page.locator('.mode h3')).toHaveText('Random');
+  await expect(page.locator('.board h4')).toHaveText(['Training', 'Test']);
   await expect(board(page, 'test').locator('.board-row')).toHaveCount(1);
   await expect(board(page, 'training').locator('.board-row')).toHaveCount(0);
   await expect(board(page, 'training')).toContainText('no finished runs yet');
@@ -101,6 +103,8 @@ test('a board ranks by score and the faster run wins a tie', async ({ page }) =>
   await expect(board(page).locator('.board-row')).toHaveCount(3);
   expect(await boardNames(page)).toEqual(['bob', 'ada', 'ada']);
   await expect(board(page).locator('.board-row .score')).toHaveText(['200', '200', '120']);
+  // the tie-break is visible, so two equal scores are not an unexplained order
+  await expect(board(page).locator('.board-row .elapsed')).toHaveText(['10 s', '30 s', '5 s']);
 });
 
 test('a board row shows name, score and the date the run finished', async ({ page }) => {

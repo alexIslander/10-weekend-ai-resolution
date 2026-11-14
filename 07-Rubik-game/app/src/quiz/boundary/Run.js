@@ -4,9 +4,7 @@ import { answerWith, nextQuestion, resetRun } from "../control/RunControl.js";
 import { evaluateAnswer } from "../core/drill.mjs";
 import { positionOf } from "../entity/Positions.js";
 import "./Finish.js";
-
-/** `test` -> `Test`, `progressive` -> `Progressive`: one rule for every mode and level. */
-const label = value => (value ? value.charAt(0).toUpperCase() + value.slice(1) : "");
+import { label } from "./format.js";
 
 /** How the four triggers read with a thumb on them. */
 const TRIGGER_NAMES = {

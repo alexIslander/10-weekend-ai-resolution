@@ -7,7 +7,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { boardOf, boardsOf, HINT_LEVELS, MODES } from "../app/src/quiz/core/boards.mjs";
+import { boardOf, boardsOf, boardId } from "../app/src/quiz/core/boards.mjs";
+import { HINT_LEVELS, MODES } from "../app/src/quiz/core/run.mjs";
 
 const run = overrides => ({
   mode: "random",
@@ -90,7 +91,12 @@ test("every mode carries one board per hint level, in plan order", () => {
   assert.deepEqual(boards[0].boards.map(({ rows }) => rows.length), [1, 3], "training has ada's run, test has three");
 });
 
-test("an unknown mode is not offered a board", () => {
+test("a board can be read for any mode, but only the modes that ship get a page", () => {
   assert.deepEqual(boardOf(players, { mode: "grouped", hintLevel: "test" }).map(({ score }) => score), [999]);
   assert.deepEqual(boardsOf(players).map(({ mode }) => mode), ["random"], "only the modes that ship get a page");
+});
+
+test("a board's anchor is one spelling that the page and the finish screen share", () => {
+  assert.equal(boardId({ mode: "random", hintLevel: "test" }), "board-random-test");
+  assert.equal(boardId({ mode: "adaptive", hintLevel: "training" }), "board-adaptive-training");
 });

@@ -34,6 +34,9 @@ export const buildRun = (positions, { mode = "random", random }) => {
 };
 
 /** Correct answers as a whole percentage, for a result screen or a stats row. */
+/** How long a finished run took: the board's tie-break, never a countdown. */
+export const elapsedOf = run => Math.max(0, run.finishedAt - run.startedAt);
+
 export const accuracy = (correct, total) => (total === 0 ? 0 : Math.round((correct / total) * 100));
 
 /**

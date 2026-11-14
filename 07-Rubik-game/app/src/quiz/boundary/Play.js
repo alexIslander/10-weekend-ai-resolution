@@ -1,8 +1,9 @@
 import BElement from "../../BElement.js";
 import { html } from "lit-html";
-import { nameTyped, startRun } from "../control/RunControl.js";
+import { HINT_LEVEL, MODE, nameTyped, startRun } from "../control/RunControl.js";
 import { positions } from "../entity/Positions.js";
 import "./Run.js";
+import { label } from "./format.js";
 
 /**
  * The way in: the player types a name, then starts a run. The name is what the
@@ -26,7 +27,7 @@ class Play extends BElement {
                     <input name="name" autocomplete="nickname" placeholder="your name" required
                            .value="${name}" @input=${event => nameTyped(event.target.value)}>
                 </label>
-                <p class="mode-line">Random · Test · ${positions.length} positions</p>
+                <p class="mode-line">${label(MODE)} · ${label(HINT_LEVEL)} · ${positions.length} positions</p>
                 <button type="submit" class="start-button" ?disabled=${name.trim() === ""}>
                     start the run
                 </button>

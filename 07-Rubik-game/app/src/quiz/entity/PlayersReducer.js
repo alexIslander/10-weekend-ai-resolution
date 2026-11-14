@@ -15,6 +15,7 @@ export const players = createReducer({}, (builder) => {
         const player = state[name] ??= { name, positions: {}, runs: [] };
         player.positions[question.oll] = recordAnswer(player.positions[question.oll], outcome.correct, at);
     }).addCase(runFinishedAction, (state, { payload: { name, ...finishedRun } }) => {
-        state[name]?.runs.push(finishedRun);
+        const player = state[name] ??= { name, positions: {}, runs: [] };
+        player.runs.push(finishedRun);
     });
 });

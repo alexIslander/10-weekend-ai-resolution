@@ -11,8 +11,8 @@ export const runFinishedAction = createAction("runFinishedAction");
 export const runResetAction = createAction("runResetAction");
 
 /** Every run today is a Random run at Test; #6 adds the other modes and levels. */
-const MODE = "random";
-const HINT_LEVEL = "test";
+export const MODE = "random";
+export const HINT_LEVEL = "test";
 
 /**
  * Keeps the typed name in the store, so the screen can refuse an empty one
