@@ -1,5 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { answerGivenAction, runFinishedAction } from "../control/RunControl.js";
+import { playerDeletedAction, statsResetAction } from "../control/PlayersControl.js";
 import { recordAnswer } from "../core/records.mjs";
 
 /**
@@ -17,5 +18,10 @@ export const players = createReducer({}, (builder) => {
     }).addCase(runFinishedAction, (state, { payload: { name, ...finishedRun } }) => {
         const player = state[name] ??= { name, positions: {}, runs: [] };
         player.runs.push(finishedRun);
+    }).addCase(statsResetAction, (state, { payload: name }) => {
+        // the name stays: the next run and the next board row are written under it
+        if (state[name]) state[name] = { name, positions: {}, runs: [] };
+    }).addCase(playerDeletedAction, (state, { payload: name }) => {
+        delete state[name];
     });
 });

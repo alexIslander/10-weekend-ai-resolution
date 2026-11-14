@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 
 import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
 import { groups, positions as generatedPositions } from "../app/src/quiz/entity/Positions.js";
-import { accuracy, buildRun, answer, defaultHintLevel, groupFor, poolOf } from "../app/src/quiz/core/run.mjs";
+import { accuracy, buildRun, answer, defaultHintLevel, DRILL, groupFor, isBoardMode, MODES, nextRun, poolOf } from "../app/src/quiz/core/run.mjs";
 import { emptyRecord, recordAnswer } from "../app/src/quiz/core/records.mjs";
 
 const positions = cases.positions;
@@ -215,4 +215,26 @@ test("a grouped choice falls back to the first group when it is missing or stale
   assert.equal(groupFor(groups, { mode: "grouped", group: null }), groups[0]);
   assert.equal(groupFor(groups, { mode: "grouped", group: "T-Shapes" }), "T-Shapes");
   assert.equal(groupFor(groups, { mode: "grouped", group: "A group the booklet dropped" }), groups[0]);
+});
+
+test("a drill is a mode the picker never offers and no board takes", () => {
+  assert.equal(DRILL, "drill");
+  assert.deepEqual(MODES.filter(isBoardMode), MODES, "every shipped mode is a board mode");
+  assert.equal(isBoardMode(DRILL), false);
+});
+
+test("the play screen reopens with the run's own choices", () => {
+  assert.deepEqual(
+    nextRun({ mode: "grouped", hintLevel: "training", group: "T-Shapes" }),
+    { mode: "grouped", hintLevel: "training", group: "T-Shapes" });
+  assert.deepEqual(
+    nextRun({ mode: "progressive", hintLevel: "test", group: null }),
+    { mode: "progressive", hintLevel: "test", group: null });
+});
+
+test("a drill hands the play screen back to the default mode and level", () => {
+  // the picker has no Drill button, so the screen must not reopen on one
+  assert.deepEqual(
+    nextRun({ mode: DRILL, hintLevel: "test", group: null }),
+    { mode: "random", hintLevel: "test", group: null });
 });

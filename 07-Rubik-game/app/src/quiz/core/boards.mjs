@@ -5,6 +5,8 @@
  */
 import { elapsedOf, HINT_LEVELS, MODES } from "./run.mjs";
 
+/** @typedef {import("./run.mjs").FinishedRun} FinishedRun */
+
 const rowOf = (player, run) => ({
   name: player.name,
   score: run.score,
@@ -18,7 +20,7 @@ const rowOf = (player, run) => ({
  * One board: the finished runs of this mode at this hint level, best first.
  * Equal scores rank the faster run higher; the remaining order is fixed so the
  * same runs always produce the same board.
- * @param {Object<string, {name: string, runs: object[]}>} players players by name
+ * @param {Object<string, {name: string, runs: FinishedRun[]}>} players players by name
  * @param {{mode: string, hintLevel: string}} board which board
  */
 export const boardOf = (players, { mode, hintLevel }) =>
@@ -36,7 +38,7 @@ export const boardOf = (players, { mode, hintLevel }) =>
 /**
  * Every board the game offers today: each mode with its hint levels, in plan
  * order, so the Scores page renders data instead of deciding which boards exist.
- * @param {Object<string, {name: string, runs: object[]}>} players
+ * @param {Object<string, {name: string, runs: FinishedRun[]}>} players
  * @returns {{mode: string, boards: {hintLevel: string, rows: object[]}[]}[]}
  */
 export const boardsOf = (players) =>

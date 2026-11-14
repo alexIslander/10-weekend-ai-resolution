@@ -6,6 +6,12 @@
 import { askPosition, evaluateAnswer } from "./drill.mjs";
 import { shuffle } from "./random.mjs";
 
+/**
+ * One finished run, as a player's history keeps it: what a board ranks and the
+ * stats add up.
+ * @typedef {{mode: string, hintLevel: string, score: number, correct: number, total: number, startedAt: number, finishedAt: number}} FinishedRun
+ */
+
 /** Points for a correct answer, before the streak multiplier. */
 export const POINTS_PER_CORRECT = 10;
 
@@ -14,6 +20,16 @@ export const STREAK_CAP = 5;
 
 /** The modes the game knows today; later tickets add the rest (ADR-0002). */
 export const MODES = ["random", "grouped", "progressive"];
+
+/**
+ * A drill asks one position and nothing else. It is a mode in the sense that a
+ * run carries one, but the picker never offers it and no board takes its score:
+ * it is practice on a position the player got wrong, launched from the stats.
+ */
+export const DRILL = "drill";
+
+/** Whether a finished run of this mode lands on a board. */
+export const isBoardMode = mode => MODES.includes(mode);
 
 /** The two hint levels every mode runs at (ADR-0002). */
 export const HINT_LEVELS = ["training", "test"];
@@ -66,6 +82,18 @@ export const buildRun = (positions, { mode, group, random }) => {
     .flatMap(steps => shuffle(blocks.get(steps), random))
     .map(position => askPosition(position, random));
 };
+
+/**
+ * The choices the play screen reopens with after a run: the run's own, unless
+ * it was a drill — a mode the picker does not offer, so the screen falls back to
+ * the default rather than showing a mode with no button pressed.
+ * @param {{mode: string, hintLevel: string, group?: string|null}} run
+ * @returns {{mode: string, hintLevel: string, group: string|null}}
+ */
+export const nextRun = ({ mode, hintLevel, group }) =>
+  isBoardMode(mode)
+    ? { mode, hintLevel, group: group ?? null }
+    : { mode: MODES[0], hintLevel: defaultHintLevel(MODES[0]), group: null };
 
 /** How long a finished run took: the board's tie-break, never a countdown. */
 export const elapsedOf = run => Math.max(0, run.finishedAt - run.startedAt);

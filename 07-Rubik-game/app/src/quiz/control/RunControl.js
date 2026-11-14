@@ -1,7 +1,8 @@
 import { createAction } from "@reduxjs/toolkit";
 import store from "../../store.js";
-import { answer, buildRun, groupFor, HINT_LEVELS, MODES } from "../core/run.mjs";
-import { groups, positions } from "../entity/Positions.js";
+import { answer, buildRun, groupFor, HINT_LEVELS, MODES, DRILL } from "../core/run.mjs";
+import { askPosition } from "../core/drill.mjs";
+import { groups, positionOf, positions } from "../entity/Positions.js";
 
 export const nameTypedAction = createAction("nameTypedAction");
 export const modeChosenAction = createAction("modeChosenAction");
@@ -59,6 +60,31 @@ export const startRun = (name, { random = Math.random, now = Date.now } = {}) =>
         hintLevel: run.hintLevel,
         group,
         questions: buildRun(positions, { mode: run.mode, group, random }),
+        startedAt: now()
+    }));
+    return true;
+}
+
+/**
+ * Starts a drill: one question on one position, under the name the play screen
+ * last used. A drill is not a board mode — its finished run is practice, not a
+ * score — and it always asks at Test, since the point is to recall the trigger.
+ * No name records nothing, so no name starts no drill.
+ * @param {number} oll the position to ask
+ * @param {{random?: () => number, now?: () => number}} [sources] injected for tests
+ * @returns {boolean} whether a drill was started
+ */
+export const startDrill = (oll, { random = Math.random, now = Date.now } = {}) => {
+    const { run } = store.getState();
+    const name = (run.name ?? "").trim();
+    const position = positionOf(oll);
+    if (!name || !position) return false;
+    store.dispatch(runStartedAction({
+        name,
+        mode: DRILL,
+        hintLevel: "test",
+        group: null,
+        questions: [askPosition(position, random)],
         startedAt: now()
     }));
     return true;

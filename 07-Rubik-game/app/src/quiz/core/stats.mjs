@@ -5,12 +5,18 @@
  */
 import { accuracy, MODES } from "./run.mjs";
 
+/**
+ * @typedef {import("./run.mjs").FinishedRun} FinishedRun
+ * @typedef {import("./records.mjs").PositionRecord} PositionRecord
+ * @typedef {{oll: number, name: string, group: string}} Position
+ */
+
 /** A run counts once it reached its finish screen. */
 const finished = run => Number.isFinite(run.finishedAt);
 
 /**
  * Per mode: how many finished runs, their accuracy, and the best score.
- * @param {object[]} runs the player's runs
+ * @param {FinishedRun[]} runs the player's runs
  * @returns {{mode: string, runs: number, accuracy: number, best: number}[]}
  */
 export const modeStats = (runs = []) =>
@@ -30,7 +36,7 @@ export const modeStats = (runs = []) =>
  * Per group, in booklet order: the rollup of its positions' records.
  * A group never played reads zero, so the table always has 14 rows.
  * @param {{oll: number, group: string}[]} positions
- * @param {Object<number, object>} records per-position records by OLL number
+ * @param {Object<number, PositionRecord>} records per-position records by OLL number
  * @returns {{group: string, attempts: number, correct: number, accuracy: number}[]}
  */
 export const groupStats = (positions, records = {}) => {
@@ -48,8 +54,8 @@ export const groupStats = (positions, records = {}) => {
 /**
  * The positions worth practising: lowest accuracy first, the position with more
  * evidence first on a tie, and never one that was never asked.
- * @param {{oll: number, name: string, group: string}[]} positions
- * @param {Object<number, object>} records
+ * @param {Position[]} positions
+ * @param {Object<number, PositionRecord>} records
  * @param {number} limit how many rows at most
  */
 export const worstPositions = (positions, records = {}, limit = 10) =>
@@ -73,8 +79,8 @@ export const worstPositions = (positions, records = {}, limit = 10) =>
 /**
  * Lifetime totals: finished runs, answers given (a position answered twice
  * counts twice) and the accuracy over those answers.
- * @param {Object<number, object>} records
- * @param {object[]} runs
+ * @param {Object<number, PositionRecord>} records
+ * @param {FinishedRun[]} runs
  * @returns {{runs: number, answered: number, accuracy: number}}
  */
 export const totals = (records = {}, runs = []) => {

@@ -113,3 +113,12 @@ test("lifetime totals count finished runs, answers given and overall accuracy", 
 test("a player who has not answered anything yet has zero totals", () => {
   assert.deepEqual(totals({}, []), { runs: 0, answered: 0, accuracy: 0 });
 });
+
+test("a finished drill counts as practice in the totals, never in a mode's row", () => {
+  const drill = run({ mode: "drill", score: 10, correct: 1, total: 1 });
+  const stats = modeStats([drill]);
+
+  assert.deepEqual(stats.map(({ mode }) => mode), MODES, "the drill is not a board mode");
+  assert.ok(stats.every(({ runs }) => runs === 0), "no mode table row takes a drill's score");
+  assert.equal(totals({}, [drill]).runs, 1, "it is still a run the player made");
+});

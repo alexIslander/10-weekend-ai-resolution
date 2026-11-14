@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { answerGivenAction, groupChosenAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runStartedAction } from "../control/RunControl.js";
-import { defaultHintLevel } from "../core/run.mjs";
+import { defaultHintLevel, nextRun } from "../core/run.mjs";
 
 /**
  * The run's state: the name it is recorded under, the questions it will ask,
@@ -51,7 +51,9 @@ export const run = createReducer(idleState(), (builder) => {
             state.finishedAt = at;
         }
     }).addCase(runResetAction, (state) => {
-        // the next run starts the way this one did, under the same name
-        Object.assign(state, idleState(), { name: state.name, mode: state.mode, hintLevel: state.hintLevel, group: state.group });
+        // the next run starts the way this one did, under the same name — a
+        // drill hands the screen back to the picker's default
+        const name = state.name;
+        Object.assign(state, idleState(), nextRun(state), { name });
     });
 });

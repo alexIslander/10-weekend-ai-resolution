@@ -3,6 +3,11 @@
  * a pure function so the next run's order can be judged from records alone.
  */
 
+/**
+ * What the game remembers about one position.
+ * @typedef {{attempts: number, correct: number, wrong: number, lastSeenAt: number|null, streak: number}} PositionRecord
+ */
+
 /** A position the player has never answered. */
 export const emptyRecord = () => ({ attempts: 0, correct: 0, wrong: 0, lastSeenAt: null, streak: 0 });
 
