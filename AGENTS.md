@@ -57,3 +57,17 @@ Keep this guide up to date as the repository grows. If you change structure or a
 ## Local git hooks
 - The repo includes `.githooks/pre-commit` to validate staged GitHub Actions workflow files.
 - Enable it locally with `git config core.hooksPath .githooks`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub Issues in this repo, driven by the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles, default label strings: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` at the root, ADRs in `docs/adr/`, project glossaries under `<project>/docs/glossary.md`. See `docs/agents/domain.md`.
