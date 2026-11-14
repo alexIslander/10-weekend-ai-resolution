@@ -60,12 +60,12 @@ class Run extends BElement {
                             ${TRIGGER_NAMES[trigger]}<span class="code">${trigger}</span>
                         </button>`)}
                 </div>
-                ${verdict ? this.verdictView(verdict) : nothing}
-                ${verdict ? this.revealView(position) : nothing}
                 ${verdict
-                    ? html`<button class="next" @click=${() => nextQuestion()}>
-                        ${run.index + 1 === total ? "see the result" : "next position"}
-                    </button>`
+                    ? html`${this.verdictView(verdict)}
+                        <button class="next" @click=${() => nextQuestion()}>
+                            ${run.index + 1 === total ? "see the result" : "next position"}
+                        </button>
+                        ${this.revealView(position)}`
                     : nothing}
             </article>
         `;
@@ -88,7 +88,7 @@ class Run extends BElement {
         `;
     }
 
-    /** Shown after a miss: the position, its route with its AUF turns, and the simulator. */
+    /** Shown after every answer: the position, its route with its AUF turns, and the simulator. */
     revealView(position) {
         const chips = position.route.flatMap(({ auf, trigger }) =>
             auf === "none"
@@ -97,11 +97,11 @@ class Run extends BElement {
         return html`
             <section class="reveal" aria-label="Position reveal" data-oll="${position.oll}" data-steps="${position.steps}">
                 <h3>${position.name}</h3>
-                <dl>
-                    <dt>OLL</dt><dd>${position.oll}</dd>
-                    <dt>Group</dt><dd>${position.group}</dd>
-                    <dt>Steps</dt><dd>${position.steps} ${position.steps === 1 ? "step" : "steps"}</dd>
-                </dl>
+                <p class="position-meta">
+                    <span>OLL ${position.oll}</span>
+                    <span>${position.group}</span>
+                    <span>${position.steps} ${position.steps === 1 ? "step" : "steps"}</span>
+                </p>
                 <ol class="route" aria-label="Route">
                     ${chips.map((chip, index) => html`${index === 0
                         ? nothing

@@ -93,6 +93,17 @@ test('lays the question out in one column that fills the phone', async ({ page }
   }
 });
 
+test('keeps the next button on screen once the answer is in', async ({ page }) => {
+  await startRun(page);
+  await optionFor(page, await expectedTrigger(page)).click();
+
+  const next = await page.locator('.run .next').boundingBox();
+  const viewport = page.viewportSize();
+  // the study material may need a scroll; the way to the next question may not
+  expect(next.y).toBeGreaterThan(0);
+  expect(next.y + next.height).toBeLessThanOrEqual(viewport.height);
+});
+
 test('shows the diagram scaled, never cropped', async ({ page }) => {
   await startRun(page);
 

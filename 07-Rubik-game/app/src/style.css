@@ -188,9 +188,14 @@ q-play, q-run, q-finish{
 }
 
 .run-status{
+    position: sticky;
+    top: 0;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     width: 100%;
+    padding: var(--spacing-xs) 0;
+    background-color: var(--color-surface);
     font-weight: 700;
     color: var(--color-on-surface-strong);
     font-variant-numeric: tabular-nums;
@@ -321,17 +326,15 @@ q-play, q-run, q-finish{
     font-weight: 600;
     color: var(--color-on-surface-strong);
 }
-.reveal dl{
-    display: grid;
-    grid-template-columns: max-content 1fr;
+.position-meta{
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-xs) var(--spacing-md);
     margin: 0;
-}
-.reveal dt{
+    font-size: 12px;
     color: var(--color-on-surface);
 }
-.reveal dd{
-    margin: 0;
+.position-meta span:first-child{
     color: var(--color-on-surface-strong);
     font-weight: 700;
 }
