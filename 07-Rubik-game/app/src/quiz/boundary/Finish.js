@@ -1,13 +1,14 @@
 import BElement from "../../BElement.js";
-import { html } from "lit-html";
+import { html, nothing } from "lit-html";
 import { resetRun } from "../control/RunControl.js";
 import { boardId } from "../core/boards.mjs";
-import { accuracy, elapsedOf } from "../core/run.mjs";
+import { accuracy, elapsedOf, isBoardMode } from "../core/run.mjs";
 import { duration } from "./format.js";
 
 /**
  * The finish screen: what the run was worth — score, correct count, accuracy and
- * elapsed time — and the way to the board this run just landed on.
+ * elapsed time — and the way to the board this run just landed on. A drill
+ * lands on no board, so its finish screen offers the result only.
  */
 class Finish extends BElement {
 
@@ -27,7 +28,9 @@ class Finish extends BElement {
                     <dt>Accuracy</dt><dd>${accuracy(correct, total)}%</dd>
                     <dt>Elapsed</dt><dd>${duration(elapsedOf(this.state))}</dd>
                 </dl>
-                <a class="board-link" href="/scores#${boardId({ mode, hintLevel })}">see the board</a>
+                ${isBoardMode(mode)
+                    ? html`<a class="board-link" href="/scores#${boardId({ mode, hintLevel })}">see the board</a>`
+                    : nothing}
                 <button class="again" @click=${() => resetRun()}>start another run</button>
             </section>
         `;

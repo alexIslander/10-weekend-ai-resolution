@@ -136,7 +136,7 @@ nav a:hover{
     color: var(--color-on-surface-strong);
 }
 
-q-play, q-run, q-finish, q-scores{
+q-play, q-run, q-finish, q-scores, q-stats{
     display: block;
     width: 100%;
     padding-top: var(--spacing-md);
@@ -564,4 +564,147 @@ q-play, q-run, q-finish, q-scores{
     display: grid;
     font-size: 12px;
     color: var(--color-on-surface);
+}
+
+/* the stats page: totals, two tables, the weak spots, and the way out */
+.stats{
+    display: grid;
+    gap: var(--spacing-md);
+    width: min(34rem, 100%);
+}
+.stats h2{
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-on-surface-strong);
+}
+.stats-player{
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.stats .empty{
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-on-surface);
+}
+.stat-note{
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-on-surface);
+}
+
+.totals{
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--spacing-xs) var(--spacing-md);
+    margin: 0;
+    padding: var(--spacing-sm) 0;
+    border-top: 1px solid var(--color-accent-border);
+    border-bottom: 1px solid var(--color-accent-border);
+    font-variant-numeric: tabular-nums;
+}
+.totals dt{
+    color: var(--color-on-surface);
+}
+.totals dd{
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+
+.stat-section{
+    display: grid;
+    gap: var(--spacing-sm);
+}
+.stat-section h3{
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.stat-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+.stat-table th,
+.stat-table td{
+    padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-xs) 0;
+    text-align: left;
+    border-bottom: 1px solid var(--color-accent-border);
+}
+.stat-table thead th{
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-on-surface);
+}
+.stat-table tbody th{
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.stat-table td{
+    color: var(--color-on-surface);
+}
+
+.weak-spots{
+    display: grid;
+    gap: var(--spacing-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+/* a weak spot is a tap target: the whole row starts the drill */
+.drill{
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    align-items: baseline;
+    column-gap: var(--spacing-sm);
+    min-height: 44px;
+    padding: var(--spacing-sm);
+    color: var(--color-on-surface-strong);
+    border: 1px solid var(--color-accent-border);
+    border-radius: var(--rounded-md);
+    font-variant-numeric: tabular-nums;
+}
+.drill:hover{
+    background-color: var(--color-neutral);
+}
+.weak-name,
+.weak-accuracy{
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.weak-detail,
+.weak-seen{
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: var(--color-on-surface);
+}
+.weak-detail{
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-md);
+}
+
+.danger-zone{
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-accent-border);
+}
+.danger{
+    min-height: 44px;
+    padding: 0 var(--spacing-md);
+    font: inherit;
+    font-weight: 700;
+    color: var(--color-danger);
+    background-color: transparent;
+    border: 1px solid var(--color-danger);
+    border-radius: var(--rounded-md);
+    cursor: pointer;
+}
+.danger:hover{
+    background-color: var(--color-danger-surface);
 }
