@@ -13,6 +13,10 @@ The build broken into tracer bullets, published as sub-issues of spec #2 and lab
 | 8 | Route mode: name the whole sequence | #6 | Chips + submit, all-or-nothing |
 | 9 | AUF mode: setup turn and trigger | #6 | Two-part answer, `none` valid |
 | 10 | Adaptive mode: worst positions first | #6, #7 | Priority ordering, weak-spots button |
+| 11 | Keyboard answering | after #10 | Keys 1–4 answer, focus moves to next, Enter advances |
 
-Frontier: **#3** alone. #8 and #9 are independent of each other and can be worked in
-either order once #6 lands; #10 needs #7 because the weak-spots button lives there.
+Frontier: **#5** (after #3 and #4 landed). #8 and #9 are independent of each other and
+can be worked in either order once #6 lands; #10 needs #7 because the weak-spots button
+lives there. #11 is a deliberate addition after the plan: keyboard answering was listed
+as out of scope in `spec.md`, and the game is better with it — it is sequenced last so
+the modes and stats keep priority.

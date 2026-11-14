@@ -203,8 +203,11 @@ board rows.
   is quizzed, so no diagram rendering is needed.
 - Authentication, accounts, synchronisation between devices, and any server.
 - Deployment to a public host; the game runs from a local static server.
-- Offline install / service worker, keyboard shortcuts, sound, animations, i18n other than
-  English.
+- Offline install / service worker, sound, animations, i18n other than English.
+- Keyboard answering was out of scope here and has been promoted to a ticket of its own
+  ([#11](tickets.md)): `1`–`4` answer the option in that position, and focus moves to the
+  next button so `Enter` advances. It is sequenced after the modes and stats, and it never
+  replaces mouse or touch or the `Tab` order.
 
 ## Further Notes
 
