@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 import store from "../../store.js";
-import { askPosition } from "../core/drill.mjs";
+import { askPosition, pickPosition } from "../core/drill.mjs";
 import { positions } from "../entity/Positions.js";
 
 export const drillStartedAction = createAction("drillStartedAction");
@@ -12,7 +12,7 @@ export const answerGivenAction = createAction("answerGivenAction");
  * @param {() => number} [random]
  */
 export const startDrill = (random = Math.random) => {
-    const position = positions[Math.floor(random() * positions.length)];
+    const position = pickPosition(positions, random);
     store.dispatch(drillStartedAction(askPosition(position, random)));
 }
 

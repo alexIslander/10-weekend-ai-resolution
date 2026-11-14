@@ -34,7 +34,7 @@ const OUTPUT = `${APP}/quiz/entity/cases.json`;
 const DIAGRAMS = `${APP}/img`;
 
 /** The booklet writes a step without an AUF as an empty string; the game says `none`. */
-const auf = value => (value === "" || value == null ? "none" : value);
+const normalizeAuf = value => (value === "" || value == null ? "none" : value);
 
 /**
  * The print guide's headings in booklet order, each followed by the OLL
@@ -46,11 +46,11 @@ export const readGroups = html => {
   const sections = html.split("<h2>").slice(1);
   return sections.map(section => {
     const name = section.slice(0, section.indexOf("</h2>")).trim();
-    const cases = [...section.matchAll(/<img src="([^"]+)" alt="OLL (\d+)"/g)].map(([, image, oll]) => ({
+    const printed = [...section.matchAll(/<img src="([^"]+)" alt="OLL (\d+)"/g)].map(([, image, oll]) => ({
       image: `img/${basename(image)}`,
       oll: Number(oll),
     }));
-    return { name, olls: cases.map(({ oll }) => oll), images: cases.map(({ image }) => image) };
+    return { name, olls: printed.map(({ oll }) => oll), images: printed.map(({ image }) => image) };
   });
 };
 
@@ -81,7 +81,7 @@ export const buildCases = () => {
         image: `/${position.image}`,
         group,
         steps: position.steps,
-        route: position.route.map(step => ({ auf: auf(step.auf), trigger: step.tool })),
+        route: position.route.map(step => ({ auf: normalizeAuf(step.auf), trigger: step.tool })),
         simulatorUrl: position.href,
       };
     })

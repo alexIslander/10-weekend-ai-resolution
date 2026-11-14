@@ -66,7 +66,7 @@ class Drill extends BElement {
      */
     mark(trigger, question, given) {
         if (given === null) return "";
-        if (trigger === question.expected) return "correct";
+        if (evaluateAnswer(question, trigger).correct) return "correct";
         return trigger === given ? "wrong" : "";
     }
 

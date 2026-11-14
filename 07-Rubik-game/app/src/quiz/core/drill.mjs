@@ -25,6 +25,16 @@ const shuffle = (items, random) => {
 };
 
 /**
+ * Draws the position a drill asks about from the injected random source, so a
+ * drill is replayable in a test and the screen never picks data itself.
+ * @template {{oll: number}} Position
+ * @param {Position[]} positions
+ * @param {() => number} random
+ * @returns {Position}
+ */
+export const pickPosition = (positions, random) => positions[Math.floor(random() * positions.length)];
+
+/**
  * Builds the question for one position: which trigger solves it from its
  * diagram, and the four triggers in an order the player has not seen yet.
  * @param {{oll: number, route: {auf: string, trigger: string}[]}} position

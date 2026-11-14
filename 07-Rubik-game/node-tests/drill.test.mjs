@@ -8,7 +8,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { askPosition, evaluateAnswer, TRIGGERS } from "../app/src/quiz/core/drill.mjs";
+import { askPosition, evaluateAnswer, pickPosition, TRIGGERS } from "../app/src/quiz/core/drill.mjs";
 
 /** A repeatable random source, so a run can be replayed test by test. */
 const seeded = seed => {
@@ -84,4 +84,11 @@ test("an unanswered question is not a correct answer", () => {
   for (const nothing of [undefined, null, ""]) {
     assert.equal(evaluateAnswer(question, nothing).correct, false, String(nothing));
   }
+});
+
+test("the position under the question comes from the injected random source", () => {
+  const pool = [{ oll: 21 }, { oll: 22 }, { oll: 23 }, { oll: 24 }];
+  assert.equal(pickPosition(pool, () => 0).oll, 21);
+  assert.equal(pickPosition(pool, () => 0.5).oll, 23);
+  assert.equal(pickPosition(pool, () => 0.9999).oll, 24);
 });

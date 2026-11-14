@@ -10,5 +10,5 @@ export const positions = cases.positions;
 /** The 14 group headings, in booklet order. */
 export const groups = cases.groups;
 
-/** @param {number|string} oll @returns {object|undefined} */
-export const positionOf = oll => positions.find(position => position.oll === Number(oll));
+/** @param {number} oll @returns {object|undefined} */
+export const positionOf = oll => positions.find(position => position.oll === oll);

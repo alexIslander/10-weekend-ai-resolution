@@ -79,8 +79,8 @@ Two traps the generated file must not fall into:
 app/src/
   index.html            import map, nav, route outlet
   app.js                route table; state persistence
-  router.js             Navigation API + URLPattern (template, unchanged)
-  store.js              slice registration (template, unchanged mechanics)
+  router.js             Navigation API + URLPattern (template; route example in its docs renamed)
+  store.js              slice registration (template mechanism, `drill` slice)
   reduction.js          minimal Redux Toolkit over structuredClone (template)
   BElement.js           store subscription + lit-html render base (template)
   libs/                 vendored lit-html, optional Redux Toolkit
@@ -98,3 +98,22 @@ tests/                  Playwright e2e
 
 `quiz/core` is the only place that decides *what happens*: no DOM, no store, no
 imports outside itself. Components render its output; controls dispatch.
+
+## Deviations from the template
+
+The host app is the bce.design quickstarter with its sample bookmarks bounded
+context removed. Where this project differs from the template, it is because the
+ticket asked for it or because a test needed it, and each is deliberate:
+
+- `app/src/bookmarks/` is gone, together with its reducer, route, nav entry,
+  page title and Playwright spec. Its component styles in `style.css` are
+  replaced by the drill's.
+- `app/src/style.css` keeps the template's tokens, grid and container queries;
+  the phone layout is made full-bleed by a media query, because the body cannot
+  query its own container size.
+- `app/src/libs/lit-html.d.ts` gains `nothing`, an export of the vendored module
+  the drill now uses.
+- `tests/playwright.config.js` enables the `webServer` block the template leaves
+  commented out, so one command runs the suite against the static server.
+- `app/src/router.js` is the template's; only the route example in its doc
+  comment is renamed, so no sample context name survives.
