@@ -1,28 +1,14 @@
 /**
- * The question a drill screen asks, and the verdict on the answer.
+ * The question a drill asks, and the verdict on the answer.
  *
  * Plain ESM: no DOM, no store, no imports outside this directory. The random
  * source is injected so a run can be replayed in tests (see ADR-0001: the four
  * triggers are always the four options, shuffled).
  */
+import { shuffle } from "./random.mjs";
 
 /** The four triggers, as the booklet names them. */
 export const TRIGGERS = ["S", "AS", "ET", "WT"];
-
-/**
- * Fisher-Yates over a copy, driven by the injected random source.
- * @param {string[]} items
- * @param {() => number} random returns a number in [0, 1)
- * @returns {string[]} a new, shuffled array
- */
-const shuffle = (items, random) => {
-  const shuffled = [...items];
-  for (let index = shuffled.length - 1; index > 0; index--) {
-    const pick = Math.floor(random() * (index + 1));
-    [shuffled[index], shuffled[pick]] = [shuffled[pick], shuffled[index]];
-  }
-  return shuffled;
-};
 
 /**
  * Draws the position a drill asks about from the injected random source, so a

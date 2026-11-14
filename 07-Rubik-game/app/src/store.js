@@ -6,10 +6,12 @@
  */
 import { configureStore } from "@reduxjs/toolkit";
 import { load } from "./localstorage/control/StorageControl.js";
-import { drill } from "./quiz/entity/DrillReducer.js"
+import { players } from "./quiz/entity/PlayersReducer.js"
+import { run } from "./quiz/entity/RunReducer.js"
 
 const reducer = {
-    drill
+    run,
+    players
 }
 const preloadedState = load();
 const config = preloadedState ? { reducer, preloadedState } : {reducer};

@@ -1,15 +1,18 @@
 # 07-Rubik-game — trigger-recognition drill
 
 A small client-side game for learning to *recognise* OLL positions: it shows one
-position diagram at a time and asks which trigger solves it. The booklet it
-drills is `../06-Rubik`; this project never imports from it at runtime.
+position diagram at a time and asks which trigger solves it, then scores a run
+of all 57. The booklet it drills is `../06-Rubik`; this project never imports
+from it at runtime.
 
 The vocabulary is fixed by [docs/glossary.md](docs/glossary.md) — position,
 trigger, step, route, AUF, group, hint level. The feature spec is
 [docs/spec.md](docs/spec.md), the settled decisions are
 [docs/adr/0001](docs/adr/0001-ask-for-the-first-trigger.md)–[0004](docs/adr/0004-boards-split-by-mode-and-hint-level.md),
-and the build order is [docs/tickets.md](docs/tickets.md). This ticket (#3) is
-the app shell, the generated position data and the single-position drill.
+and the build order is [docs/tickets.md](docs/tickets.md). Built so far: the app
+shell and generated position data (#3), and the scored `Random` run at `Test`
+(#4) — name, 57 positions, streak ladder, finish screen, per-position records in
+memory.
 
 ## Serve
 
@@ -80,15 +83,20 @@ app/src/
   index.html            import map, nav, route outlet
   app.js                route table; state persistence
   router.js             Navigation API + URLPattern (template; route example in its docs renamed)
-  store.js              slice registration (template mechanism, `drill` slice)
+  store.js              slice registration (template mechanism, `run` + `players`)
   reduction.js          minimal Redux Toolkit over structuredClone (template)
   BElement.js           store subscription + lit-html render base (template)
   libs/                 vendored lit-html, optional Redux Toolkit
   quiz/
-    core/drill.mjs      pure ESM: the question and the verdict, random injected
-    entity/             cases.json (generated), Positions.js, DrillReducer.js
-    control/            DrillControl.js: actions dispatched from the UI
-    boundary/Drill.js   the `q-drill` custom element
+    core/drill.mjs      pure ESM: one question and its verdict, random injected
+    core/run.mjs        pure ESM: which positions a run asks, what an answer is worth
+    core/records.mjs    pure ESM: how an answer changes a position's record
+    core/random.mjs     the injected shuffle
+    entity/             cases.json (generated), Positions.js, RunReducer.js, PlayersReducer.js
+    control/            RunControl.js: the actions the screens dispatch
+    boundary/Play.js    `q-play`: the name prompt, and the way into a run
+    boundary/Run.js     `q-run`: question, progress, score, feedback, reveal
+    boundary/Finish.js  `q-finish`: score, correct, accuracy, elapsed
 scripts/
   generate-cases.mjs    booklet -> cases.json + img/
   assert-cases.mjs      what the generated file must satisfy (used by both)
@@ -98,6 +106,15 @@ tests/                  Playwright e2e
 
 `quiz/core` is the only place that decides *what happens*: no DOM, no store, no
 imports outside itself. Components render its output; controls dispatch.
+
+A run is `Random` at `Test` until #6: every one of the 57 positions once, in a
+shuffled order, with the case name kept out of sight until the answer. A correct
+answer is 10 points times a streak multiplier that climbs to 5 (**ADR-0004**);
+a miss scores nothing, resets the multiplier and reveals the position so it can
+be studied. Every answer updates the player's per-position record
+(`attempts`, `correct`, `wrong`, `lastSeenAt`, `streak`), and a finished run is
+appended to that player's history — the data the boards (#5) and stats (#7)
+will read.
 
 ## Deviations from the template
 

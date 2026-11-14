@@ -19,11 +19,13 @@ Open reports: `npx playwright show-report`
 
 ## what is here
 
-`tests/drill.spec.js` covers the single-position drill: one diagram, four
-triggers in a changing order, nothing identifying before the answer, immediate
-feedback, and the reveal with case name, OLL number, step count, route and
-simulator link. It runs at a portrait phone viewport in Chromium, Firefox and
-WebKit.
+`tests/run.spec.js` covers the name prompt, a scored `Random` run (progress,
+score, the streak ladder and its reset), the reveal after a miss (case name,
+OLL number, step count, route, simulator link) and the finish screen. The spec
+reads `app/src/quiz/entity/cases.json` so it knows which trigger the booklet
+gives for the diagram on screen, and can therefore answer right or wrong on
+purpose instead of guessing. It runs at a portrait phone viewport in Chromium,
+Firefox and WebKit; the full 57-position run runs once, in Chromium.
 
 Browser-free tests (the generated data and the drill's rules) are `node --test`
 from the project root, not here — nothing needs installing for those.

@@ -40,10 +40,10 @@ main{
         "footer";
         padding: 0 var(--spacing-md) var(--spacing-md);
     }
-    nav li{
+    main > nav li{
         display: inline;
     }
-    header{
+    main > header{
         margin: var(--spacing-md) 0;
     }
     .view{
@@ -74,18 +74,20 @@ main{
     }
 }
 
-header{
+/* scoped to the page chrome: a component's own <header> must not inherit the
+   page's grid placement */
+main > header{
     grid-area: status;
     margin: var(--spacing-md) auto;
 }
-footer{
+main > footer{
     display: flex;
     grid-area: footer;
     align-items: end;
     gap: var(--spacing-xs);
 }
 
-nav{
+main > nav{
     grid-area: menu;
 }
 
@@ -134,17 +136,104 @@ nav a:hover{
     color: var(--color-on-surface-strong);
 }
 
-q-drill{
+q-play, q-run, q-finish{
     display: block;
     width: 100%;
     padding-top: var(--spacing-md);
 }
 
-.drill{
+.start{
     display: grid;
-    justify-items: start;
+    gap: var(--spacing-md);
+    width: min(28rem, 100%);
+}
+.start label{
+    display: grid;
+    gap: var(--spacing-sm);
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.start input{
+    font: inherit;
+    height: 44px;
+    padding: 0 var(--spacing-sm);
+    color: var(--color-on-surface-strong);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--rounded-md);
+}
+.mode-line{
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-on-surface);
+}
+.start-button, .again{
+    justify-self: start;
+    min-height: 44px;
+    padding: 0 var(--spacing-md);
+    font: inherit;
+    font-weight: 700;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--rounded-md);
+    cursor: pointer;
+}
+.start-button:disabled{
+    opacity: 0.5;
+    cursor: default;
+}
+.start-button:hover:enabled, .again:hover{
+    background-color: color-mix(in oklab, var(--color-primary), black 8%);
+}
+
+.run-status{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+    font-variant-numeric: tabular-nums;
+}
+
+.finish{
+    display: grid;
+    gap: var(--spacing-md);
+    width: min(28rem, 100%);
+}
+.finish h2{
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-on-surface-strong);
+}
+.result{
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--spacing-xs) var(--spacing-md);
+    margin: 0;
+}
+.result dt{
+    color: var(--color-on-surface);
+}
+.result dd{
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-on-surface-strong);
+}
+.final-score{
+    font-size: 32px;
+    line-height: 1.125;
+}
+
+.run{
+    display: grid;
+    /* text blocks fill the column; the diagram and the buttons keep their own width */
+    justify-items: stretch;
     gap: var(--spacing-md);
     width: min(34rem, 100%);
+}
+.run .diagram{
+    justify-self: start;
 }
 
 /* the diagram is an 82x82 booklet drawing: scale it, never crop it, so the

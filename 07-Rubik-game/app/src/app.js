@@ -3,7 +3,7 @@
  * To deactivate localStorage persistence, comment out or remove the store.subscribe() block.
  */
 import { initRouter } from "./router.js";
-import './quiz/boundary/Drill.js';
+import './quiz/boundary/Play.js';
 import store from "./store.js";
 import { save } from "./localstorage/control/StorageControl.js";
 
@@ -15,6 +15,6 @@ store.subscribe(_ => {
     save(state);
 })
 initRouter(document.querySelector('.view'), [
-    { path: '/', component: 'q-drill' }
+    { path: '/', component: 'q-play' }
 ]);
 console.log("router initialized");

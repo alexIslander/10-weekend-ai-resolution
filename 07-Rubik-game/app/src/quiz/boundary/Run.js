@@ -1,10 +1,11 @@
 import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
-import { answerWith, startDrill } from "../control/DrillControl.js";
-import { positionOf } from "../entity/Positions.js";
+import { answerWith, nextQuestion, resetRun } from "../control/RunControl.js";
 import { evaluateAnswer } from "../core/drill.mjs";
+import { positionOf } from "../entity/Positions.js";
+import "./Finish.js";
 
-/** How the four triggers read on a button. */
+/** How the four triggers read with a thumb on them. */
 const TRIGGER_NAMES = {
     S: "Sune",
     AS: "Anti-Sune",
@@ -13,57 +14,60 @@ const TRIGGER_NAMES = {
 };
 
 /**
- * The drill screen: one position diagram, the four triggers in an order the
- * player has not seen, immediate feedback, then the full reveal.
+ * The run screen: one position at a time, the four triggers shuffled per
+ * question, progress and score on top, immediate feedback. A miss reveals the
+ * position so it can be studied; a hit moves straight on.
  *
- * Nothing identifying is on screen before the answer — the case name, the OLL
- * number, the group and the step count appear with the reveal. Renders the
- * core's question; the rules live in core/drill.mjs.
+ * Renders the core's questions; every rule lives in core/run.mjs.
  */
-class Drill extends BElement {
+class Run extends BElement {
 
-    /**
-     * The question lives in the store so a reload resumes it rather than
-     * reshuffling the options under the player's thumb.
-     */
-    extractState({ drill }) {
-        return drill ?? { question: null, given: null };
-    }
-
-    connectedCallback() {
-        if (!this.state.question) startDrill();
-        super.connectedCallback();
+    extractState({ run }) {
+        return run ?? { phase: "idle" };
     }
 
     view() {
-        const { question, given } = this.state;
-        if (!question) return nothing;
+        const run = this.state;
+        if (run.phase === "running") return this.questionView(run);
+        if (run.phase === "finished") return html`<q-finish></q-finish>`;
+        return nothing;
+    }
+
+    questionView(run) {
+        const total = run.questions.length;
+        const question = run.questions[run.index];
         const position = positionOf(question.oll);
-        const verdict = given === null ? null : evaluateAnswer(question, given);
+        const verdict = run.given === null ? null : evaluateAnswer(question, run.given);
         return html`
-            <article class="drill">
+            <article class="run" data-index="${run.index + 1}" data-total="${total}">
+                <header class="run-status">
+                    <span class="progress">${run.index + 1} / ${total}</span>
+                    <span class="score">${run.score} points</span>
+                </header>
                 <img class="diagram" src="${position.image}"
                      alt="Position diagram: the top face and the ring of side stickers"
                      width="82" height="82">
                 <h2>Which trigger solves this position?</h2>
                 <div class="options">
                     ${question.options.map(trigger => html`
-                        <button class="option ${this.mark(trigger, question, given)}"
-                                ?disabled=${given !== null}
+                        <button class="option ${this.mark(trigger, question, run.given)}"
+                                ?disabled=${run.given !== null}
                                 @click=${() => answerWith(trigger)}>
                             ${TRIGGER_NAMES[trigger]}<span class="code">${trigger}</span>
                         </button>`)}
                 </div>
                 ${verdict ? this.verdictView(verdict) : nothing}
-                ${verdict ? this.revealView(position, verdict) : nothing}
+                ${verdict && !verdict.correct ? this.revealView(position) : nothing}
+                ${verdict
+                    ? html`<button class="next" @click=${() => nextQuestion()}>
+                        ${run.index + 1 === total ? "see the result" : "next position"}
+                    </button>`
+                    : nothing}
             </article>
         `;
     }
 
-    /**
-     * The tapped button and the right button are marked once an answer is in,
-     * so feedback is visible without reading the verdict line.
-     */
+    /** The tapped button and the right button are marked once an answer is in. */
     mark(trigger, question, given) {
         if (given === null) return "";
         if (evaluateAnswer(question, trigger).correct) return "correct";
@@ -80,8 +84,8 @@ class Drill extends BElement {
         `;
     }
 
-    revealView(position, verdict) {
-        // the route reads as a sequence of chips: an AUF, then the trigger it lines up
+    /** Shown after a miss: the position, its route with its AUF turns, and the simulator. */
+    revealView(position) {
         const chips = position.route.flatMap(({ auf, trigger }) =>
             auf === "none"
                 ? [{ label: trigger, kind: "trigger" }]
@@ -102,12 +106,9 @@ class Drill extends BElement {
                 <a class="simulator" href="${position.simulatorUrl}" target="_blank" rel="noopener">
                     open this position in the cube simulator
                 </a>
-                <button class="next" @click=${() => startDrill()}>
-                    ${verdict.correct ? "next position" : "try another position"}
-                </button>
             </section>
         `;
     }
 }
 
-customElements.define('q-drill', Drill);
+customElements.define('q-run', Run);
