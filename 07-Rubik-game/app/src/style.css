@@ -461,6 +461,48 @@ q-play, q-run, q-finish, q-scores, q-stats{
     background-color: color-mix(in oklab, var(--color-primary), black 8%);
 }
 
+/* Route mode: the sequence being built, and the one button that judges it */
+.chosen{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.chosen .chip{
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-weight: 700;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border-radius: var(--rounded-sm);
+}
+.chosen .chosen-empty{
+    font-size: 12px;
+    color: var(--color-on-surface);
+}
+.submit{
+    justify-self: start;
+    min-height: 44px;
+    padding: 0 var(--spacing-md);
+    font: inherit;
+    font-weight: 700;
+    color: var(--color-on-primary);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--rounded-md);
+    cursor: pointer;
+}
+.submit:disabled{
+    opacity: 0.5;
+    cursor: default;
+}
+.submit:hover:enabled{
+    background-color: color-mix(in oklab, var(--color-primary), black 8%);
+}
+
 .board-link{
     display: inline-flex;
     align-items: center;

@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { playerDeletedAction } from "../control/PlayersControl.js";
-import { answerGivenAction, groupChosenAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runStartedAction } from "../control/RunControl.js";
+import { answerGivenAction, chipAppendedAction, groupChosenAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runStartedAction } from "../control/RunControl.js";
 import { defaultHintLevel, nextRun } from "../core/run.mjs";
 
 /**
@@ -16,6 +16,8 @@ export const idleState = () => ({
     name: "",
     questions: [],
     index: 0,
+    // a route answer is built up in `chips` and only judged on submit
+    chips: [],
     given: null,
     score: 0,
     streak: 0,
@@ -38,6 +40,8 @@ export const run = createReducer(idleState(), (builder) => {
     }).addCase(runStartedAction, (state, { payload }) => {
         Object.assign(state, idleState(), payload);
         state.phase = "running";
+    }).addCase(chipAppendedAction, (state, { payload: trigger }) => {
+        if (state.given === null) state.chips.push(trigger);
     }).addCase(answerGivenAction, (state, { payload: { given, outcome } }) => {
         state.given = given;
         state.score = outcome.score;
@@ -46,6 +50,7 @@ export const run = createReducer(idleState(), (builder) => {
         state.complete = outcome.complete;
     }).addCase(nextQuestionAction, (state, { payload: at }) => {
         state.index += 1;
+        state.chips = [];
         state.given = null;
         if (state.complete) {
             state.phase = "finished";

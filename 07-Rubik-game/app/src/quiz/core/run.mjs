@@ -3,7 +3,9 @@
  * is worth. Plain ESM — no DOM, no store, no imports outside this directory —
  * and the random source is injected, so a run replays exactly in a test.
  */
-import { askPosition, evaluateAnswer } from "./drill.mjs";
+import { askPosition, askRoute, evaluateAnswer } from "./drill.mjs";
+
+/** @typedef {import("./drill.mjs").Question} Question */
 import { shuffle } from "./random.mjs";
 
 /**
@@ -19,7 +21,7 @@ export const POINTS_PER_CORRECT = 10;
 export const STREAK_CAP = 5;
 
 /** The modes the game knows today; later tickets add the rest (ADR-0002). */
-export const MODES = ["random", "grouped", "progressive"];
+export const MODES = ["random", "grouped", "progressive", "route"];
 
 /**
  * A drill asks one position and nothing else. It is a mode in the sense that a
@@ -65,22 +67,26 @@ export const poolOf = (positions, { mode, group }) => {
   return pool;
 };
 
+/** Which question a mode asks of a position: one trigger, or the whole route. */
+const askOf = mode => (mode === "route" ? askRoute : askPosition);
+
 /**
  * Builds a run: every position of the mode's pool exactly once, in an order the
  * random source decides, each with its four options shuffled. Progressive walks
  * one-step, then two-step, then three-step, shuffled within each block.
  * @param {{oll: number, group: string, steps: number, route: {auf: string, trigger: string}[]}[]} positions
  * @param {{mode: string, group?: string, random: () => number}} options
- * @returns {{oll: number, expected: string, options: string[]}[]} the questions
+ * @returns {Question[]} the questions
  */
 export const buildRun = (positions, { mode, group, random }) => {
   const pool = poolOf(positions, { mode, group });
-  if (mode !== "progressive") return shuffle(pool, random).map(position => askPosition(position, random));
+  const ask = askOf(mode);
+  if (mode !== "progressive") return shuffle(pool, random).map(position => ask(position, random));
   const blocks = new Map();
   for (const position of pool) blocks.set(position.steps, [...(blocks.get(position.steps) ?? []), position]);
   return [...blocks.keys()].sort((a, b) => a - b)
     .flatMap(steps => shuffle(blocks.get(steps), random))
-    .map(position => askPosition(position, random));
+    .map(position => ask(position, random));
 };
 
 /**
@@ -103,10 +109,10 @@ export const accuracy = (correct, total) => (total === 0 ? 0 : Math.round((corre
 
 /**
  * Judges an answer inside a run and says what it was worth.
- * @param {{expected: string}} question
- * @param {string} given the trigger the player tapped
+ * @param {Question} question
+ * @param {string|string[]} given the trigger tapped, or the route built
  * @param {{index: number, total: number, score: number, streak: number, correct: number}} progress
- * @returns {{correct: boolean, expected: string, points: number, streak: number, score: number, correctCount: number, complete: boolean}}
+ * @returns {{correct: boolean, expected: string|string[], points: number, streak: number, score: number, correctCount: number, complete: boolean}}
  */
 export const answer = (question, given, progress) => {
   const { correct, expected } = evaluateAnswer(question, given);

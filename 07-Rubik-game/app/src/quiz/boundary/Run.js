@@ -1,7 +1,7 @@
 import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
-import { answerWith, nextQuestion, resetRun } from "../control/RunControl.js";
-import { evaluateAnswer } from "../core/drill.mjs";
+import { answerWith, chipTapped, nextQuestion, resetRun, submitRoute } from "../control/RunControl.js";
+import { evaluateAnswer, TRIGGERS } from "../core/drill.mjs";
 import { positionOf } from "../entity/Positions.js";
 import "./Finish.js";
 import { label } from "./format.js";
@@ -15,11 +15,14 @@ const TRIGGER_NAMES = {
 };
 
 /**
- * The run screen: one position at a time, the four triggers shuffled per
- * question, progress, mode and score on top, immediate feedback. Every answer
- * reveals the position so it can be studied; the next question is one tap away.
+ * The run screen: one position at a time, the answer the mode asks for, progress
+ * and score on top, immediate feedback. Every answer reveals the position so it
+ * can be studied; the next question is one tap away.
  *
- * Renders the core's questions; every rule lives in core/run.mjs.
+ * The trigger drills tap one of four buttons. Route mode builds a sequence from
+ * the same four triggers and judges it only when the player submits it.
+ *
+ * Renders the core's questions; every rule lives in core/.
  */
 class Run extends BElement {
 
@@ -39,8 +42,10 @@ class Run extends BElement {
         const question = run.questions[run.index];
         const position = positionOf(question.oll);
         const verdict = run.given === null ? null : evaluateAnswer(question, run.given);
+        const route = question.kind === "route";
         return html`
-            <article class="run" data-index="${run.index + 1}" data-total="${total}">
+            <article class="run" data-index="${run.index + 1}" data-total="${total}"
+                     data-kind="${question.kind ?? "trigger"}">
                 <header class="run-status">
                     <span class="progress">${run.index + 1} / ${total}</span>
                     <span class="mode-level">${label(run.mode)} · ${label(run.hintLevel)}</span>
@@ -55,23 +60,57 @@ class Run extends BElement {
                 <img class="diagram" src="${position.image}"
                      alt="Position diagram: the top face and the ring of side stickers"
                      width="82" height="82">
-                <h2>Which trigger solves this position?</h2>
-                <div class="options">
-                    ${question.options.map(trigger => html`
-                        <button class="option ${this.mark(trigger, question, run.given)}"
-                                ?disabled=${run.given !== null}
-                                @click=${() => answerWith(trigger)}>
-                            ${TRIGGER_NAMES[trigger]}<span class="code">${trigger}</span>
-                        </button>`)}
-                </div>
+                <h2>${route
+                    ? "Name the route, step by step"
+                    : "Which trigger solves this position?"}</h2>
+                ${route ? this.routeAnswer(run) : this.triggerAnswer(question, run)}
                 ${verdict
-                    ? html`${this.verdictView(verdict)}
+                    ? html`${this.verdictView(verdict, question)}
                         <button class="next" @click=${() => nextQuestion()}>
                             ${run.index + 1 === total ? "see the result" : "next position"}
                         </button>
                         ${this.revealView(position)}`
                     : nothing}
             </article>
+        `;
+    }
+
+    /** The trigger drills: one tap answers. */
+    triggerAnswer(question, run) {
+        return html`
+            <div class="options">
+                ${question.options.map(trigger => html`
+                    <button class="option ${this.mark(trigger, question, run.given)}"
+                            ?disabled=${run.given !== null}
+                            @click=${() => answerWith(trigger)}>
+                        ${TRIGGER_NAMES[trigger]}<span class="code">${trigger}</span>
+                    </button>`)}
+            </div>
+        `;
+    }
+
+    /**
+     * Route mode: the four triggers append to a list the player can read, and
+     * nothing is judged until `submit`. The list never says how many steps the
+     * position has, so its length leaks only what the player themselves typed.
+     */
+    routeAnswer(run) {
+        const open = run.given === null;
+        return html`
+            <ol class="chosen" aria-label="Your route">
+                ${run.chips.length === 0
+                    ? html`<li class="chosen-empty">no steps yet — tap the triggers in order</li>`
+                    : run.chips.map(trigger => html`
+                        <li class="chip" data-trigger="${trigger}">${trigger}</li>`)}
+            </ol>
+            <div class="options">
+                ${TRIGGERS.map(trigger => html`
+                    <button class="option" ?disabled=${!open} @click=${() => chipTapped(trigger)}>
+                        ${TRIGGER_NAMES[trigger]}<span class="code">${trigger}</span>
+                    </button>`)}
+            </div>
+            <button class="submit" ?disabled=${!open || run.chips.length === 0}
+                    @click=${() => submitRoute()}>submit the route</button>
         `;
     }
 
@@ -82,11 +121,16 @@ class Run extends BElement {
         return trigger === given ? "wrong" : "";
     }
 
-    verdictView(verdict) {
+    verdictView(verdict, question) {
+        if (verdict.correct) {
+            return html`
+                <p class="verdict" role="status" data-verdict="correct">Correct.</p>
+            `;
+        }
         return html`
-            <p class="verdict" role="status" data-verdict="${verdict.correct ? "correct" : "incorrect"}">
-                ${verdict.correct
-                    ? "Correct."
+            <p class="verdict" role="status" data-verdict="incorrect">
+                ${question.kind === "route"
+                    ? "Not quite — the route is below, with its turns."
                     : `Not quite — the first step is ${TRIGGER_NAMES[verdict.expected]} (${verdict.expected}).`}
             </p>
         `;
