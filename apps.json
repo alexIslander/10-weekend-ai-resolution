@@ -1,0 +1,82 @@
+{
+  "entries": [
+    {
+      "slug": "apps",
+      "title": "Apps",
+      "kind": "app",
+      "target": "pages",
+      "project": "10-weekend-ai-resolution",
+      "build": { "dir": "08-dashboard", "out": "dist" },
+      "live": false
+    },
+    {
+      "slug": "lit-starter",
+      "title": "Lit Starter",
+      "kind": "app",
+      "target": "pages",
+      "project": "01-lit-starter",
+      "build": { "dir": "01-lit-starter", "out": "dist" },
+      "live": false
+    },
+    {
+      "slug": "admin-starter",
+      "title": "Admin Starter",
+      "kind": "app",
+      "target": "pages",
+      "project": "02-lit-admin-starter",
+      "build": { "dir": "02-lit-admin-starter", "out": "dist" },
+      "live": false
+    },
+    {
+      "slug": "rubik",
+      "title": "Rubik Guides",
+      "kind": "app",
+      "target": "pages",
+      "project": "rubik",
+      "build": { "dir": "06-Rubik", "out": "." },
+      "live": false
+    },
+    {
+      "slug": "rubik-game",
+      "title": "Rubik Game",
+      "kind": "app",
+      "target": "pages",
+      "project": "rubik-game",
+      "build": { "dir": "07-Rubik-game/app/src", "out": "." },
+      "live": false
+    },
+    {
+      "slug": "dualreveal",
+      "title": "DualReveal",
+      "kind": "app",
+      "target": "workers",
+      "project": "dualreveal",
+      "build": { "dir": "00-dualreveal", "out": "dist" },
+      "live": false
+    },
+    {
+      "slug": "spring-api",
+      "title": "Spring API",
+      "kind": "service",
+      "target": "aws",
+      "url": "https://spring-api.csete.cc",
+      "live": false
+    },
+    {
+      "slug": "second-brain",
+      "title": "Second Brain Ingester",
+      "kind": "service",
+      "target": "aws",
+      "url": "https://second-brain.csete.cc",
+      "live": false
+    },
+    {
+      "slug": "barefoot",
+      "title": "Barefoot",
+      "kind": "service",
+      "target": "aws",
+      "url": "https://barefoot.csete.cc",
+      "live": false
+    }
+  ]
+}
