@@ -1,10 +1,12 @@
 import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
-import { answerWith, chipTapped, nextQuestion, resetRun, submitRoute } from "../control/RunControl.js";
+import { answerWith, chipTapped, nextQuestion, skipRun, submitRoute } from "../control/RunControl.js";
 import { evaluateAnswer, TRIGGERS } from "../core/drill.mjs";
+import { answersOf } from "../core/run.mjs";
 import { positionOf } from "../entity/Positions.js";
 import "./Finish.js";
 import { label } from "./format.js";
+import { skipControl } from "./Skip.js";
 
 /** How the four triggers read with a thumb on them. */
 const TRIGGER_NAMES = {
@@ -26,8 +28,22 @@ const TRIGGER_NAMES = {
  */
 class Run extends BElement {
 
+    constructor() {
+        super();
+        // whether the skip is asking for confirmation, and which question it asked on
+        this.confirmingSkip = false;
+        this.confirmFor = null;
+    }
+
     extractState({ run }) {
-        return run ?? { phase: "idle" };
+        const state = run ?? { phase: "idle" };
+        // the confirm is about the question on screen: a new one closes it
+        const here = `${state.startedAt}:${state.index}`;
+        if (this.confirmFor !== here) {
+            this.confirmFor = here;
+            this.confirmingSkip = false;
+        }
+        return state;
     }
 
     view() {
@@ -55,6 +71,13 @@ class Run extends BElement {
                     <span class="progress">${run.index + 1} / ${total}</span>
                     <span class="mode-level">${label(run.mode)} · ${label(run.hintLevel)}</span>
                     <span class="score">${run.score} points</span>
+                    ${skipControl({
+                        answers: answersOf(run),
+                        confirming: this.confirmingSkip,
+                        onAsk: () => this.askSkip(),
+                        onConfirm: () => this.skip(),
+                        onCancel: () => this.cancelSkip()
+                    })}
                 </header>
                 ${run.hintLevel === "training"
                     ? html`<p class="training-hint" data-oll="${position.oll}">
@@ -117,6 +140,23 @@ class Run extends BElement {
             <button class="submit" ?disabled=${!open || chips.length === 0}
                     @click=${() => submitRoute()}>submit the route</button>
         `;
+    }
+
+    /** Asks before discarding: a Skip is never one slip of the thumb. */
+    askSkip() {
+        this.confirmingSkip = true;
+        this.triggerViewUpdate();
+    }
+
+    cancelSkip() {
+        this.confirmingSkip = false;
+        this.triggerViewUpdate();
+    }
+
+    /** Skips the open run — answers withdrawn, nothing scored — and goes home. */
+    skip() {
+        skipRun();
+        navigation.navigate("/");
     }
 
     /** The tapped button and the right button are marked once an answer is in. */

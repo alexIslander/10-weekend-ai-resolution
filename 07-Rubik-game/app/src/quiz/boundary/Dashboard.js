@@ -1,12 +1,16 @@
 import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
-import { groupChosen, hintLevelChosen, modeChosen, startRun } from "../control/RunControl.js";
-import { defaultHintLevel, groupFor, HINT_LEVELS, poolOf } from "../core/run.mjs";
+import { groupChosen, hintLevelChosen, modeChosen, skipRun, startRun } from "../control/RunControl.js";
+import { answersOf, defaultHintLevel, groupFor, HINT_LEVELS, poolOf } from "../core/run.mjs";
 import { modeStats } from "../core/stats.mjs";
 import { groups, positions } from "../entity/Positions.js";
 import { idleState } from "../entity/RunReducer.js";
 import { icon } from "../../icons.js";
 import { ago, label, percentage } from "./format.js";
+import { skipControl } from "./Skip.js";
+
+/** A week: past this, an open run is old enough that skipping is offered first. */
+const STALE_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * The four modes that ship, each with the colour and glyph ADR-0006 reserves for
@@ -37,11 +41,19 @@ class Dashboard extends BElement {
         super();
         // which card has its picker open: a screen concern, so it stays here
         this.openMode = null;
+        // and whether the open run's skip is asking for confirmation
+        this.confirmingSkip = false;
+        this.confirmFor = null;
     }
 
     extractState({ run, players }) {
         const state = run ?? idleState();
         const name = (state.name ?? "").trim();
+        // the confirm belongs to one open run: another run starts closed
+        if (this.confirmFor !== state.startedAt) {
+            this.confirmFor = state.startedAt;
+            this.confirmingSkip = false;
+        }
         return {
             name,
             mode: state.mode,
@@ -50,6 +62,7 @@ class Dashboard extends BElement {
             phase: state.phase,
             index: state.index ?? 0,
             total: state.questions?.length ?? 0,
+            answers: answersOf(state),
             startedAt: state.startedAt,
             player: players?.[name]
         };
@@ -86,9 +99,14 @@ class Dashboard extends BElement {
         `;
     }
 
-    /** The open run, and the one tap back into it. */
+    /**
+     * The open run: how far it got, how long it has been waiting, the one tap back
+     * into it, and the way to throw it away. Past a week it has plainly been
+     * abandoned, so skipping stands beside continue as a primary action.
+     */
     openRunView() {
         const { mode, hintLevel, index, total, startedAt } = this.state;
+        const stale = Number.isFinite(startedAt) && Date.now() - startedAt > STALE_AFTER_MS;
         return html`
             <section class="card open-run" data-testid="open-run">
                 <p class="open-run-label">open run</p>
@@ -97,11 +115,37 @@ class Dashboard extends BElement {
                     <span data-testid="open-run-progress">${index + 1} / ${total}</span>
                     <span data-testid="open-run-started">started ${ago(startedAt)}</span>
                 </p>
-                <a class="continue" href="/run" data-testid="continue-run">
-                    ${icon("forward")} continue
-                </a>
+                <div class="open-run-actions">
+                    <a class="continue" href="/run" data-testid="continue-run">
+                        ${icon("forward")} continue
+                    </a>
+                    ${skipControl({
+                        answers: this.state.answers,
+                        confirming: this.confirmingSkip,
+                        stale,
+                        onAsk: () => this.askSkip(),
+                        onConfirm: () => this.skip(),
+                        onCancel: () => this.cancelSkip()
+                    })}
+                </div>
             </section>
         `;
+    }
+
+    askSkip() {
+        this.confirmingSkip = true;
+        this.triggerViewUpdate();
+    }
+
+    cancelSkip() {
+        this.confirmingSkip = false;
+        this.triggerViewUpdate();
+    }
+
+    /** Skips the open run: nothing is scored, and this card is simply gone. */
+    skip() {
+        this.confirmingSkip = false;
+        skipRun();
     }
 
     modeView(card) {

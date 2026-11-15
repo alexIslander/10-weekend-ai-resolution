@@ -1,7 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { answerGivenAction, runFinishedAction } from "../control/RunControl.js";
+import { answerGivenAction, runFinishedAction, runSkippedAction } from "../control/RunControl.js";
 import { playerDeletedAction, statsResetAction } from "../control/PlayersControl.js";
-import { recordAnswer } from "../core/records.mjs";
+import { recordAnswer, withoutAnswers } from "../core/records.mjs";
 
 /**
  * What the game remembers about a player: one record per name, holding the
@@ -18,6 +18,12 @@ export const players = createReducer({}, (builder) => {
     }).addCase(runFinishedAction, (state, { payload: { name, ...finishedRun } }) => {
         const player = state[name] ??= { name, positions: {}, runs: [] };
         player.runs.push(finishedRun);
+    }).addCase(runSkippedAction, (state, { payload: { name, snapshot } }) => {
+        // a skipped run leaves no trace: its answers leave the records (ADR-0005).
+        // A run persisted before the snapshot existed carries none, and guessing
+        // which answers were its own would be worse than leaving them.
+        if (!state[name] || !snapshot) return;
+        state[name] = withoutAnswers(state[name], snapshot);
     }).addCase(statsResetAction, (state, { payload: name }) => {
         // the name stays: the next run and the next board row are written under it
         if (state[name]) state[name] = { name, positions: {}, runs: [] };

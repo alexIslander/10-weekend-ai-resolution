@@ -195,6 +195,69 @@ test('the finish screen leads straight to the board of the run that just ended',
   await expect(row.locator('.date')).toHaveText(/^\d{4}-\d{2}-\d{2}$/);
 });
 
+test('skipping an open run takes its answers back out of the records', async ({ page }) => {
+  const adaRun = run({ score: 120, correct: 40 });
+  const positions = { 26: { attempts: 3, correct: 2, wrong: 1, lastSeenAt: DAY, streak: 1 } };
+  await seed(page, { ada: { name: 'ada', positions, runs: [adaRun] } });
+
+  // the stats page reads the name the next run would be recorded under
+  await signIn(page, 'ada');
+  // what the records add up to before the run that is about to be skipped
+  await page.getByTestId('nav-stats').click();
+  const totals = page.locator('.totals');
+  const before = await totals.textContent();
+
+  await page.getByTestId('nav-play').click();
+  await startRun(page);
+  for (let answered = 0; answered < 3; answered += 1) {
+    await optionFor(page, await expectedTrigger(page)).click();
+    await page.locator('.next').click();
+  }
+  await expect(page.locator('.run-status .progress')).toHaveText('4 / 57');
+
+  // asking is not doing: a cancelled confirm leaves the run exactly where it was
+  await page.getByTestId('skip-run').click();
+  await expect(page.locator('.skip-confirm')).toContainText('3 answers');
+  await page.getByTestId('cancel-skip').click();
+  await expect(page.locator('.skip-confirm')).toHaveCount(0);
+  await expect(page.locator('.run-status .progress')).toHaveText('4 / 57');
+
+  await page.getByTestId('skip-run').click();
+  await page.getByTestId('confirm-skip').click();
+
+  // ADR-0005: the run is gone, and the dashboard offers the modes again
+  await expect(page).toHaveURL(/localhost:3000\/$/);
+  await expect(page.getByTestId('open-run')).toHaveCount(0);
+  await expect(page.getByTestId('mode-toggle-random')).toBeVisible();
+
+  await page.getByTestId('nav-stats').click();
+  expect(await totals.textContent()).toEqual(before);
+  await page.getByTestId('nav-scores').click();
+  await expect(board(page).locator('.board-row')).toHaveCount(1);
+  const state = await storedState(page);
+  expect(state.players.ada.positions).toEqual(positions);
+  expect(state.players.ada.runs).toEqual([adaRun]);
+});
+
+test('an open run can be skipped from the dashboard too', async ({ page }) => {
+  await seed(page, { ada: { name: 'ada', positions: {}, runs: [] } });
+
+  await signIn(page, 'ada');
+  await startRun(page);
+  await optionFor(page, await expectedTrigger(page)).click();
+  await page.getByTestId('nav-play').click();
+
+  await expect(page.getByTestId('open-run')).toBeVisible();
+  await page.getByTestId('skip-run').click();
+  await expect(page.locator('.skip-confirm')).toContainText('1 answer');
+  await page.getByTestId('confirm-skip').click();
+
+  // the one shared control: same words, same outcome, from either screen
+  await expect(page.getByTestId('open-run')).toHaveCount(0);
+  await expect(page.getByTestId('no-open-run')).toBeVisible();
+  expect((await storedState(page)).players.ada.positions).toEqual({});
+});
+
 test('a second name writes into its own records and leaves the first alone', async ({ page }) => {
   const adaRun = run({ score: 120, correct: 40 });
   await seed(page, {

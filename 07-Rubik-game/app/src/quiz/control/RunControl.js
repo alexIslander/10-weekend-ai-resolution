@@ -2,6 +2,7 @@ import { createAction } from "@reduxjs/toolkit";
 import store from "../../store.js";
 import { answer, buildRun, groupFor, HINT_LEVELS, MODES, DRILL } from "../core/run.mjs";
 import { askPosition, TRIGGERS } from "../core/drill.mjs";
+import { snapshotRecords } from "../core/records.mjs";
 import { groups, positionOf, positions } from "../entity/Positions.js";
 
 export const nameTypedAction = createAction("nameTypedAction");
@@ -14,6 +15,7 @@ export const answerGivenAction = createAction("answerGivenAction");
 export const nextQuestionAction = createAction("nextQuestionAction");
 export const runFinishedAction = createAction("runFinishedAction");
 export const runResetAction = createAction("runResetAction");
+export const runSkippedAction = createAction("runSkippedAction");
 
 /**
  * Keeps the typed name in the store, so the screen can refuse an empty one
@@ -53,7 +55,7 @@ export const groupChosen = (group) => {
 export const startRun = (name, { random = Math.random, now = Date.now } = {}) => {
     const player = name.trim();
     if (!player) return false;
-    const { run } = store.getState();
+    const { run, players } = store.getState();
     const group = groupFor(groups, run);
     store.dispatch(runStartedAction({
         name: player,
@@ -61,7 +63,9 @@ export const startRun = (name, { random = Math.random, now = Date.now } = {}) =>
         hintLevel: run.hintLevel,
         group,
         questions: buildRun(positions, { mode: run.mode, group, random }),
-        startedAt: now()
+        startedAt: now(),
+        // what the run's answers are added to, so a Skip can take them back out
+        snapshot: snapshotRecords(players?.[player])
     }));
     return true;
 }
@@ -76,7 +80,7 @@ export const startRun = (name, { random = Math.random, now = Date.now } = {}) =>
  * @returns {boolean} whether a drill was started
  */
 export const startDrill = (oll, { random = Math.random, now = Date.now } = {}) => {
-    const { run } = store.getState();
+    const { run, players } = store.getState();
     const name = (run.name ?? "").trim();
     const position = positionOf(oll);
     if (!name || !position) return false;
@@ -86,7 +90,9 @@ export const startDrill = (oll, { random = Math.random, now = Date.now } = {}) =
         hintLevel: "test",
         group: null,
         questions: [askPosition(position, random)],
-        startedAt: now()
+        startedAt: now(),
+        // a drill is an open run too: skipping it takes its answer back out
+        snapshot: snapshotRecords(players?.[name])
     }));
     return true;
 }
@@ -171,4 +177,17 @@ export const nextQuestion = ({ now = Date.now } = {}) => {
 /** Leaves the finish screen, keeping the name for the next run. */
 export const resetRun = () => {
     store.dispatch(runResetAction());
+}
+
+/**
+ * Skips the open run: the answers it collected come back out of the player's
+ * records, nothing about it is scored, and the picker reopens under the same
+ * name (ADR-0005). Any open run can be skipped, a drill included.
+ * @returns {boolean} whether there was an open run to skip
+ */
+export const skipRun = () => {
+    const { run } = store.getState();
+    if (run.phase !== "running") return false;
+    store.dispatch(runSkippedAction({ name: run.name, snapshot: run.snapshot }));
+    return true;
 }

@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { playerDeletedAction } from "../control/PlayersControl.js";
-import { answerGivenAction, chipAppendedAction, groupChosenAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runStartedAction } from "../control/RunControl.js";
+import { answerGivenAction, chipAppendedAction, groupChosenAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runSkippedAction, runStartedAction } from "../control/RunControl.js";
 import { defaultHintLevel, nextRun } from "../core/run.mjs";
 
 /**
@@ -24,7 +24,9 @@ export const idleState = () => ({
     correct: 0,
     complete: false,
     startedAt: null,
-    finishedAt: null
+    finishedAt: null,
+    // the player's records when the run started: what a Skip puts back (ADR-0005)
+    snapshot: {}
 });
 
 export const run = createReducer(idleState(), (builder) => {
@@ -60,6 +62,9 @@ export const run = createReducer(idleState(), (builder) => {
     }).addCase(playerDeletedAction, (state, { payload: name }) => {
         // the name was only ever a player's: once that player is gone, so is it
         if (state.name === name) state.name = "";
+    }).addCase(runSkippedAction, (state) => {
+        // the run is gone; the player keeps the name and the mode they were at
+        Object.assign(state, idleState(), nextRun(state), { name: state.name });
     }).addCase(runResetAction, (state) => {
         // the next run starts the way this one did, under the same name — a
         // drill hands the screen back to the picker's default

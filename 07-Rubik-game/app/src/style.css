@@ -684,6 +684,70 @@ img.diagram {
     font-weight: 700;
 }
 
+/* ---------- skip, and the confirm that names what it costs ---------- */
+
+.skip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    padding: 0 0.8rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    background: var(--bg-pill);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.skip:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--bg-pill-hover);
+}
+
+/* an open run older than a week: skipping stops being a quiet aside */
+.skip.is-stale {
+    background: var(--text-primary);
+    color: var(--bg-surface);
+}
+
+.run-status .skip,
+.open-run-actions .skip {
+    margin-left: auto;
+}
+
+.skip-confirm {
+    flex-basis: 100%;
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.7rem 0.85rem;
+    border-left: 4px solid var(--rubik-red);
+    background: var(--bg-surface-alt);
+    border-radius: var(--radius-sm);
+}
+
+.skip-confirm p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.skip-confirm strong {
+    color: var(--text-primary);
+}
+
+.skip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skip-actions .danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
 /* ---------- finish screen ---------- */
 
 .finish {
@@ -1004,6 +1068,14 @@ img.diagram {
     background: var(--bg-pill);
     border-radius: var(--radius-pill);
     padding: 0.25rem 0.65rem;
+}
+
+.open-run-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
 }
 
 .continue {

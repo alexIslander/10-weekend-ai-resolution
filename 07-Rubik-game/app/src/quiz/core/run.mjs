@@ -101,6 +101,14 @@ export const nextRun = ({ mode, hintLevel, group }) =>
     ? { mode, hintLevel, group: group ?? null }
     : { mode: MODES[0], hintLevel: defaultHintLevel(MODES[0]), group: null };
 
+/**
+ * How many answers an open run has taken: the questions it has moved past, plus
+ * the one on screen if it has been answered. What a Skip takes back, and what
+ * the confirm counts out loud.
+ * @param {{index: number, given: string|string[]|null}} run
+ */
+export const answersOf = run => (run?.index ?? 0) + (run?.given == null ? 0 : 1);
+
 /** How long a finished run took: the board's tie-break, never a countdown. */
 export const elapsedOf = run => Math.max(0, run.finishedAt - run.startedAt);
 
