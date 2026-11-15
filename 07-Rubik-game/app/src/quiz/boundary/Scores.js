@@ -8,8 +8,9 @@ import { date, duration, label } from "./format.js";
  * presentation ADR-0004 asks for, so a Training score is never read as a Test
  * one. Every board is derived from finished runs; nothing here ranks or filters.
  *
- * Each board is anchored as `#board-<mode>-<hint level>`, so the finish screen
- * can point straight at the board of the run that just ended.
+ * Each mode is a `.card` (ADR-0006). Each board is anchored as
+ * `#board-<mode>-<hint level>`, so the finish screen can point straight at the
+ * board of the run that just ended.
  */
 class Scores extends BElement {
 
@@ -19,7 +20,7 @@ class Scores extends BElement {
 
     view() {
         return html`
-            <article class="scores">
+            <article class="scores" data-testid="scores-page">
                 <h2>Scores</h2>
                 <p class="scores-intro">Best score first; the faster run wins a tie.</p>
                 ${boardsOf(this.state).map(({ mode, boards }) => this.modeView(mode, boards))}
@@ -29,7 +30,7 @@ class Scores extends BElement {
 
     modeView(mode, boards) {
         return html`
-            <section class="mode" data-mode="${mode}">
+            <section class="card mode" data-testid="scores-mode-${mode}">
                 <h3>${label(mode)}</h3>
                 <div class="mode-boards">
                     ${boards.map(({ hintLevel, rows }) => this.boardView(mode, hintLevel, rows))}
@@ -41,20 +42,21 @@ class Scores extends BElement {
     boardView(mode, hintLevel, rows) {
         return html`
             <section class="board" id="${boardId({ mode, hintLevel })}"
-                     data-mode="${mode}" data-hint-level="${hintLevel}">
+                     data-testid="board-${mode}-${hintLevel}">
                 <h4>${label(hintLevel)}</h4>
                 ${rows.length === 0
-                    ? html`<p class="empty">no finished runs yet</p>`
+                    ? html`<p class="empty" data-testid="board-empty">no finished runs yet</p>`
                     : html`
                         <ol class="board-rows">
                             ${rows.map((row, index) => html`
-                                <li class="board-row" data-name="${row.name}" data-score="${row.score}">
-                                    <span class="rank">${index + 1}</span>
-                                    <span class="name">${row.name}</span>
-                                    <span class="score">${row.score}</span>
-                                    <span class="meta">
-                                        <span class="date">${date(row.at)}</span>
-                                        <span class="elapsed">${duration(row.elapsed)}</span>
+                                <li class="board-row" data-testid="board-row"
+                                    data-name="${row.name}" data-score="${row.score}">
+                                    <span class="rank" aria-hidden="true">${index + 1}</span>
+                                    <span class="board-row-name" data-testid="board-row-name">${row.name}</span>
+                                    <span class="board-row-score" data-testid="board-row-score">${row.score}</span>
+                                    <span class="board-row-meta">
+                                        <span class="board-row-date" data-testid="board-row-date">${date(row.at)}</span>
+                                        <span class="board-row-elapsed" data-testid="board-row-elapsed">${duration(row.elapsed)}</span>
                                     </span>
                                 </li>`)}
                         </ol>`}

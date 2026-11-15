@@ -56,14 +56,14 @@ const openPlay = async (page, players, name = 'ada') => {
 const openStats = async (page, players, name = 'ada') => {
   await openPlay(page, players, name);
   await page.getByTestId('nav-stats').click();
-  await expect(page.locator('.stats')).toBeVisible();
+  await expect(page.getByTestId('stats-page')).toBeVisible();
 };
 
 const storedPlayers = page => page.evaluate(key => (JSON.parse(localStorage.getItem(key) || 'null') || {}).players, KEY);
 
-const modeRow = (page, mode) => page.locator(`tr[data-mode="${mode}"]`);
-const groupRow = (page, group) => page.locator(`tr[data-group="${group}"]`);
-const weakRows = page => page.locator('.weak-row');
+const modeRow = (page, mode) => page.getByTestId(`mode-row-${mode}`);
+const groupRow = (page, group) => page.getByTestId(`group-row-${group}`);
+const weakRows = page => page.locator('[data-testid^="weak-row-"]');
 
 const position = oll => {
   const found = cases.positions.find(candidate => candidate.oll === oll);
@@ -71,7 +71,7 @@ const position = oll => {
   return found;
 };
 
-const optionFor = (page, trigger) => page.locator(`.option:has(.code:text-is("${trigger}"))`);
+const optionFor = (page, trigger) => page.getByTestId(`answer-${trigger}`);
 
 /** Two positions of the first group, answered four times and twice. */
 const records = () => {
@@ -88,12 +88,12 @@ test('the stats page is one tap from play and totals up the history', async ({ p
 
   await page.getByTestId('nav-stats').click();
 
-  await expect(page.locator('.stats')).toBeVisible();
-  await expect(page.locator('.stats-player')).toHaveText('ada');
+  await expect(page.getByTestId('stats-page')).toBeVisible();
+  await expect(page.getByTestId('stats-player')).toHaveText('ada');
   // four answers on the first position and two on the second: six answers, three right
-  await expect(page.locator('.total-runs')).toHaveText('1');
-  await expect(page.locator('.total-answered')).toHaveText('6');
-  await expect(page.locator('.total-accuracy')).toHaveText('50%');
+  await expect(page.getByTestId('total-runs')).toHaveText('1');
+  await expect(page.getByTestId('total-answered')).toHaveText('6');
+  await expect(page.getByTestId('total-accuracy')).toHaveText('50%');
 });
 
 test('a mode row reports its own finished runs, accuracy and best score', async ({ page }) => {
@@ -108,22 +108,32 @@ test('a mode row reports its own finished runs, accuracy and best score', async 
   });
 
   // 40 + 30 right out of 57 + 57 asked: 61%, and the better of the two scores
-  await expect(modeRow(page, 'random').locator('td')).toHaveText(['2', '61%', '250']);
-  await expect(modeRow(page, 'grouped').locator('td')).toHaveText(['1', '75%', '30']);
-  await expect(modeRow(page, 'progressive').locator('td')).toHaveText(['0', '0%', '0']);
-  await expect(modeRow(page, 'route').locator('td')).toHaveText(['0', '0%', '0']);
-  await expect(page.locator('tr[data-mode]')).toHaveCount(4);
+  await expect(modeRow(page, 'random')).toBeVisible();
+  await expect(page.getByTestId('mode-random-runs')).toHaveText('2');
+  await expect(page.getByTestId('mode-random-accuracy')).toHaveText('61%');
+  await expect(page.getByTestId('mode-random-best')).toHaveText('250');
+
+  await expect(page.getByTestId('mode-grouped-runs')).toHaveText('1');
+  await expect(page.getByTestId('mode-grouped-accuracy')).toHaveText('75%');
+  await expect(page.getByTestId('mode-grouped-best')).toHaveText('30');
+
+  await expect(page.getByTestId('mode-progressive-runs')).toHaveText('0');
+  await expect(page.getByTestId('mode-progressive-accuracy')).toHaveText('0%');
+  await expect(page.getByTestId('mode-route-runs')).toHaveText('0');
+  await expect(page.locator('[data-testid^="mode-row-"]')).toHaveCount(4);
 });
 
 test('the group table covers all 14 groups in booklet order, and a group rolls up its positions', async ({ page }) => {
   await openStats(page, adaWithARun());
 
-  await expect(page.locator('tr[data-group]')).toHaveCount(14);
-  await expect(page.locator('tr[data-group] th')).toHaveText(cases.groups);
+  const rows = page.locator('[data-testid^="group-row-"]');
+  await expect(rows).toHaveCount(14);
+  await expect(page.getByTestId('groups').getByTestId('stat-name')).toHaveText(cases.groups);
 
   const group = cases.positions[0].group;
-  await expect(groupRow(page, group).locator('td')).toHaveText(['6', '50%']);
-  await expect(groupRow(page, cases.groups[1]).locator('td')).toHaveText(['0', '0%'], 'a group never played reads zero');
+  await expect(page.getByTestId(`group-${group}-attempts`)).toHaveText('6');
+  await expect(page.getByTestId(`group-${group}-accuracy`)).toHaveText('50%');
+  await expect(page.getByTestId(`group-${cases.groups[1]}-attempts`)).toHaveText('0', 'a group never played reads zero');
 });
 
 test('weak spots list the worst positions with attempts, accuracy and when they were last seen', async ({ page }) => {
@@ -165,43 +175,43 @@ test('a weak spot starts a one-question drill on that position, whose score land
   await openStats(page, { ada: { name: 'ada', positions: records(), runs: [] } });
 
   const target = position(26);
-  await weakRows(page).first().getByRole('link').click();
+  await weakRows(page).first().getByTestId('drill-26').click();
 
   await expect(page).toHaveURL(/localhost:3000\/run$/);
-  await expect(page.locator('.run-status .progress')).toHaveText('1 / 1');
-  await expect(page.locator('.run-status .mode-level')).toHaveText('Drill · Test');
-  await expect(page.locator('img.diagram')).toHaveAttribute('src', target.image);
+  await expect(page.getByTestId('run-progress')).toHaveText('1 / 1');
+  await expect(page.getByTestId('run-mode-level')).toHaveText('Drill · Test');
+  await expect(page.getByTestId('diagram')).toHaveAttribute('src', target.image);
 
   // answer it wrong: a drill is still a question with a right answer to show
   const wrong = ['S', 'AS', 'ET', 'WT'].find(trigger => trigger !== target.route[0].trigger);
   await optionFor(page, wrong).click();
-  await expect(page.locator('.verdict')).toHaveAttribute('data-verdict', 'incorrect');
-  await expect(page.locator('.verdict')).toContainText(target.route[0].trigger);
+  await expect(page.getByTestId('verdict')).toHaveAttribute('data-result', 'incorrect');
+  await expect(page.getByTestId('verdict')).toContainText(target.route[0].trigger);
 
-  await page.getByRole('button', { name: 'see the result' }).click();
+  await page.getByTestId('next').click();
 
-  const finish = page.locator('.finish');
+  const finish = page.getByTestId('finish');
   await expect(finish).toBeVisible();
   await expect(finish).toHaveAttribute('data-total', '1');
   await expect(finish).toHaveAttribute('data-correct', '0');
   // practice, not a score: there is no board for it to link to
-  await expect(finish.locator('.board-link')).toHaveCount(0);
+  await expect(page.getByTestId('board-link')).toHaveCount(0);
 
   // the answer went into the record the stats page reads...
   await page.getByTestId('nav-stats').click();
-  await expect(page.locator('.weak-row[data-oll="26"]')).toContainText('5 attempts');
-  await expect(page.locator('.weak-row[data-oll="26"]')).toContainText('20%');
+  await expect(page.getByTestId('weak-row-26')).toContainText('5 attempts');
+  await expect(page.getByTestId('weak-row-26')).toContainText('20%');
   // ...and the drill's score is on no board at all
   await page.getByTestId('nav-scores').click();
-  await expect(page.locator('.board-row')).toHaveCount(0);
+  await expect(page.getByTestId('board-row')).toHaveCount(0);
 });
 
 test('the dashboard after a drill comes back with the name, on a mode it offers', async ({ page }) => {
   await openStats(page, { ada: { name: 'ada', positions: records(), runs: [] } });
 
-  await weakRows(page).first().getByRole('link').click();
+  await weakRows(page).first().getByTestId('drill-26').click();
   await optionFor(page, position(26).route[0].trigger).click();
-  await page.getByRole('button', { name: 'see the result' }).click();
+  await page.getByTestId('next').click();
   await page.getByTestId('start-another').click();
 
   await expect(page).toHaveURL(/localhost:3000\/$/);
@@ -215,26 +225,26 @@ test('a player with answers but no finished run still sees the practice, and is 
   await openStats(page, { ada: { name: 'ada', positions: records(), runs: [] } });
 
   // the ticket's empty state for "no runs" is this line, without hiding the answers
-  await expect(page.locator('.stats .empty')).toContainText('no finished runs yet');
-  await expect(page.locator('.total-runs')).toHaveText('0');
+  await expect(page.getByTestId('no-runs')).toContainText('no finished runs yet');
+  await expect(page.getByTestId('total-runs')).toHaveText('0');
   await expect(weakRows(page)).toHaveCount(2);
 });
 
 test('a player with no history at all gets an empty page, not a table of zeros', async ({ page }) => {
   await openStats(page, { ada: { name: 'ada', positions: {}, runs: [] } });
 
-  await expect(page.locator('.stats .empty')).toContainText('no answers yet');
-  await expect(page.locator('.stat-table')).toHaveCount(0);
+  await expect(page.getByTestId('stats-empty')).toContainText('no answers yet');
+  await expect(page.locator('[data-testid^="mode-row-"]')).toHaveCount(0);
   await expect(weakRows(page)).toHaveCount(0);
   // nothing to clear yet, but the name can still be deleted
-  await expect(page.getByRole('button', { name: 'delete player' })).toBeVisible();
+  await expect(page.getByTestId('delete-player')).toBeVisible();
 });
 
 test('with no name at all the stats page points at the play screen', async ({ page }) => {
   await openStats(page, {}, '');
 
-  await expect(page.locator('.stats .empty')).toContainText('no player yet');
-  await expect(page.getByRole('button', { name: 'delete player' })).toHaveCount(0);
+  await expect(page.getByTestId('stats-empty')).toContainText('no player yet');
+  await expect(page.getByTestId('delete-player')).toHaveCount(0);
 });
 
 test('reset stats clears the records and runs, keeps the name, and leaves other players alone', async ({ page }) => {
@@ -243,15 +253,15 @@ test('reset stats clears the records and runs, keeps the name, and leaves other 
     bob: { name: 'bob', positions: {}, runs: [run({ score: 60, correct: 20 })] }
   });
 
-  await page.getByRole('button', { name: 'reset stats' }).click();
+  await page.getByTestId('reset-stats').click();
 
-  await expect(page.locator('.stats .empty')).toContainText('no answers yet');
+  await expect(page.getByTestId('stats-empty')).toContainText('no answers yet');
   await expect(weakRows(page)).toHaveCount(0);
-  await expect(page.locator('.stats')).toHaveAttribute('data-name', 'ada');
+  await expect(page.getByTestId('stats-page')).toHaveAttribute('data-name', 'ada');
 
   // the runs are gone from the boards, and another player is untouched
   await page.getByTestId('nav-scores').click();
-  await expect(page.locator('#board-random-test .board-row .name')).toHaveText(['bob']);
+  await expect(page.getByTestId('board-random-test').getByTestId('board-row-name')).toHaveText(['bob']);
 
   // the name is kept: the next run is still recorded under it
   await page.getByTestId('nav-play').click();
@@ -268,14 +278,14 @@ test('delete player removes the name, its records and its rows from the boards',
     bob: { name: 'bob', positions: {}, runs: [run({ score: 60, correct: 20 })] }
   });
 
-  await page.getByRole('button', { name: 'delete player' }).click();
+  await page.getByTestId('delete-player').click();
 
-  await expect(page.locator('.stats .empty')).toContainText('no player yet');
+  await expect(page.getByTestId('stats-empty')).toContainText('no player yet');
 
   // ada's rows leave both boards she was on, bob's row stays
   await page.getByTestId('nav-scores').click();
-  await expect(page.locator('#board-random-test .board-row .name')).toHaveText(['bob']);
-  await expect(page.locator('#board-random-training .board-row')).toHaveCount(0);
+  await expect(page.getByTestId('board-random-test').getByTestId('board-row-name')).toHaveText(['bob']);
+  await expect(page.getByTestId('board-random-training').getByTestId('board-row')).toHaveCount(0);
 
   // the device forgets the name too: the header has none to play under
   await page.getByTestId('nav-play').click();

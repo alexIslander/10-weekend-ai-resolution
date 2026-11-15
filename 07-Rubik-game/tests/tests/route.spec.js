@@ -20,16 +20,21 @@ const signIn = async (page, name) => {
   await page.getByTestId('name-input').fill(name);
 };
 
-const optionFor = (page, trigger) => page.locator(`.option:has(.code:text-is("${trigger}"))`);
+const optionFor = (page, trigger) => page.getByTestId(`answer-${trigger}`);
 
-const chips = page => page.locator('.chosen .chip');
-const submit = page => page.getByRole('button', { name: 'submit the route' });
-const score = page => page.locator('.run-status .score');
+const chips = page => page.getByTestId('chosen-step');
+const submit = page => page.getByTestId('submit-route');
+const score = page => page.getByTestId('run-score');
+const progress = page => page.getByTestId('run-progress');
 
+const revealSteps = (page, kind = 'trigger') =>
+  page.locator(`[data-testid="reveal-step"][data-kind="${kind}"]`);
+
+/** The position on screen, read from the run card's `data-oll`. */
 const positionOnScreen = async page => {
-  const image = await page.locator('img.diagram').getAttribute('src');
-  const position = cases.positions.find(({ image: known }) => known === image);
-  if (!position) throw new Error(`no position for diagram ${image}`);
+  const oll = Number(await page.getByTestId('run').getAttribute('data-oll'));
+  const position = cases.positions.find(candidate => candidate.oll === oll);
+  if (!position) throw new Error(`no position ${oll}`);
   return position;
 };
 
@@ -40,7 +45,7 @@ const startRoute = async (page, name = 'ada') => {
   await signIn(page, name);
   await page.getByTestId('mode-toggle-route').click();
   await page.getByTestId('start-run').click();
-  await expect(page.locator('.run')).toHaveAttribute('data-kind', 'route');
+  await expect(page.getByTestId('run')).toHaveAttribute('data-kind', 'route');
 };
 
 const tapAll = async (page, triggers) => {
@@ -65,11 +70,11 @@ test('Route is a mode like the others, asking for the whole sequence at Test', a
 
   await page.getByTestId('start-run').click();
 
-  await expect(page.locator('.run-status .mode-level')).toHaveText('Route · Test');
-  await expect(page.locator('.run h2')).toHaveText('Name the route, step by step');
+  await expect(page.getByTestId('run-mode-level')).toHaveText('Route · Test');
+  await expect(page.getByTestId('question')).toHaveText('Name the route, step by step');
   await expect(chips(page)).toHaveCount(0);
   await expect(submit(page)).toBeDisabled();
-  await expect(page.locator('.option')).toHaveCount(4);
+  await expect(page.locator('[data-testid^="answer-"]')).toHaveCount(4);
 });
 
 test('chips append in tap order, and a wrong first chip is not judged early', async ({ page }) => {
@@ -83,10 +88,10 @@ test('chips append in tap order, and a wrong first chip is not judged early', as
   await optionFor(page, position.route[0].trigger).click();
 
   await expect(chips(page)).toHaveText([first, position.route[0].trigger]);
-  await expect(page.locator('.verdict')).toHaveCount(0);
-  await expect(page.locator('.reveal')).toHaveCount(0);
-  await expect(page.locator('.option.correct, .option.wrong')).toHaveCount(0);
-  await expect(page.locator('.run-status .score')).toHaveText('0 points');
+  await expect(page.getByTestId('verdict')).toHaveCount(0);
+  await expect(page.getByTestId('reveal')).toHaveCount(0);
+  await expect(page.locator('[data-state="correct"], [data-state="wrong"]')).toHaveCount(0);
+  await expect(score(page)).toHaveText('0 points');
   await expect(submit(page)).toBeEnabled();
 });
 
@@ -95,13 +100,12 @@ test('the screen gives the route length away neither before nor during the answe
   await startRoute(page);
 
   // the only counter on screen is the run's own progress
-  await expect(page.locator('.run-status .progress')).toHaveText('1 / 57');
-  await expect(page.locator('[data-steps]')).toHaveCount(0);
-  await expect(page.locator('.reveal')).toHaveCount(0);
+  await expect(progress(page)).toHaveText('1 / 57');
+  await expect(page.getByTestId('reveal')).toHaveCount(0);
 
   await optionFor(page, 'ET').click();
-  await expect(page.locator('[data-steps]')).toHaveCount(0);
-  await expect(page.locator('.reveal')).toHaveCount(0);
+  await expect(page.getByTestId('reveal')).toHaveCount(0);
+  await expect(page.getByTestId('reveal-route')).toHaveCount(0);
 });
 
 test('a route submitted too short is wrong, and the whole route is still revealed', async ({ page }) => {
@@ -122,9 +126,9 @@ test('a route submitted too short is wrong, and the whole route is still reveale
   await tapAll(page, triggers.slice(0, -1));
   await submit(page).click();
 
-  await expect(page.locator('.verdict')).toHaveAttribute('data-verdict', 'incorrect');
+  await expect(page.getByTestId('verdict')).toHaveAttribute('data-result', 'incorrect');
   await expect(score(page)).toHaveText('0 points');
-  expect(await page.locator('.reveal .route li.trigger').allTextContents()).toEqual(triggers);
+  expect(await revealSteps(page).allTextContents()).toEqual(triggers);
 });
 
 test('the exact route is accepted, and the reveal shows every step with its turns', async ({ page }) => {
@@ -135,19 +139,19 @@ test('the exact route is accepted, and the reveal shows every step with its turn
   await tapAll(page, triggersOf(position));
   await submit(page).click();
 
-  await expect(page.locator('.verdict')).toHaveAttribute('data-verdict', 'correct');
+  await expect(page.getByTestId('verdict')).toHaveAttribute('data-result', 'correct');
   await expect(score(page)).toHaveText('10 points');
 
-  const reveal = page.locator('.reveal');
+  const reveal = page.getByTestId('reveal');
   await expect(reveal).toHaveAttribute('data-steps', String(position.steps));
-  await expect(reveal.locator('.route li.trigger')).toHaveCount(position.steps);
-  expect(await reveal.locator('.route li.trigger').allTextContents()).toEqual(triggersOf(position));
+  await expect(revealSteps(page)).toHaveCount(position.steps);
+  expect(await revealSteps(page).allTextContents()).toEqual(triggersOf(position));
   // the AUF turns of the route are shown where the route has them
-  await expect(reveal.locator('.route li.auf'))
+  await expect(revealSteps(page, 'auf'))
     .toHaveCount(position.route.filter(step => step.auf !== 'none').length);
 
   // the answer is closed: no further chip can be added after submitting
-  await expect(page.locator('.option:enabled')).toHaveCount(0);
+  await expect(page.locator('[data-testid^="answer-"]:enabled')).toHaveCount(0);
 });
 
 test('a route with one step too many is wrong, and the whole route is revealed', async ({ page }) => {
@@ -158,16 +162,16 @@ test('a route with one step too many is wrong, and the whole route is revealed',
   await tapAll(page, overLongRoute(position));
   await submit(page).click();
 
-  await expect(page.locator('.verdict')).toHaveAttribute('data-verdict', 'incorrect');
-  await expect(page.locator('.verdict')).toContainText('the route is below');
+  await expect(page.getByTestId('verdict')).toHaveAttribute('data-result', 'incorrect');
+  await expect(page.getByTestId('verdict')).toContainText('the route is below');
   // all or nothing: a wrong route scores nothing at all
   await expect(score(page)).toHaveText('0 points');
 
   // the miss still teaches the whole route, with its AUF turns
-  const reveal = page.locator('.reveal');
-  await expect(reveal.locator('.route li.trigger')).toHaveCount(position.steps);
-  expect(await reveal.locator('.route li.trigger').allTextContents()).toEqual(triggersOf(position));
-  expect(await reveal.locator('.route li.auf').allTextContents())
+  const reveal = page.getByTestId('reveal');
+  await expect(revealSteps(page)).toHaveCount(position.steps);
+  expect(await revealSteps(page).allTextContents()).toEqual(triggersOf(position));
+  expect(await revealSteps(page, 'auf').allTextContents())
     .toEqual(position.route.map(step => step.auf).filter(auf => auf !== 'none'));
   await expect(reveal).toContainText(`OLL ${position.oll}`);
 });
@@ -198,18 +202,20 @@ test('a finished Route run lands on its own board, without retyping the name', a
 
   await tapAll(page, triggersOf(position));
   await submit(page).click();
-  await page.getByRole('button', { name: 'see the result' }).click();
+  await page.getByTestId('next').click();
 
-  const link = page.locator('.finish .board-link');
+  const link = page.getByTestId('board-link');
   await expect(link).toHaveAttribute('href', '/scores#board-route-test');
   await link.click();
 
-  const board = page.locator('#board-route-test');
-  await expect(board.locator('.board-row .name')).toHaveText(['ada']);
-  await expect(board.locator('.board-row .score')).toHaveText(['10']);
+  const board = page.getByTestId('board-route-test');
+  await expect(board.getByTestId('board-row-name')).toHaveText(['ada']);
+  await expect(board.getByTestId('board-row-score')).toHaveText(['10']);
 
   // and the finished run reaches the stats like any other mode's
-  await page.getByRole('link', { name: 'stats' }).click();
-  await expect(page.locator('tr[data-mode="route"] td')).toHaveText(['1', '100%', '10']);
-  await expect(page.locator('.total-runs')).toHaveText('1');
+  await page.getByTestId('nav-stats').click();
+  await expect(page.getByTestId('mode-route-runs')).toHaveText('1');
+  await expect(page.getByTestId('mode-route-accuracy')).toHaveText('100%');
+  await expect(page.getByTestId('mode-route-best')).toHaveText('10');
+  await expect(page.getByTestId('total-runs')).toHaveText('1');
 });

@@ -17,15 +17,17 @@ const signIn = async (page, name = 'throwaway') => {
   await page.getByTestId('name-input').fill(name);
 };
 
-/** The position the diagram on screen belongs to - read from the generated data, never from the file name. */
+/** The position on screen, read from the run card's `data-oll` — never from a file name. */
 const positionOnScreen = async page => {
-  const image = await page.locator('img.diagram').getAttribute('src');
-  const position = cases.positions.find(({ image: known }) => known === image);
-  if (!position) throw new Error(`no position for diagram ${image}`);
+  const oll = Number(await page.getByTestId('run').getAttribute('data-oll'));
+  const position = cases.positions.find(candidate => candidate.oll === oll);
+  if (!position) throw new Error(`no position ${oll}`);
   return position;
 };
 
-const optionFor = (page, trigger) => page.locator(`.option:has(.code:text-is("${trigger}"))`);
+const optionFor = (page, trigger) => page.getByTestId(`answer-${trigger}`);
+
+const revealSteps = page => page.locator('[data-testid="reveal-step"][data-kind="trigger"]');
 
 /** Taps the trigger the booklet names, without leaving the question. */
 const answerCorrectly = async page => {
@@ -33,7 +35,7 @@ const answerCorrectly = async page => {
   await optionFor(page, route[0].trigger).click();
 };
 
-const advance = page => page.getByRole('button', { name: /next position|see the result/ }).click();
+const advance = page => page.getByTestId('next').click();
 
 /** Opens a mode's card — if it is not already open — and starts a run of it. */
 const startRun = async (page, { mode = 'random', hint, group } = {}) => {
@@ -42,7 +44,7 @@ const startRun = async (page, { mode = 'random', hint, group } = {}) => {
   if (hint) await page.getByTestId(`hint-${hint}`).click();
   if (group) await page.getByTestId('group-select').selectOption(group);
   await page.getByTestId('start-run').click();
-  await expect(page.locator('img.diagram')).toBeVisible();
+  await expect(page.getByTestId('diagram')).toBeVisible();
 };
 
 test('the dashboard offers a card per shipping mode, and none for the modes still to come', async ({ page }) => {
@@ -125,13 +127,13 @@ test('Grouped lists the 14 groups in booklet order and runs exactly the chosen o
 
   await startRun(page, { mode: 'grouped', group: name });
 
-  await expect(page.locator('.run-status .progress')).toHaveText('1 / 2');
-  await expect(page.locator('.run-status .mode-level')).toHaveText('Grouped · Test');
+  await expect(page.getByTestId('run-progress')).toHaveText('1 / 2');
+  await expect(page.getByTestId('run-mode-level')).toHaveText('Grouped · Test');
   expect((await positionOnScreen(page)).group).toBe(name);
 
   await answerCorrectly(page);
   await advance(page);
-  await expect(page.locator('.run-status .progress')).toHaveText('2 / 2');
+  await expect(page.getByTestId('run-progress')).toHaveText('2 / 2');
   expect((await positionOnScreen(page)).group).toBe(name);
 });
 
@@ -144,7 +146,7 @@ test('Progressive defaults to Training and walks one-step positions first', asyn
   await expect(page.getByTestId('position-count')).toHaveText('Progressive · Training · 57 positions');
 
   await startRun(page, { mode: 'progressive', hint: 'training' });
-  await expect(page.locator('.run-status .mode-level')).toHaveText('Progressive · Training');
+  await expect(page.getByTestId('run-mode-level')).toHaveText('Progressive · Training');
 
   const steps = [];
   for (let question = 0; question < 5; question++) {
@@ -176,7 +178,7 @@ test('Training keeps the case name and OLL number on screen while asking', async
   await startRun(page, { mode: 'random', hint: 'training' });
 
   const position = await positionOnScreen(page);
-  const hint = page.locator('.training-hint');
+  const hint = page.getByTestId('training-hint');
   await expect(hint).toHaveAttribute('data-oll', String(position.oll));
   await expect(hint).toContainText(position.name);
   await expect(hint).toContainText(`OLL ${position.oll}`);
@@ -185,11 +187,11 @@ test('Training keeps the case name and OLL number on screen while asking', async
 
   // the reveal after an answer is the same material as at Test
   await answerCorrectly(page);
-  const reveal = page.locator('.reveal');
-  await expect(reveal.locator('h3')).toHaveText(position.name);
+  const reveal = page.getByTestId('reveal');
+  await expect(reveal.getByRole('heading')).toHaveText(position.name);
   await expect(reveal).toContainText(`OLL ${position.oll}`);
   await expect(reveal).toContainText(position.group);
-  await expect(reveal.locator('.route li.trigger')).toHaveCount(position.steps);
+  await expect(revealSteps(page)).toHaveCount(position.steps);
 });
 
 test('Test shows nothing identifying before the answer, and the same reveal after it', async ({ page }) => {
@@ -198,21 +200,21 @@ test('Test shows nothing identifying before the answer, and the same reveal afte
   await startRun(page);
 
   const position = await positionOnScreen(page);
-  await expect(page.locator('.training-hint')).toHaveCount(0);
-  await expect(page.locator('.reveal')).toHaveCount(0);
+  await expect(page.getByTestId('training-hint')).toHaveCount(0);
+  await expect(page.getByTestId('reveal')).toHaveCount(0);
   await expect(page.getByText(position.name, { exact: true })).toHaveCount(0);
   await expect(page.getByText(`OLL ${position.oll}`)).toHaveCount(0);
 
   await answerCorrectly(page);
-  const reveal = page.locator('.reveal');
+  const reveal = page.getByTestId('reveal');
   await expect(reveal).toHaveAttribute('data-oll', String(position.oll));
-  await expect(reveal.locator('h3')).toHaveText(position.name);
+  await expect(reveal.getByRole('heading')).toHaveText(position.name);
   await expect(reveal).toContainText(`OLL ${position.oll}`);
   await expect(reveal).toContainText(position.group);
-  await expect(reveal.locator('.route li.trigger')).toHaveCount(position.steps);
+  await expect(revealSteps(page)).toHaveCount(position.steps);
   await expect(reveal.getByRole('link', { name: /cube simulator/i })).toBeVisible();
   // the question itself stays free of everything the reveal carries
-  await expect(page.locator('.training-hint')).toHaveCount(0);
+  await expect(page.getByTestId('training-hint')).toHaveCount(0);
 });
 
 test('a finished run of a mode leaves a green check and its accuracy on the card', async ({ page }) => {
@@ -226,7 +228,7 @@ test('a finished run of a mode leaves a green check and its accuracy on the card
   await advance(page);
   await answerCorrectly(page);
   await advance(page);
-  await expect(page.locator('.finish')).toBeVisible();
+  await expect(page.getByTestId('finish')).toBeVisible();
 
   await page.getByTestId('start-another').click();
 
@@ -241,10 +243,12 @@ test('the scores page holds a board per mode and hint level', async ({ page }) =
   await open(page);
   await page.getByTestId('nav-scores').click();
 
-  await expect(page.locator('.mode h3')).toHaveText(['Random', 'Grouped', 'Progressive', 'Route']);
   for (const mode of ['random', 'grouped', 'progressive', 'route']) {
-    await expect(page.locator(`.mode[data-mode="${mode}"] .board h4`)).toHaveText(['Training', 'Test']);
+    await expect(page.getByTestId(`scores-mode-${mode}`).getByRole('heading', { level: 3 }))
+      .toHaveText(mode.charAt(0).toUpperCase() + mode.slice(1));
+    await expect(page.getByTestId(`board-${mode}-training`).getByRole('heading')).toHaveText('Training');
+    await expect(page.getByTestId(`board-${mode}-test`).getByRole('heading')).toHaveText('Test');
   }
-  await expect(page.locator('.board')).toHaveCount(8);
-  await expect(page.locator('.board .empty').first()).toHaveText('no finished runs yet');
+  await expect(page.getByTestId('board-empty')).toHaveCount(8);
+  await expect(page.getByTestId('board-empty').first()).toHaveText('no finished runs yet');
 });

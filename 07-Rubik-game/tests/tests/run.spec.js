@@ -9,19 +9,32 @@ test.use({ viewport: { width: 390, height: 844 } });
 
 const open = page => page.goto('localhost:3000');
 
-/** The trigger the booklet names for the diagram on screen. */
-const expectedTrigger = async page => {
-  const image = await page.locator('img.diagram').getAttribute('src');
-  const position = cases.positions.find(({ image: known }) => known === image);
-  if (!position) throw new Error(`no position for diagram ${image}`);
-  return position.route[0].trigger;
+/**
+ * The position on screen, read from the run card's `data-oll` — never from the
+ * diagram's file name, and never from a class.
+ */
+const positionOnScreen = async page => {
+  const oll = Number(await page.getByTestId('run').getAttribute('data-oll'));
+  const position = cases.positions.find(candidate => candidate.oll === oll);
+  if (!position) throw new Error(`no position ${oll}`);
+  return position;
 };
 
-const optionFor = (page, trigger) => page.locator(`.option:has(.code:text-is("${trigger}"))`);
+/** The trigger the booklet names for the position on screen. */
+const expectedTrigger = async page => (await positionOnScreen(page)).route[0].trigger;
 
-const score = page => page.locator('.run-status .score');
-const progress = page => page.locator('.run-status .progress');
-const next = page => page.locator('.run .next');
+const optionFor = (page, trigger) => page.getByTestId(`answer-${trigger}`);
+const optionCodes = async page => (await page.locator('[data-testid^="answer-"]').evaluateAll(
+  elements => elements.map(element => element.getAttribute('data-testid'))))
+  .map(testid => testid.replace('answer-', ''))
+  .sort();
+
+const score = page => page.getByTestId('run-score');
+const progress = page => page.getByTestId('run-progress');
+const next = page => page.getByTestId('next');
+
+const revealSteps = (page, kind = 'trigger') =>
+  page.locator(`[data-testid="reveal-step"][data-kind="${kind}"]`);
 
 /** The name a run is recorded under: the header's `change` line opens the field. */
 const signIn = async (page, name) => {
@@ -35,7 +48,7 @@ const startRun = async (page, name = 'throwaway') => {
   await signIn(page, name);
   await page.getByTestId('mode-toggle-random').click();
   await page.getByTestId('start-run').click();
-  await expect(page.locator('img.diagram')).toBeVisible();
+  await expect(page.getByTestId('diagram')).toBeVisible();
 };
 
 /** Answers the current position correctly and moves on to the next one. */
@@ -55,7 +68,7 @@ test('asks for a name before the first question, and refuses an empty one', asyn
 
   // the dashboard is home, and it starts nothing until someone owns the score
   await expect(page.getByTestId('dashboard')).toBeVisible();
-  await expect(page.locator('img.diagram')).toHaveCount(0);
+  await expect(page.getByTestId('diagram')).toHaveCount(0);
   await expect(page.getByTestId('no-open-run')).toBeVisible();
 
   // the name field is one tap away, and the header says whose run this would be
@@ -82,49 +95,66 @@ test('a run offers the first of 57 positions, four triggers and no case name', a
   await expect(page).toHaveURL(/\/run$/);
   await expect(progress(page)).toHaveText('1 / 57');
   await expect(score(page)).toHaveText('0 points');
-  await expect(page.locator('.run-status .mode-level')).toHaveText('Random · Test');
+  await expect(page.getByTestId('run-mode-level')).toHaveText('Random · Test');
 
-  const diagram = page.getByRole('img', { name: /position diagram/i });
+  const diagram = page.getByTestId('diagram');
   await expect(diagram).toHaveAttribute('src', /^\/img\/friedrich-oll-\d+\.png$/);
+  await expect(diagram).toHaveAttribute('width', '82');
 
-  await expect(page.locator('.option')).toHaveCount(4);
-  const codes = (await page.locator('.option .code').allTextContents()).map(code => code.trim()).sort();
-  expect(codes).toEqual(['AS', 'ET', 'S', 'WT']);
+  await expect(page.locator('[data-testid^="answer-"]')).toHaveCount(4);
+  expect(await optionCodes(page)).toEqual(['AS', 'ET', 'S', 'WT']);
 
   // Test level: nothing identifying before the answer
-  await expect(page.locator('.reveal')).toHaveCount(0);
+  await expect(page.getByTestId('reveal')).toHaveCount(0);
   await expect(page.getByText(/OCLL/)).toHaveCount(0);
 });
 
-test('lays the question out in one column that fills the phone', async ({ page }) => {
+test('lays the question out in one card that fills the phone', async ({ page }) => {
   await startRun(page);
 
-  const run = await page.locator('.run').boundingBox();
-  const question = await page.locator('.run h2').boundingBox();
-  const options = await page.locator('.options').boundingBox();
-  const status = await page.locator('.run-status').boundingBox();
+  const viewport = page.viewportSize();
+  const card = page.getByTestId('run');
+  const run = await card.boundingBox();
+  // the card's own inset: its border plus its padding, the guide's `.card` rhythm
+  const inset = await card.evaluate(node => {
+    const style = getComputedStyle(node);
+    return parseFloat(style.borderLeftWidth) + parseFloat(style.paddingLeft);
+  });
 
-  for (const [name, box] of [['question', question], ['options', options], ['status', status]]) {
-    expect(box.width, `${name} is squeezed into a column`).toBeGreaterThan(run.width * 0.8);
-    expect(box.x, `${name} starts at the left edge`).toBeCloseTo(run.x, 0);
+  // the phone, less the container's gutters
+  expect(run.x).toBeCloseTo(16, 0);
+  expect(run.width).toBeCloseTo(viewport.width - 32, 0);
+
+  // and one column inside it, filling the card's content box
+  for (const testid of ['run-status', 'question', 'answers']) {
+    const box = await page.getByTestId(testid).boundingBox();
+    expect(box.x, `${testid} is indented`).toBeCloseTo(run.x + inset, 0);
+    expect(box.width, `${testid} is squeezed into a column`).toBeGreaterThan(run.width - 2 * inset - 1);
   }
 });
 
-test('keeps the next button on screen once the answer is in', async ({ page }) => {
+test('the way on sits under the solving note, and one scroll reaches it', async ({ page }) => {
   await startRun(page);
   await optionFor(page, await expectedTrigger(page)).click();
 
-  const next = await page.locator('.run .next').boundingBox();
+  const note = await page.getByTestId('reveal').boundingBox();
+  const nextBox = await next(page).boundingBox();
+  // the ticket's order: the note teaches first, the way on follows it
+  expect(nextBox.y).toBeGreaterThan(note.y);
+
+  // and it is a thumb-sized control, never a clipped one
+  expect(nextBox.height).toBeGreaterThanOrEqual(44);
+  await next(page).scrollIntoViewIfNeeded();
+  const reached = await next(page).boundingBox();
   const viewport = page.viewportSize();
-  // the study material may need a scroll; the way to the next question may not
-  expect(next.y).toBeGreaterThan(0);
-  expect(next.y + next.height).toBeLessThanOrEqual(viewport.height);
+  expect(reached.y).toBeGreaterThanOrEqual(0);
+  expect(reached.y + reached.height).toBeLessThanOrEqual(viewport.height);
 });
 
 test('shows the diagram scaled, never cropped', async ({ page }) => {
   await startRun(page);
 
-  const diagram = page.locator('img.diagram');
+  const diagram = page.getByTestId('diagram');
   const natural = await diagram.evaluate(image => ({ width: image.naturalWidth, height: image.naturalHeight }));
   const box = await diagram.boundingBox();
   const viewport = page.viewportSize();
@@ -144,11 +174,11 @@ test('offers thumb-sized tap targets', async ({ page }) => {
   expect(start.height).toBeGreaterThanOrEqual(44);
 
   await page.getByTestId('start-run').click();
-  await expect(page.locator('img.diagram')).toBeVisible();
+  await expect(page.getByTestId('diagram')).toBeVisible();
   await optionFor(page, await expectedTrigger(page)).click();
 
-  const targets = await page.locator('.option, .run .next, .reveal .simulator').evaluateAll(elements =>
-    elements.map(element => {
+  const targets = await page.locator('[data-testid^="answer-"], [data-testid="next"], [data-testid="simulator"]')
+    .evaluateAll(elements => elements.map(element => {
       const { width, height } = element.getBoundingClientRect();
       return { width, height };
     }));
@@ -165,24 +195,24 @@ test('a correct answer is worth ten points and moves on', async ({ page }) => {
   const trigger = await expectedTrigger(page);
   await optionFor(page, trigger).click();
 
-  await expect(page.locator('.verdict')).toHaveAttribute('data-verdict', 'correct');
-  await expect(page.locator('.option.correct .code')).toHaveText(trigger);
+  await expect(page.getByTestId('verdict')).toHaveAttribute('data-result', 'correct');
+  await expect(optionFor(page, trigger)).toHaveAttribute('data-state', 'correct');
   await expect(score(page)).toHaveText('10 points');
   await expect(progress(page)).toHaveText('1 / 57');
 
   // the reveal follows every answer, hit or miss, so the position can be studied
-  const reveal = page.locator('.reveal');
+  const reveal = page.getByTestId('reveal');
   await expect(reveal).toBeVisible();
   await expect(reveal.getByRole('heading')).not.toBeEmpty();
-  expect((await page.locator('.route li.trigger').first().innerText()).trim()).toBe(trigger);
+  expect((await revealSteps(page).first().innerText()).trim()).toBe(trigger);
 
   await next(page).click();
 
   await expect(progress(page)).toHaveText('2 / 57');
   await expect(score(page)).toHaveText('10 points');
-  await expect(page.locator('.verdict')).toHaveCount(0);
-  await expect(page.locator('.reveal')).toHaveCount(0);
-  await expect(page.locator('.option:enabled')).toHaveCount(4);
+  await expect(page.getByTestId('verdict')).toHaveCount(0);
+  await expect(page.getByTestId('reveal')).toHaveCount(0);
+  await expect(page.locator('[data-testid^="answer-"]:enabled')).toHaveCount(4);
 });
 
 test('a miss reveals the trigger that would have been right, and the position it solves', async ({ page }) => {
@@ -192,21 +222,22 @@ test('a miss reveals the trigger that would have been right, and the position it
   const wrong = ['S', 'AS', 'ET', 'WT'].find(candidate => candidate !== trigger);
   await optionFor(page, wrong).click();
 
-  const verdict = page.locator('.verdict');
-  await expect(verdict).toHaveAttribute('data-verdict', 'incorrect');
+  const verdict = page.getByTestId('verdict');
+  await expect(verdict).toHaveAttribute('data-result', 'incorrect');
   await expect(verdict).toContainText(trigger);
+  await expect(optionFor(page, wrong)).toHaveAttribute('data-state', 'wrong');
   await expect(score(page)).toHaveText('0 points');
 
-  const reveal = page.locator('.reveal');
+  const reveal = page.getByTestId('reveal');
   await expect(reveal).toBeVisible();
   await expect(reveal.getByRole('heading')).not.toBeEmpty();
   await expect(reveal).toContainText('OLL');
 
   const steps = Number(await reveal.getAttribute('data-steps'));
-  await expect(page.locator('.route li.trigger')).toHaveCount(steps);
-  expect((await page.locator('.route li.trigger').first().innerText()).trim()).toBe(trigger);
+  await expect(revealSteps(page)).toHaveCount(steps);
+  expect((await revealSteps(page).first().innerText()).trim()).toBe(trigger);
 
-  const simulator = reveal.getByRole('link', { name: /cube simulator/i });
+  const simulator = page.getByTestId('simulator');
   const href = await simulator.getAttribute('href');
   expect(href).toMatch(/^https:\/\/alg\.cubing\.net\//);
   expect(href).toContain('puzzle=3x3x3');
@@ -283,16 +314,17 @@ test('a finished run shows score, correct count, accuracy and elapsed time', asy
     await next(page).click();
   }
 
-  const finish = page.locator('.finish');
+  const finish = page.getByTestId('finish');
   await expect(finish).toBeVisible();
   await expect(finish.getByRole('heading')).toHaveText('Run finished');
   await expect(finish).toHaveAttribute('data-correct', '57');
   await expect(finish).toHaveAttribute('data-total', '57');
   await expect(finish).toHaveAttribute('data-score', '2750');
-  await expect(finish.locator('.final-score')).toHaveText('2750');
-  await expect(finish).toContainText('57 of 57');
-  await expect(finish).toContainText('100%');
-  await expect(finish).toContainText(/\d+ s|\d+ min \d+ s/);
+  await expect(page.getByTestId('final-score')).toHaveText('2750');
+  await expect(page.getByTestId('finish-correct')).toHaveText('57');
+  await expect(page.getByTestId('finish-total')).toHaveText('57');
+  await expect(page.getByTestId('finish-accuracy')).toHaveText('100%');
+  await expect(page.getByTestId('finish-elapsed')).toHaveText(/\d+ s|\d+ min \d+ s/);
 
   // the picker lives on the dashboard now, so that is where the button goes
   await page.getByTestId('start-another').click();
@@ -300,5 +332,5 @@ test('a finished run shows score, correct count, accuracy and elapsed time', asy
   await expect(page.getByTestId('dashboard')).toBeVisible();
   await expect(page.getByTestId('playing-as')).toHaveText(/playing as throwaway/);
   await expect(page.getByTestId('no-open-run')).toBeVisible();
-  await expect(page.locator('img.diagram')).toHaveCount(0);
+  await expect(page.getByTestId('diagram')).toHaveCount(0);
 });

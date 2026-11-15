@@ -1,10 +1,11 @@
 /* The component layer: everything here consumes the tokens in /tokens.css and
    names no colour of its own (ADR-0006). One container, one card, one pill.
 
-   The playing surfaces are dressed properly in their own ticket; what is here is
-   their legible default on the new tokens, so /, /stats and /scores work in both
-   themes in between. */
+   The playing surfaces wear the guide's components: the question and its
+   solving note on the run screen, the finish screen's result, and the stats and
+   scores pages as `.card` sections whose figures are rows, never a table. */
 
+/* ---------- reset and base ---------- */
 /* ---------- reset and base ---------- */
 
 *, *::before, *::after {
@@ -327,8 +328,7 @@ q-site-header {
 }
 
 .stat-note,
-.scores-intro,
-.hint-note {
+.scores-intro {
     color: var(--text-secondary);
     font-size: 0.85rem;
 }
@@ -398,43 +398,7 @@ legend {
     color: var(--bg-surface);
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-}
-
-th,
-td {
-    text-align: left;
-    padding: 0.45rem 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-thead th {
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-}
-
-tbody th {
-    font-weight: 700;
-}
-
-/* ---------- play screen: the start form ---------- */
-
-.start {
-    display: grid;
-    gap: var(--spacing-md);
-    max-width: 620px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
-}
+/* ---------- the mode picker, inside the card that was tapped ---------- */
 
 .field {
     display: grid;
@@ -473,10 +437,10 @@ tbody th {
     border-color: var(--rubik-blue);
 }
 
-/* ---------- run screen ---------- */
+/* ---------- run screen: the guide's question card ---------- */
 
-/* a column of questions, not a card: the run screen is dressed in its own
-   ticket, and the phone layout has to fill the width it is given */
+/* one card per question: pills on top, the sticker, the prompt, the answers,
+   and — once an answer is in — the verdict, the solving note and the way on */
 .run {
     display: grid;
     justify-items: stretch;
@@ -491,13 +455,14 @@ tbody th {
     gap: 0.4rem;
 }
 
-.run-status > span {
-    font-size: 0.8rem;
-    font-weight: 700;
+.pill {
+    font-size: 0.75rem;
+    font-weight: 800;
     color: var(--text-secondary);
     background: var(--bg-pill);
     border-radius: var(--radius-pill);
-    padding: 0.25rem 0.65rem;
+    padding: 0.25rem 0.7rem;
+    white-space: nowrap;
 }
 
 .training-hint {
@@ -518,57 +483,100 @@ tbody th {
     color: var(--text-primary);
 }
 
-/* a diagram is white stickers on a clear ground: it needs a white tile in
-   either theme (the full sticker treatment belongs to the run screen's ticket) */
-img.diagram {
-    display: block;
-    margin-inline: auto;
-    width: 82px;
-    height: 82px;
-    background: var(--rubik-white);
-    border-radius: var(--radius-sm);
-    padding: 4px;
-    box-shadow: var(--shadow-sm);
+/* The diagram is white stickers on a clear ground: the guide's sticker tile, a
+   white face inside the cube's frame, in either theme. */
+.cube-wrapper {
+    justify-self: center;
+    padding: 3px;
+    background: var(--cube-frame);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    line-height: 0;
 }
 
-.options {
+.cube-frame {
+    display: block;
+    padding: 4px;
+    background: var(--rubik-white);
+    border-radius: 8px;
+}
+
+img.diagram {
+    display: block;
+    width: 82px;
+    height: 82px;
+}
+
+/* the prompt is a section title, set the way the guide sets one */
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+/* answers are neutral notation cards: the cube's colours stay off them, so the
+   verdict is the only thing that says right or wrong in colour */
+.answers {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
 }
 
-.option {
+.move-card {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 0.15rem;
-    min-height: 60px;
+    min-height: 64px;
     padding: 0.6rem 0.5rem;
     background: var(--bg-surface-alt);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
+    color: var(--text-primary);
+}
+
+.move-card:hover:not(:disabled) {
+    border-color: var(--border-strong);
+    transform: none;
+}
+
+.move-name {
+    font-size: 0.9rem;
     font-weight: 700;
 }
 
-.option .code {
+.move-code {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
     color: var(--text-muted);
 }
 
-.option.correct {
-    border-color: var(--rubik-green);
-    box-shadow: inset 0 0 0 1px var(--rubik-green);
+.move-card[data-state="correct"] {
+    border-color: var(--text-primary);
+    box-shadow: inset 0 0 0 1px var(--text-primary);
 }
 
-.option.wrong {
-    border-color: var(--rubik-red);
-    box-shadow: inset 0 0 0 1px var(--rubik-red);
+.move-card[data-state="correct"] .move-code {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
-/* Route mode: the chips are typed, so they read as an algorithm */
+.move-card[data-state="wrong"] {
+    border-style: dashed;
+    border-color: var(--border-strong);
+}
+
+.move-card[data-state="wrong"] .move-code {
+    text-decoration: line-through;
+}
+
+/* Route mode: the chips are typed, so they read as an algorithm with a square
+   of the trigger's colour in front of each step */
 .chosen {
     display: flex;
     flex-wrap: wrap;
@@ -579,60 +587,97 @@ img.diagram {
     padding: 0.4rem;
     list-style: none;
     background: var(--bg-surface-alt);
-    border: 1px solid var(--border-color);
+    border: 1px dashed var(--border-strong);
     border-radius: var(--radius-md);
 }
 
-.chip {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.85rem;
-    font-weight: 700;
+.chosen-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
     background: var(--bg-algo);
     color: var(--text-algo);
     border-radius: var(--radius-sm);
-    padding: 0.2rem 0.6rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
 }
+
+.tile {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.tile--yellow { background: var(--rubik-yellow); }
+.tile--blue { background: var(--rubik-blue); }
+.tile--green { background: var(--rubik-green); }
+.tile--orange { background: var(--rubik-orange); }
 
 .chosen-empty {
     font-size: 0.85rem;
     color: var(--text-muted);
 }
 
-.submit {
-    justify-self: start;
+.submit,
+.next {
+    justify-self: stretch;
     background: var(--text-primary);
     border-color: transparent;
     color: var(--bg-surface);
     font-weight: 800;
 }
 
+/* the verdict: the guide's green check or red cross, and the sentence beside it */
 .verdict {
-    border-left: 4px solid var(--border-strong);
-    background: var(--bg-surface-alt);
-    border-radius: var(--radius-sm);
-    padding: 0.6rem 0.8rem;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 700;
 }
 
-.verdict[data-verdict="correct"] {
-    border-left-color: var(--rubik-green);
+.verdict-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    color: #ffffff;
+    box-shadow: var(--shadow-sm);
 }
 
-.verdict[data-verdict="incorrect"] {
-    border-left-color: var(--rubik-red);
+.verdict-badge .icon {
+    width: 13px;
+    height: 13px;
 }
 
-.next {
-    justify-self: start;
-}
+.verdict-badge--correct { background: var(--rubik-green); }
+.verdict-badge--incorrect { background: var(--rubik-red); }
 
-.reveal {
+/* the reveal: the guide's yellow solving note, with the route as an algorithm */
+.solve-note {
     display: grid;
     gap: 0.5rem;
+    padding: var(--spacing-md);
     background: var(--bg-surface-alt);
     border: 1px solid var(--border-color);
+    border-left: 5px solid var(--rubik-yellow);
     border-radius: var(--radius-md);
-    padding: var(--spacing-md);
+}
+
+.solve-note-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
 }
 
 .position-meta {
@@ -654,25 +699,25 @@ img.diagram {
     list-style: none;
 }
 
-.route li {
+.route-step {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 0.85rem;
-    font-weight: 700;
+    font-weight: 800;
     border-radius: var(--radius-sm);
-    padding: 0.15rem 0.5rem;
+    padding: 0.2rem 0.55rem;
 }
 
-.route li.trigger {
+.route-step--trigger {
     background: var(--bg-algo);
     color: var(--text-algo);
 }
 
-.route li.auf {
+.route-step--auf {
     background: var(--bg-pill);
     color: var(--text-secondary);
 }
 
-.route li.arrow {
+.route .arrow {
     color: var(--text-muted);
 }
 
@@ -754,25 +799,43 @@ img.diagram {
     display: grid;
     gap: var(--spacing-md);
     justify-items: start;
-    max-width: 620px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
+    max-width: 34rem;
+}
+
+.score-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+}
+
+.score-number {
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.score-caption {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
 }
 
 .result {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 0.35rem 1rem;
+    gap: 0.4rem 1rem;
     margin: 0;
     width: 100%;
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
 }
 
 .result dt {
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-muted);
@@ -783,17 +846,14 @@ img.diagram {
     font-weight: 800;
 }
 
-.final-score {
-    font-size: 1.5rem;
-}
-
 .board-link {
     display: inline-flex;
     align-items: center;
+    min-height: 44px;
     background: var(--rubik-blue);
     color: #ffffff;
     border-radius: var(--radius-sm);
-    padding: 0.55rem 0.9rem;
+    padding: 0 0.9rem;
     font-weight: 700;
 }
 
@@ -802,26 +862,39 @@ img.diagram {
     background: var(--rubik-blue);
 }
 
-/* ---------- stats screen ---------- */
+/* a filled link keeps the cube colour's white type: the dark theme's `a` colour
+   would otherwise repaint it yellow, which is not readable on blue */
+[data-theme="dark"] .board-link,
+[data-theme="dark"] .continue {
+    color: #ffffff;
+}
+
+/* ---------- stats screen: one card per block ---------- */
 
 .stats {
     display: grid;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
+}
+
+.stats-summary {
+    display: grid;
+    gap: var(--spacing-sm);
 }
 
 .stats-player {
+    font-size: 1.15rem;
     font-weight: 800;
 }
 
 .totals {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: var(--spacing-sm);
     margin: 0;
 }
 
 .totals dt {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -830,17 +903,51 @@ img.diagram {
 
 .totals dd {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 900;
+    letter-spacing: -0.02em;
 }
 
 .stat-section {
     display: grid;
     gap: var(--spacing-sm);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
+}
+
+/* The figures are rows of one grid, with the labels on a head row: they line up
+   like a table and still fit a 390 px phone without scrolling sideways. */
+.stat-heading,
+.stat-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: 0.5rem 0.9rem;
+    align-items: baseline;
+}
+
+.stat-heading {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.stat-heading--group,
+.stat-row--group {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.stat-row {
+    padding: 0.45rem 0.5rem;
+    background: var(--bg-surface-alt);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: right;
+}
+
+.stat-row .stat-name {
+    font-weight: 700;
+    text-align: left;
 }
 
 .weak-spots {
@@ -856,6 +963,7 @@ img.diagram {
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.35rem 0.9rem;
+    min-height: 44px;
     padding: 0.55rem 0.7rem;
     color: var(--text-primary);
     background: var(--bg-surface-alt);
@@ -896,6 +1004,12 @@ img.diagram {
 }
 
 .danger-zone {
+    display: grid;
+    gap: var(--spacing-sm);
+    border-left: 5px solid var(--rubik-red);
+}
+
+.danger-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -907,11 +1021,11 @@ img.diagram {
     background: transparent;
 }
 
-/* ---------- scores screen ---------- */
+/* ---------- scores screen: one card per mode, a board per hint level ---------- */
 
 .scores {
     display: grid;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
 }
 
 .mode {
@@ -921,17 +1035,17 @@ img.diagram {
 
 .mode-boards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: var(--spacing-md);
 }
 
 .board {
     display: grid;
     gap: var(--spacing-sm);
-    background: var(--bg-surface);
+    padding: var(--spacing-md);
+    background: var(--bg-surface-alt);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: var(--spacing-md);
 }
 
 .board-rows {
@@ -944,30 +1058,32 @@ img.diagram {
 
 .board-row {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 0.15rem 0.75rem;
     align-items: baseline;
     padding: 0.45rem 0.6rem;
-    background: var(--bg-surface-alt);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
 }
 
 .board-row .rank {
+    font-size: 0.75rem;
     font-weight: 900;
-    font-size: 0.8rem;
     color: var(--text-muted);
 }
 
-.board-row .name {
+.board-row-name {
     font-weight: 700;
+    overflow-wrap: anywhere;
 }
 
-.board-row .score {
-    font-weight: 900;
+.board-row-score {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 800;
 }
 
-.board-row .meta {
+.board-row-meta {
     grid-column: 1 / -1;
     display: flex;
     flex-wrap: wrap;
@@ -1252,18 +1368,14 @@ img.diagram {
         font-size: 0.95rem;
     }
 
-    .result {
-        grid-template-columns: 1fr;
+    /* the figures stay on one line: a name, then three short numbers */
+    .stat-heading,
+    .stat-row {
+        gap: 0.35rem 0.6rem;
     }
 
-    .result dd {
-        margin-bottom: 0.35rem;
-    }
-
-    th,
-    td {
-        padding: 0.4rem 0.35rem;
-        font-size: 0.8rem;
+    .stat-row {
+        font-size: 0.82rem;
     }
 }
 

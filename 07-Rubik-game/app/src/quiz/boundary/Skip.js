@@ -21,7 +21,7 @@ export const skipConsequence = (answers) => answers === 0
  */
 export const skipControl = ({ answers, confirming, stale = false, onAsk, onConfirm, onCancel }) => confirming
     ? html`
-        <div class="skip-confirm" role="alertdialog" aria-label="Skip this open run">
+        <div class="skip-confirm" role="alertdialog" aria-label="Skip this open run" data-testid="skip-confirm">
             <p><strong>Skip this open run?</strong> ${skipConsequence(answers)}</p>
             <div class="skip-actions">
                 <button type="button" class="danger" data-testid="confirm-skip" @click=${onConfirm}>

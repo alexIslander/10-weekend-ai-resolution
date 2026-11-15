@@ -22,9 +22,9 @@ const run = ({ score, correct, startedAt = DAY, finishedAt = DAY + 30_000, mode 
   finishedAt
 });
 
-const board = (page, hintLevel = 'test') => page.locator(`#board-random-${hintLevel}`);
+const board = (page, hintLevel = 'test') => page.getByTestId(`board-random-${hintLevel}`);
 
-const boardNames = page => board(page).locator('.board-row .name').allTextContents();
+const boardNames = page => board(page).getByTestId('board-row-name').allTextContents();
 
 /**
  * Puts a whole store state in localStorage, the way the template persists it.
@@ -62,13 +62,13 @@ const lastQuestionRun = name => ({
 const storedState = page => page.evaluate(key => JSON.parse(localStorage.getItem(key) || 'null'), KEY);
 
 const expectedTrigger = async page => {
-  const image = await page.locator('img.diagram').getAttribute('src');
-  const position = cases.positions.find(({ image: known }) => known === image);
-  if (!position) throw new Error(`no position for diagram ${image}`);
+  const oll = Number(await page.getByTestId('run').getAttribute('data-oll'));
+  const position = cases.positions.find(candidate => candidate.oll === oll);
+  if (!position) throw new Error(`no position ${oll}`);
   return position.route[0].trigger;
 };
 
-const optionFor = (page, trigger) => page.locator(`.option:has(.code:text-is("${trigger}"))`);
+const optionFor = (page, trigger) => page.getByTestId(`answer-${trigger}`);
 
 /** The name a run is recorded under: the header's `change` line opens the field. */
 const signIn = async (page, name) => {
@@ -80,7 +80,7 @@ const signIn = async (page, name) => {
 const startRun = async page => {
   await page.getByTestId('mode-toggle-random').click();
   await page.getByTestId('start-run').click();
-  await expect(page.locator('img.diagram')).toBeVisible();
+  await expect(page.getByTestId('diagram')).toBeVisible();
 };
 
 test('the scores page is one tap from play and shows a board per hint level', async ({ page }) => {
@@ -90,14 +90,13 @@ test('the scores page is one tap from play and shows a board per hint level', as
 
   await page.getByTestId('nav-scores').click();
 
-  await expect(page.locator('.scores')).toBeVisible();
-  // ADR-0004: a mode on the scores page, with a column per hint level
-  const random = page.locator('.mode[data-mode="random"]');
+  await expect(page.getByTestId('scores-page')).toBeVisible();
+  // ADR-0004: a mode on the scores page, with a board per hint level
+  const random = page.getByTestId('scores-mode-random');
   await expect(random).toBeVisible();
-  await expect(random.locator('h3')).toHaveText('Random');
-  await expect(random.locator('.board h4')).toHaveText(['Training', 'Test']);
-  await expect(board(page, 'test').locator('.board-row')).toHaveCount(1);
-  await expect(board(page, 'training').locator('.board-row')).toHaveCount(0);
+  await expect(random.getByRole('heading')).toHaveText(['Random', 'Training', 'Test']);
+  await expect(board(page, 'test').getByTestId('board-row')).toHaveCount(1);
+  await expect(board(page, 'training').getByTestId('board-row')).toHaveCount(0);
   await expect(board(page, 'training')).toContainText('no finished runs yet');
 });
 
@@ -114,11 +113,11 @@ test('a board ranks by score and the faster run wins a tie', async ({ page }) =>
     cara: { name: 'cara', positions: {}, runs: [run({ score: 999, correct: 57, mode: 'grouped' })] }
   }, undefined, '/scores');
 
-  await expect(board(page).locator('.board-row')).toHaveCount(3);
+  await expect(board(page).getByTestId('board-row')).toHaveCount(3);
   expect(await boardNames(page)).toEqual(['bob', 'ada', 'ada']);
-  await expect(board(page).locator('.board-row .score')).toHaveText(['200', '200', '120']);
+  await expect(board(page).getByTestId('board-row-score')).toHaveText(['200', '200', '120']);
   // the tie-break is visible, so two equal scores are not an unexplained order
-  await expect(board(page).locator('.board-row .elapsed')).toHaveText(['10 s', '30 s', '5 s']);
+  await expect(board(page).getByTestId('board-row-elapsed')).toHaveText(['10 s', '30 s', '5 s']);
 });
 
 test('a board row shows name, score and the date the run finished', async ({ page }) => {
@@ -126,10 +125,10 @@ test('a board row shows name, score and the date the run finished', async ({ pag
     ada: { name: 'ada', positions: {}, runs: [run({ score: 120, correct: 40 })] }
   }, undefined, '/scores');
 
-  const row = board(page).locator('.board-row').first();
-  await expect(row.locator('.name')).toHaveText('ada');
-  await expect(row.locator('.score')).toHaveText('120');
-  await expect(row.locator('.date')).toHaveText('2026-11-14');
+  const row = board(page).getByTestId('board-row').first();
+  await expect(row.getByTestId('board-row-name')).toHaveText('ada');
+  await expect(row.getByTestId('board-row-score')).toHaveText('120');
+  await expect(row.getByTestId('board-row-date')).toHaveText('2026-11-14');
 });
 
 test('players, records and finished runs survive a reload', async ({ page }) => {
@@ -140,12 +139,12 @@ test('players, records and finished runs survive a reload', async ({ page }) => 
       runs: [run({ score: 120, correct: 40 })]
     }
   }, undefined, '/scores');
-  await expect(board(page).locator('.board-row')).toHaveCount(1);
+  await expect(board(page).getByTestId('board-row')).toHaveCount(1);
   const before = await storedState(page);
 
   await page.reload();
 
-  await expect(board(page).locator('.board-row')).toHaveCount(1);
+  await expect(board(page).getByTestId('board-row')).toHaveCount(1);
   expect(await storedState(page)).toEqual(before);
   expect(before.players.ada.positions['26'].attempts).toBe(3);
 });
@@ -158,7 +157,7 @@ test('an abandoned run writes no score and lands on no board', async ({ page }) 
   await optionFor(page, await expectedTrigger(page)).click();
   await page.getByTestId('nav-scores').click();
 
-  await expect(board(page).locator('.board-row')).toHaveCount(0);
+  await expect(board(page).getByTestId('board-row')).toHaveCount(0);
   expect((await storedState(page)).players.ada.runs).toEqual([]);
 });
 
@@ -171,8 +170,8 @@ test('a reload in the middle of a run keeps the run, and still writes no score',
   // the run view is its own address, so a reload resumes it in place
   await page.reload();
 
-  await expect(page.locator('.run-status .progress')).toHaveText('1 / 57');
-  await expect(page.locator('.run-status .score')).toHaveText('10 points');
+  await expect(page.getByTestId('run-progress')).toHaveText('1 / 57');
+  await expect(page.getByTestId('run-score')).toHaveText('10 points');
   expect((await storedState(page)).players.ada.runs).toEqual([]);
 });
 
@@ -180,19 +179,19 @@ test('the finish screen leads straight to the board of the run that just ended',
   // a run in progress lives at its own address, not on the dashboard
   await seed(page, { ada: { name: 'ada', positions: {}, runs: [] } }, lastQuestionRun('ada'), '/run');
 
-  await expect(page.locator('.run-status .progress')).toHaveText('57 / 57');
+  await expect(page.getByTestId('run-progress')).toHaveText('57 / 57');
   await optionFor(page, await expectedTrigger(page)).click();
-  await page.getByRole('button', { name: 'see the result' }).click();
+  await page.getByTestId('next').click();
 
-  const link = page.locator('.finish .board-link');
+  const link = page.getByTestId('board-link');
   await expect(link).toHaveAttribute('href', '/scores#board-random-test');
   await link.click();
 
   await expect(page).toHaveURL(/\/scores#board-random-test$/);
-  const row = board(page).locator('.board-row').first();
-  await expect(row.locator('.name')).toHaveText('ada');
-  await expect(row.locator('.score')).toHaveText('10');
-  await expect(row.locator('.date')).toHaveText(/^\d{4}-\d{2}-\d{2}$/);
+  const row = board(page).getByTestId('board-row').first();
+  await expect(row.getByTestId('board-row-name')).toHaveText('ada');
+  await expect(row.getByTestId('board-row-score')).toHaveText('10');
+  await expect(row.getByTestId('board-row-date')).toHaveText(/^\d{4}-\d{2}-\d{2}$/);
 });
 
 test('skipping an open run takes its answers back out of the records', async ({ page }) => {
@@ -204,23 +203,23 @@ test('skipping an open run takes its answers back out of the records', async ({ 
   await signIn(page, 'ada');
   // what the records add up to before the run that is about to be skipped
   await page.getByTestId('nav-stats').click();
-  const totals = page.locator('.totals');
+  const totals = page.getByTestId('totals');
   const before = await totals.textContent();
 
   await page.getByTestId('nav-play').click();
   await startRun(page);
   for (let answered = 0; answered < 3; answered += 1) {
     await optionFor(page, await expectedTrigger(page)).click();
-    await page.locator('.next').click();
+    await page.getByTestId('next').click();
   }
-  await expect(page.locator('.run-status .progress')).toHaveText('4 / 57');
+  await expect(page.getByTestId('run-progress')).toHaveText('4 / 57');
 
   // asking is not doing: a cancelled confirm leaves the run exactly where it was
   await page.getByTestId('skip-run').click();
-  await expect(page.locator('.skip-confirm')).toContainText('3 answers');
+  await expect(page.getByTestId('skip-confirm')).toContainText('3 answers');
   await page.getByTestId('cancel-skip').click();
-  await expect(page.locator('.skip-confirm')).toHaveCount(0);
-  await expect(page.locator('.run-status .progress')).toHaveText('4 / 57');
+  await expect(page.getByTestId('skip-confirm')).toHaveCount(0);
+  await expect(page.getByTestId('run-progress')).toHaveText('4 / 57');
 
   await page.getByTestId('skip-run').click();
   await page.getByTestId('confirm-skip').click();
@@ -233,7 +232,7 @@ test('skipping an open run takes its answers back out of the records', async ({ 
   await page.getByTestId('nav-stats').click();
   expect(await totals.textContent()).toEqual(before);
   await page.getByTestId('nav-scores').click();
-  await expect(board(page).locator('.board-row')).toHaveCount(1);
+  await expect(board(page).getByTestId('board-row')).toHaveCount(1);
   const state = await storedState(page);
   expect(state.players.ada.positions).toEqual(positions);
   expect(state.players.ada.runs).toEqual([adaRun]);
@@ -249,7 +248,7 @@ test('an open run can be skipped from the dashboard too', async ({ page }) => {
 
   await expect(page.getByTestId('open-run')).toBeVisible();
   await page.getByTestId('skip-run').click();
-  await expect(page.locator('.skip-confirm')).toContainText('1 answer');
+  await expect(page.getByTestId('skip-confirm')).toContainText('1 answer');
   await page.getByTestId('confirm-skip').click();
 
   // the one shared control: same words, same outcome, from either screen
