@@ -35,6 +35,54 @@ The fallback matters: `/` renders the play screen, `/stats` the stats page and
 `/scores` the boards, and a reload of any of them must reach `index.html`. `zws.sh --single` (from the template) or browsersync
 serve the same directory.
 
+## Starting the app: no login, no dashboard
+
+A name is identity, not authentication: there is no account, no password and no
+server, so there is nothing to log in to. The play screen at `/` is the home
+screen, and its start form — name, mode, hint level, and a group for `Grouped` —
+is the app's only entry point. The name field arrives already filled with the
+last name used, because the run slice persists like everything else.
+
+There is no dashboard page either: the spec's navigation decision lists exactly
+the play screen, the run view, the stats page and the scores page. Anything that
+adds up a player's history lives on `/stats`.
+
+The whole run persists, so reopening the app resumes it rather than starting
+over. What `/` shows depends on the phase in storage:
+
+| Stored run phase | What `/` shows |
+| --- | --- |
+| `idle` | the start form: name, mode, hint level, start |
+| `running` | the question that run was on, resumed |
+| `finished` | the finish screen of that run |
+
+That is also the one place the app can feel stuck: there is **no abandon-run
+control**, so a half-played run returns on every reload until it is finished —
+the finish screen's `start another run` is the way back to the picker, and
+clearing the site's local storage is the other. It is recorded as a gap, not a
+decision.
+
+## A session, step by step
+
+1. **Play** (`/`) — type or keep a name, choose a mode and a hint level (and a
+   group for `Grouped`); the line under the choices states mode · level ·
+   position count. `start the run`.
+2. **Run** — one position at a time, with progress, score and mode on top. A
+   trigger mode answers with one of four buttons; `Route` appends triggers to a
+   list of chips and waits for `submit the route`. Every answer, right or wrong,
+   reveals the position — case name, OLL number, group, step count, route with
+   its AUF turns, and the way into the cube simulator — and then `next position`.
+3. **Finish** — score, correct of total, accuracy and elapsed time; `see the
+   board` for the mode the run landed on (no board link for a drill), and
+   `start another run`, which reopens the picker under the same name.
+4. **Scores** (`/scores`) — one section per mode, a `Training` and a `Test`
+   column each, best score first, the faster run winning a tie.
+5. **Stats** (`/stats`) — the player the next run would be recorded under:
+   lifetime totals, accuracy per mode, all 14 groups, the ten weakest positions.
+   Tapping a weak spot starts a one-question drill at `Test`; `reset stats`
+   clears the history and keeps the name, `delete player` removes the name too.
+
+
 ## Test
 
 Browser-free — data shape and the drill's rules. No install, no package.json:

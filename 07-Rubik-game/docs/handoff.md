@@ -41,6 +41,13 @@ The 2 skips are the full 57-question runs, which only run in Chromium.
 - **#11 Keyboard answering** — `1`–`4` answer the option in that position, focus moves
   to the next button so `Enter` advances. Sequenced after #10.
 
+## Reading the app as a user
+
+README has the two sections a new session needs for orientation: *Starting the app:
+no login, no dashboard* (the start form is the home screen; `/` resumes an open run,
+table of the three phases) and *A session, step by step* (play → run → finish →
+scores → stats).
+
 ## How to run
 
 ```bash
