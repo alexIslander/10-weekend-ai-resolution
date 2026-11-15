@@ -32,12 +32,12 @@ function planManual(entries, trigger) {
     throw new Error(`plan: a manual trigger needs a stage, one of ${STAGES.join(', ')}`);
   }
 
-  const wanted =
+  const slugsToDeploy =
     trigger.app === 'all'
       ? new Set(entries.map((entry) => entry.slug))
-      : new Set([namedSlug(entries, trigger.app)]);
+      : new Set([requireSlug(entries, trigger.app)]);
 
-  return partition(entries, wanted, stage, () => 'not requested by the manual trigger');
+  return partition(entries, slugsToDeploy, stage, () => 'not requested by the manual trigger');
 }
 
 function planPush(entries, changedPaths, trigger) {
@@ -46,22 +46,22 @@ function planPush(entries, changedPaths, trigger) {
   }
 
   const paths = changedPaths.map(normalisePath).filter(Boolean);
-  const wanted = paths.some(isRegistryPath)
+  const slugsToDeploy = paths.some(isRegistryPath)
     ? new Set(withBuild(entries).map((entry) => entry.slug))
     : matchedSlugs(entries, paths);
 
-  return partition(entries, wanted, stageFor(trigger.ref), (entry) =>
+  return partition(entries, slugsToDeploy, stageFor(trigger.ref), (entry) =>
     `no changed path under ${entry.build.dir}`,
   );
 }
 
 // One row per entry, so deploy and skipped together account for the registry.
-function partition(entries, wanted, stage, reasonForSkipped) {
+function partition(entries, slugsToDeploy, stage, reasonForSkipped) {
   const deploy = [];
   const skipped = [];
 
   for (const entry of entries) {
-    if (wanted.has(entry.slug) && hasBuild(entry)) {
+    if (slugsToDeploy.has(entry.slug) && hasBuild(entry)) {
       deploy.push({ slug: entry.slug, stage });
     } else {
       skipped.push({
@@ -84,16 +84,16 @@ function matchedSlugs(entries, paths) {
     dir: normalisePath(entry.build.dir),
   }));
 
-  const wanted = new Set();
+  const matched = new Set();
   for (const path of paths) {
     let best;
     for (const candidate of candidates) {
       if (!isUnder(path, candidate.dir)) continue;
       if (best === undefined || candidate.dir.length > best.dir.length) best = candidate;
     }
-    if (best !== undefined) wanted.add(best.slug);
+    if (best !== undefined) matched.add(best.slug);
   }
-  return wanted;
+  return matched;
 }
 
 function isUnder(path, dir) {
@@ -112,14 +112,14 @@ function stageFor(ref) {
 }
 
 function hasBuild(entry) {
-  return entry.build !== undefined && entry.build !== null;
+  return entry.build != null;
 }
 
 function withBuild(entries) {
   return entries.filter(hasBuild);
 }
 
-function namedSlug(entries, app) {
+function requireSlug(entries, app) {
   const entry = entries.find((candidate) => candidate.slug === app);
   if (entry === undefined) throw new Error(`plan: unknown app "${app}"`);
   return entry.slug;

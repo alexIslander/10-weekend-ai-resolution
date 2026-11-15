@@ -89,6 +89,5 @@ function changedSince(base, cwd) {
 }
 
 function readEntries(path) {
-  const parsed = JSON.parse(readFileSync(path, 'utf8'));
-  return Array.isArray(parsed) ? parsed : parsed.entries;
+  return JSON.parse(readFileSync(path, 'utf8')).entries;
 }

@@ -18,7 +18,7 @@ Within a project, keep code organized and predictable:
 - `assets/` for images or downloadable artifacts when needed.
 
 ## Build, Test, and Development Commands
-Each project folder owns its own commands: read its `README.md` before running anything. This file deliberately holds no command list, so nothing goes stale here.
+Each project folder owns its own commands: read its `README.md` before running anything. This file deliberately holds no per-project command list, so nothing goes stale here.
 - `00-dualreveal/`, `01-lit-starter/`, `02-lit-admin-starter/`: npm scripts (`dev`, `build`, `start`, `test`).
 - `03-second-brain-ingester/`, `04-spring-boot-api/`, `05-MyLifeOps/`, `06-Rubik/`: see the project `README.md`.
 - `03-barefoot-python/`: no README yet — read the project for its entrypoint.

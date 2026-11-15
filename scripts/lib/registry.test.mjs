@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import test from 'node:test';
@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { deployView, hostnameFor, loadRegistry, tileView, validate } from './registry.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const realEntries = () =>
+  JSON.parse(readFileSync(join(repoRoot, 'apps.json'), 'utf8')).entries;
 
 const pagesEntry = (overrides = {}) => ({
   slug: 'lit-starter',
@@ -49,7 +51,7 @@ const invalidCases = [
   {
     name: 'duplicate slugs',
     entries: [pagesEntry(), pagesEntry()],
-    expect: 'duplicates apps[0]',
+    expect: 'duplicates entries[0]',
   },
   {
     name: 'a slug that is not kebab-case',
@@ -141,30 +143,57 @@ test('reports every problem rather than the first', () => {
   assert.ok(problems.length >= 3, problems.join('\n'));
 });
 
-test('loadRegistry reads the real registry', () => {
-  // One known problem today: the Dashboard folder the `apps` entry builds from
-  // does not exist yet. When 08-dashboard lands, this test should assert [].
-  assert.throws(
-    () => loadRegistry(join(repoRoot, 'apps.json'), repoRoot),
-    (error) => {
-      assert.match(error.message, /apps\.json has 1 problem\(s\)/);
-      const problems = error.message.split('\n').slice(1);
-      assert.equal(problems.length, 1, problems.join('\n'));
-      assert.match(problems[0], /\(apps\): build\.dir "08-dashboard" does not exist/);
-      return true;
-    },
-  );
+test('every entry in the real registry is valid apart from on-disk build dirs', () => {
+  // build.dir existence depends on what is checked out, so it is the one rule
+  // this test tolerates. Everything else about the real file has to hold.
+  const problems = validate(realEntries(), repoRoot);
+  const diskOnly = problems.filter((problem) => !/build\.dir "[^"]+" does not exist/.test(problem));
+  assert.deepEqual(diskOnly, []);
 });
 
-test('loadRegistry accepts a bare array as well as { entries }', (t) => {
+test('loadRegistry loads the real registry shape', () => {
+  const entries = realEntries();
+  assert.equal(entries.length, 9);
+  assert.deepEqual(
+    entries.map((entry) => entry.slug),
+    ['apps', 'lit-starter', 'admin-starter', 'rubik', 'rubik-game', 'dualreveal',
+      'spring-api', 'second-brain', 'barefoot'],
+  );
+  assert.equal(entries.every((entry) => entry.live === false), true);
+});
+
+test('loadRegistry reads a registry from disk', (t) => {
+  const root = fixtureRoot(t, ['01-lit-starter']);
+  const path = join(root, 'apps.json');
+
+  writeFileSync(path, JSON.stringify({ entries: [pagesEntry()] }));
+  assert.equal(loadRegistry(path, root).length, 1);
+});
+
+test('loadRegistry rejects a bare array: the registry is one keyed object', (t) => {
   const root = fixtureRoot(t, ['01-lit-starter']);
   const path = join(root, 'apps.json');
 
   writeFileSync(path, JSON.stringify([pagesEntry()]));
-  assert.equal(loadRegistry(path, root).length, 1);
+  assert.throws(() => loadRegistry(path, root), /expected an object with an "entries" array/);
+});
 
-  writeFileSync(path, JSON.stringify({ entries: [pagesEntry()] }));
-  assert.equal(loadRegistry(path, root).length, 1);
+test('loadRegistry throws with every problem, not the first', (t) => {
+  const root = fixtureRoot(t, ['01-lit-starter']);
+  const path = join(root, 'apps.json');
+  writeFileSync(
+    path,
+    JSON.stringify({ entries: [pagesEntry({ slug: 'Bad Slug' }), awsEntry({ kind: 'thing' })] }),
+  );
+
+  assert.throws(
+    () => loadRegistry(path, root),
+    (error) => {
+      assert.match(error.message, /has 2 problem\(s\)/);
+      assert.equal(error.message.split('\n').length, 3);
+      return true;
+    },
+  );
 });
 
 test('loadRegistry rejects unreadable JSON', (t) => {

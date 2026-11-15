@@ -18,7 +18,7 @@ test('a pages entry resolves to an adapter that describes both provisioning step
   const target = resolveTarget(rubik);
 
   assert.deepEqual(target.provision(rubik), { kind: 'create-project', project: 'rubik' });
-  assert.deepEqual(target.provision(rubik, 'domain'), {
+  assert.deepEqual(target.attachDomain(rubik), {
     kind: 'attach-domain',
     project: 'rubik',
     domain: 'rubik.csete.cc',
@@ -52,8 +52,21 @@ test('a staging deploy takes the branch under test from the caller', () => {
   const rubik = entryFor('rubik');
   const target = resolveTarget(rubik);
 
-  assert.equal(target.deploy(rubik, 'staging', 'feature/deploy-pipeline').branch, 'feature/deploy-pipeline');
-  assert.equal(target.deploy(rubik, 'staging').branch, null);
+  assert.deepEqual(target.deploy(rubik, 'staging', 'feature/deploy-pipeline'), {
+    kind: 'pages-deploy',
+    dir: '06-Rubik',
+    project: 'rubik',
+    branch: 'feature/deploy-pipeline',
+  });
+});
+
+test('a staging deploy without a branch is refused, not described', () => {
+  const rubik = entryFor('rubik');
+  const target = resolveTarget(rubik);
+
+  assert.throws(() => target.deploy(rubik, 'staging'), /needs the branch under test/);
+  assert.throws(() => target.deploy(rubik, 'preview'), /stage must be one of/);
+  assert.throws(() => target.deploy(rubik), /stage must be one of/);
 });
 
 test('workers and aws throw TargetNotImplemented', () => {
@@ -75,8 +88,15 @@ test('an aws entry can never produce a Pages project or domain', () => {
   // rule is enforced here, not remembered, so exercising every aws entry has to
   // end in a throw rather than a description.
   for (const entry of realEntries().filter((candidate) => candidate.target === 'aws')) {
-    assert.throws(() => resolveTarget(entry), TargetNotImplemented);
-    assert.throws(() => resolveTarget(entry).provision(entry), TargetNotImplemented);
+    assert.throws(
+      () => resolveTarget(entry),
+      (error) => {
+        assert.ok(error instanceof TargetNotImplemented);
+        assert.equal(error.target, 'aws');
+        assert.equal(error.slug, entry.slug);
+        return true;
+      },
+    );
   }
 });
 

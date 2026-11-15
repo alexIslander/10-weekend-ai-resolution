@@ -1,9 +1,7 @@
 // The Apps Registry: what a valid entry is, and the narrow views its
 // consumers read. Pure description — nothing here talks to Cloudflare.
 //
-// Five exports, no default: loadRegistry, validate, hostnameFor, tileView,
-// deployView. (The slice brief said "four"; it lists five, and every listed
-// function is here.)
+// Five exports, no default, and no other state:
 //   loadRegistry(path, root)  read + validate, throwing every problem at once
 //   validate(entries, root)   the rules, as a list of strings
 //   hostnameFor(entry)        the one place a hostname is derived
@@ -30,7 +28,7 @@ const isText = (value) => typeof value === 'string' && value.trim() !== '';
 const label = (entry, index) =>
   isPlainObject(entry) && isText(entry.slug)
     ? `apps[${index}] (${entry.slug})`
-    : `apps[${index}]`;
+    : `entries[${index}]`;
 
 export function loadRegistry(path = 'apps.json', root = process.cwd()) {
   let raw;
@@ -47,14 +45,13 @@ export function loadRegistry(path = 'apps.json', root = process.cwd()) {
     throw new Error(`registry: ${path} is not valid JSON: ${error.message}`);
   }
 
-  const entries = Array.isArray(parsed) ? parsed : parsed?.entries;
-  const problems = validate(entries, root);
+  const problems = validate(parsed?.entries, root);
   if (problems.length > 0) {
     throw new Error(
       [`registry: ${path} has ${problems.length} problem(s)`, ...problems].join('\n'),
     );
   }
-  return entries;
+  return parsed.entries;
 }
 
 export function validate(entries, root = process.cwd()) {
@@ -77,7 +74,9 @@ export function validate(entries, root = process.cwd()) {
     } else if (!KEBAB_CASE.test(entry.slug)) {
       problems.push(`${where}: slug "${entry.slug}" is not kebab-case`);
     } else if (seen.has(entry.slug)) {
-      problems.push(`${where}: slug "${entry.slug}" duplicates apps[${seen.get(entry.slug)}]`);
+      problems.push(
+        `${where}: slug "${entry.slug}" duplicates entries[${seen.get(entry.slug)}]`,
+      );
     } else {
       seen.set(entry.slug, index);
     }

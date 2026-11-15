@@ -10,6 +10,8 @@ import { posix } from 'node:path';
 
 import { hostnameFor } from './registry.mjs';
 
+const STAGES = ['staging', 'production'];
+
 export class TargetNotImplemented extends Error {
   constructor(entry) {
     super(
@@ -37,30 +39,41 @@ export function resolveTarget(entry) {
   }
 }
 
-// provision(entry)          -> create the project
-// provision(entry, 'domain')-> attach the App's hostname to it
-// Both are descriptions; whoever runs them decides the order.
+// Two provisioning steps, each a description; whoever runs them decides the
+// order and the retries.
 const pagesTarget = Object.freeze({
-  provision(entry, step = 'project') {
-    if (step === 'domain') {
-      return {
-        kind: 'attach-domain',
-        project: entry.project,
-        domain: domainOf(entry),
-      };
-    }
+  provision(entry) {
     return { kind: 'create-project', project: entry.project };
   },
 
-  // `branch` is the Pages branch alias: `main` for production, and the branch
-  // under test for staging, which the caller supplies because this module has
-  // no access to the working copy.
-  deploy(entry, stage = 'staging', branch = stage === 'production' ? 'main' : null) {
+  attachDomain(entry) {
+    return {
+      kind: 'attach-domain',
+      project: entry.project,
+      domain: domainOf(entry),
+    };
+  },
+
+  // `branch` is the Pages branch alias. Production is always `main`; staging is
+  // the branch under test (ADR-0002), which the caller supplies because this
+  // module has no access to the working copy — and which is required, so a
+  // staging deploy can never be described without the hostname it will land on.
+  deploy(entry, stage, branch) {
+    if (!STAGES.includes(stage)) {
+      throw new Error(
+        `deploy: stage must be one of ${STAGES.join(', ')}, got "${stage}"`,
+      );
+    }
+    const target = stage === 'production' ? 'main' : branch;
+    if (typeof target !== 'string' || target.trim() === '') {
+      throw new Error('deploy: a staging deploy needs the branch under test');
+    }
+
     return {
       kind: 'pages-deploy',
       dir: artifactDir(entry),
       project: entry.project,
-      branch,
+      branch: target,
     };
   },
 });

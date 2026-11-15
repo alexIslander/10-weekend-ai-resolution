@@ -32,7 +32,7 @@ const slugs = (rows) => rows.map((row) => row.slug);
 const deployOf = (result) => result.deploy;
 
 const buildableSlugs = (entries) =>
-  entries.filter((entry) => entry.build !== undefined).map((entry) => entry.slug);
+  entries.filter((entry) => entry.build != null).map((entry) => entry.slug);
 
 // --- push: one changed path, one App -----------------------------------------
 
@@ -160,6 +160,20 @@ test('a change outside the nested folder deploys only the parent App', () => {
 test('a change touching both folders deploys both Apps', () => {
   const result = nestedPush(['05-MyLifeOps/admin/index.html', '05-MyLifeOps/src/main.ts']);
   assert.deepEqual(slugs(deployOf(result)).sort(), ['mylifeops', 'mylifeops-admin']);
+});
+
+test('a registry edit deploys every buildable fixture entry and skips the rest', () => {
+  const result = plan({
+    entries: nestedEntries,
+    changedPaths: ['apps.json'],
+    trigger: { kind: 'push' },
+  });
+
+  assert.deepEqual(deployOf(result), [
+    { slug: 'mylifeops', stage: 'staging' },
+    { slug: 'mylifeops-admin', stage: 'staging' },
+  ]);
+  assert.deepEqual(slugs(result.skipped), ['spring-api']);
 });
 
 // --- manual ------------------------------------------------------------------
