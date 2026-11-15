@@ -204,6 +204,33 @@ q-site-header {
     overflow-wrap: anywhere;
 }
 
+.change-name {
+    min-height: 0;
+    padding: 0 0.15rem;
+    border: 0;
+    background: none;
+    color: var(--rubik-blue);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+[data-theme="dark"] .change-name {
+    color: var(--rubik-yellow);
+}
+
+.change-name:hover:not(:disabled) {
+    background: none;
+    transform: none;
+}
+
+.name-input {
+    width: min(12rem, 100%);
+    min-height: 40px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+}
+
 .theme-toggle {
     display: inline-flex;
     align-items: center;
@@ -883,6 +910,259 @@ img.diagram {
     gap: 0.6rem;
     font-size: 0.75rem;
     color: var(--text-muted);
+}
+
+/* ---------- dashboard: hero, the open run, one card per mode ---------- */
+
+.dashboard {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.hero {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--accent-highlight);
+    color: var(--rubik-blue);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+[data-theme="dark"] .hero-eyebrow {
+    color: var(--rubik-yellow);
+}
+
+.hero h2 {
+    font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+}
+
+.hero-sub {
+    max-width: 60ch;
+    color: var(--text-secondary);
+}
+
+.hero-empty {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* the run that is waiting: the one thing on the page asking for a tap */
+.open-run {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-sm);
+    border-left: 5px solid var(--rubik-blue);
+}
+
+.open-run-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rubik-blue);
+}
+
+[data-theme="dark"] .open-run-label {
+    color: var(--rubik-yellow);
+}
+
+.open-run-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.open-run-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.open-run-facts span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--bg-pill);
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.65rem;
+}
+
+.continue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0 1.1rem;
+    border-radius: var(--radius-sm);
+    background: var(--rubik-blue);
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.continue:hover {
+    text-decoration: none;
+}
+
+/* one card per mode; the picker grows inside the card that was tapped */
+.modes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    align-items: start;
+    gap: var(--spacing-md);
+}
+
+.step-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+}
+
+.step-card.open {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+}
+
+.mode-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 56px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+}
+
+.mode-head:hover:not(:disabled) {
+    background: none;
+    transform: none;
+}
+
+.step-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.step-badge .icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* ADR-0006 fixes each mode's colour; AUF and Adaptive keep theirs reserved */
+.mode-badge--yellow { background: var(--rubik-yellow); color: #0f172a; }
+.mode-badge--blue { background: var(--rubik-blue); color: #ffffff; }
+.mode-badge--green { background: var(--rubik-green); color: #ffffff; }
+.mode-badge--orange { background: var(--rubik-orange); color: #ffffff; }
+
+.mode-title {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.mode-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.mode-meta {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.mode-record {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.mode-accuracy {
+    font-size: 0.85rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.mode-accuracy.not-played {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.check-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--rubik-green);
+    color: #ffffff;
+}
+
+.check-badge .icon {
+    width: 11px;
+    height: 11px;
+}
+
+.chevron {
+    display: inline-flex;
+    color: var(--text-muted);
+}
+
+.chevron .icon {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+}
+
+.step-card.open .chevron .icon {
+    transform: rotate(180deg);
+}
+
+.picker {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+}
+
+.picker .start-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    gap: 0.45rem;
+    padding: 0 1.1rem;
+    min-height: 44px;
 }
 
 /* ---------- narrow screens: the app is played on a phone in portrait ---------- */

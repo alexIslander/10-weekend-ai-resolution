@@ -14,7 +14,11 @@ const DAY = new Date(2026, 10, 14, 10, 0, 0).getTime();
 
 const open = page => page.goto('localhost:3000');
 
-const choose = (page, name) => page.getByRole('button', { name, exact: true }).click();
+/** The name a run is recorded under: the header's `change` line opens the field. */
+const signIn = async (page, name) => {
+  await page.getByTestId('change-name').click();
+  await page.getByTestId('name-input').fill(name);
+};
 
 const optionFor = (page, trigger) => page.locator(`.option:has(.code:text-is("${trigger}"))`);
 
@@ -31,11 +35,11 @@ const positionOnScreen = async page => {
 
 const triggersOf = position => position.route.map(step => step.trigger);
 
-/** Starts a Route run under the given name, at the hint level the mode settles on. */
+/** Starts a Route run from the dashboard, at the hint level the mode settles on. */
 const startRoute = async (page, name = 'ada') => {
-  await choose(page, 'Route');
-  await page.getByLabel('Name').fill(name);
-  await page.getByRole('button', { name: 'start the run' }).click();
+  await signIn(page, name);
+  await page.getByTestId('mode-toggle-route').click();
+  await page.getByTestId('start-run').click();
   await expect(page.locator('.run')).toHaveAttribute('data-kind', 'route');
 };
 
@@ -51,15 +55,15 @@ const overLongRoute = position => [...triggersOf(position), 'S'];
 
 test('Route is a mode like the others, asking for the whole sequence at Test', async ({ page }) => {
   await open(page);
-  await expect(page.getByRole('button', { name: 'Route' })).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('position-count')).toHaveCount(0);
 
-  await choose(page, 'Route');
-  await expect(page.getByRole('button', { name: 'Test' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.mode-line')).toHaveText('Route · Test · 57 positions');
-  await expect(page.getByLabel('Group')).toHaveCount(0);
+  await signIn(page, 'ada');
+  await page.getByTestId('mode-toggle-route').click();
+  await expect(page.getByTestId('hint-test')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('position-count')).toHaveText('Route · Test · 57 positions');
+  await expect(page.getByTestId('group-select')).toHaveCount(0);
 
-  await page.getByLabel('Name').fill('ada');
-  await page.getByRole('button', { name: 'start the run' }).click();
+  await page.getByTestId('start-run').click();
 
   await expect(page.locator('.run-status .mode-level')).toHaveText('Route · Test');
   await expect(page.locator('.run h2')).toHaveText('Name the route, step by step');
@@ -189,7 +193,8 @@ test('a finished Route run lands on its own board, without retyping the name', a
   };
   await page.goto('localhost:3000');
   await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify(value)), [KEY, { run: lastQuestion, players: {} }]);
-  await page.reload();
+  // a run in progress has its own address; the dashboard only offers it back
+  await page.goto('localhost:3000/run');
 
   await tapAll(page, triggersOf(position));
   await submit(page).click();

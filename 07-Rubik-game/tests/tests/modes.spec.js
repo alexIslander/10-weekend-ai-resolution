@@ -11,14 +11,10 @@ const groups = cases.groups;
 
 const open = page => page.goto('localhost:3000');
 
-const choose = (page, name) => page.getByRole('button', { name, exact: true }).click();
-
-const modeLine = page => page.locator('.mode-line');
-
-const start = async (page, name = 'throwaway') => {
-  await page.getByLabel('Name').fill(name);
-  await page.getByRole('button', { name: 'start the run' }).click();
-  await expect(page.locator('img.diagram')).toBeVisible();
+/** The name a run is recorded under: the header's `change` line opens the field. */
+const signIn = async (page, name = 'throwaway') => {
+  await page.getByTestId('change-name').click();
+  await page.getByTestId('name-input').fill(name);
 };
 
 /** The position the diagram on screen belongs to - read from the generated data, never from the file name. */
@@ -39,33 +35,95 @@ const answerCorrectly = async page => {
 
 const advance = page => page.getByRole('button', { name: /next position|see the result/ }).click();
 
-test('the mode picker offers every shipping mode, starting at Random and Test', async ({ page }) => {
+/** Opens a mode's card — if it is not already open — and starts a run of it. */
+const startRun = async (page, { mode = 'random', hint, group } = {}) => {
+  const toggle = page.getByTestId(`mode-toggle-${mode}`);
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
+  if (hint) await page.getByTestId(`hint-${hint}`).click();
+  if (group) await page.getByTestId('group-select').selectOption(group);
+  await page.getByTestId('start-run').click();
+  await expect(page.locator('img.diagram')).toBeVisible();
+};
+
+test('the dashboard offers a card per shipping mode, and none for the modes still to come', async ({ page }) => {
   await open(page);
 
-  await expect(page.getByRole('button', { name: 'Random' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('button', { name: 'Grouped' })).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.getByRole('button', { name: 'Progressive' })).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.getByRole('button', { name: 'Route' })).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.getByRole('button', { name: 'Test' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(modeLine(page)).toHaveText('Random · Test · 57 positions');
-  // a group is only offered by the mode that needs one
-  await expect(page.getByLabel('Group')).toHaveCount(0);
+  for (const mode of ['random', 'grouped', 'progressive', 'route']) {
+    await expect(page.getByTestId(`mode-card-${mode}`)).toBeVisible();
+  }
+  // AUF and Adaptive keep their colours and glyphs reserved, but ask for nothing
+  await expect(page.getByTestId('mode-card-auf')).toHaveCount(0);
+  await expect(page.getByTestId('mode-card-adaptive')).toHaveCount(0);
+
+  // nothing is picked, and the hero says so in one line
+  await expect(page.getByTestId('no-open-run')).toHaveText(/no open run/);
+  await expect(page.getByTestId('position-count')).toHaveCount(0);
+  await expect(page.getByTestId('start-run')).toHaveCount(0);
+});
+
+test('tapping a card opens its picker inside the card, one card at a time', async ({ page }) => {
+  await open(page);
+  await signIn(page);
+
+  // the whole card is the target, not just its title
+  await page.getByTestId('mode-card-random').click();
+  await expect(page.getByTestId('position-count')).toHaveText('Random · Test · 57 positions');
+  await expect(page.getByTestId('hint-test')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('group-select')).toHaveCount(0);
+
+  // a second card closes the first: one picker, one start
+  await page.getByTestId('mode-toggle-grouped').click();
+  await expect(page.getByTestId('group-select')).toBeVisible();
+  await expect(page.getByTestId('start-run')).toHaveCount(1);
+  await expect(page.getByTestId('mode-card-random').getByTestId('start-run')).toHaveCount(0);
+
+  // and the open card closes again on a second tap
+  await page.getByTestId('mode-toggle-grouped').click();
+  await expect(page.getByTestId('start-run')).toHaveCount(0);
+});
+
+test('opening a card does not reflow the grid', async ({ page }) => {
+  // the four cards share a row here, which is where a reflow would be visible
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await open(page);
+  await signIn(page);
+
+  const route = page.getByTestId('mode-card-route');
+  const before = await route.boundingBox();
+
+  await page.getByTestId('mode-toggle-random').click();
+  await expect(page.getByTestId('start-run')).toBeVisible();
+
+  const after = await route.boundingBox();
+  // the open card grows inside its own cell: its neighbours keep size and place
+  expect(after.x).toBeCloseTo(before.x, 0);
+  expect(after.y).toBeCloseTo(before.y, 0);
+  expect(after.width).toBeCloseTo(before.width, 0);
+  expect(after.height).toBeCloseTo(before.height, 0);
+
+  // one column on the phone: the cards below move down, but never narrow
+  await page.setViewportSize({ width: 390, height: 844 });
+  const narrow = await route.boundingBox();
+  const hero = await page.getByTestId('hero').boundingBox();
+  expect(narrow.x).toBeCloseTo(hero.x, 0);
+  expect(narrow.width).toBeCloseTo(hero.width, 0);
 });
 
 test('Grouped lists the 14 groups in booklet order and runs exactly the chosen one', async ({ page }) => {
   await open(page);
-  await choose(page, 'Grouped');
+  await signIn(page);
+  await page.getByTestId('mode-toggle-grouped').click();
 
-  const group = page.getByLabel('Group');
+  const group = page.getByTestId('group-select');
   await expect(group.locator('option')).toHaveText(groups);
   await expect(group).toHaveValue(groups[0]);
-  await expect(modeLine(page)).toHaveText(`Grouped · ${groups[0]} · Test · 7 positions`);
+  await expect(page.getByTestId('position-count')).toHaveText(`Grouped · ${groups[0]} · Test · 7 positions`);
 
   const name = 'T-Shapes';
   await group.selectOption(name);
-  await expect(modeLine(page)).toHaveText('Grouped · T-Shapes · Test · 2 positions');
+  await expect(page.getByTestId('position-count')).toHaveText('Grouped · T-Shapes · Test · 2 positions');
 
-  await start(page);
+  await startRun(page, { mode: 'grouped', group: name });
 
   await expect(page.locator('.run-status .progress')).toHaveText('1 / 2');
   await expect(page.locator('.run-status .mode-level')).toHaveText('Grouped · Test');
@@ -79,12 +137,13 @@ test('Grouped lists the 14 groups in booklet order and runs exactly the chosen o
 
 test('Progressive defaults to Training and walks one-step positions first', async ({ page }) => {
   await open(page);
-  await choose(page, 'Progressive');
+  await signIn(page);
+  await page.getByTestId('mode-toggle-progressive').click();
 
-  await expect(page.getByRole('button', { name: 'Training' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(modeLine(page)).toHaveText('Progressive · Training · 57 positions');
+  await expect(page.getByTestId('hint-training')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('position-count')).toHaveText('Progressive · Training · 57 positions');
 
-  await start(page);
+  await startRun(page, { mode: 'progressive', hint: 'training' });
   await expect(page.locator('.run-status .mode-level')).toHaveText('Progressive · Training');
 
   const steps = [];
@@ -99,19 +158,22 @@ test('Progressive defaults to Training and walks one-step positions first', asyn
 
 test('a hint level can be overridden for any mode', async ({ page }) => {
   await open(page);
+  await signIn(page);
 
-  await choose(page, 'Training');
-  await expect(page.getByRole('button', { name: 'Test' })).toHaveAttribute('aria-pressed', 'false');
-  await expect(modeLine(page)).toHaveText('Random · Training · 57 positions');
+  await page.getByTestId('mode-toggle-random').click();
+  await page.getByTestId('hint-training').click();
+  await expect(page.getByTestId('hint-test')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('position-count')).toHaveText('Random · Training · 57 positions');
 
-  await choose(page, 'Grouped');
-  await expect(page.getByRole('button', { name: 'Test' })).toHaveAttribute('aria-pressed', 'true');
+  // another mode starts at its own default again
+  await page.getByTestId('mode-toggle-grouped').click();
+  await expect(page.getByTestId('hint-test')).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('Training keeps the case name and OLL number on screen while asking', async ({ page }) => {
   await open(page);
-  await choose(page, 'Training');
-  await start(page, 'ada');
+  await signIn(page, 'ada');
+  await startRun(page, { mode: 'random', hint: 'training' });
 
   const position = await positionOnScreen(page);
   const hint = page.locator('.training-hint');
@@ -132,7 +194,8 @@ test('Training keeps the case name and OLL number on screen while asking', async
 
 test('Test shows nothing identifying before the answer, and the same reveal after it', async ({ page }) => {
   await open(page);
-  await start(page, 'ada');
+  await signIn(page, 'ada');
+  await startRun(page);
 
   const position = await positionOnScreen(page);
   await expect(page.locator('.training-hint')).toHaveCount(0);
@@ -152,9 +215,31 @@ test('Test shows nothing identifying before the answer, and the same reveal afte
   await expect(page.locator('.training-hint')).toHaveCount(0);
 });
 
+test('a finished run of a mode leaves a green check and its accuracy on the card', async ({ page }) => {
+  await open(page);
+  await signIn(page, 'ada');
+
+  // T-Shapes at Training is two positions: a whole run in two answers
+  await startRun(page, { mode: 'grouped', group: 'T-Shapes', hint: 'training' });
+
+  await answerCorrectly(page);
+  await advance(page);
+  await answerCorrectly(page);
+  await advance(page);
+  await expect(page.locator('.finish')).toBeVisible();
+
+  await page.getByTestId('start-another').click();
+
+  await expect(page.getByTestId('finished-badge-grouped')).toBeVisible();
+  await expect(page.getByTestId('mode-accuracy-grouped')).toHaveText('100%');
+  // the mode with no finished run still says so, and wears no check
+  await expect(page.getByTestId('mode-accuracy-random')).toHaveText('not played');
+  await expect(page.getByTestId('finished-badge-random')).toHaveCount(0);
+});
+
 test('the scores page holds a board per mode and hint level', async ({ page }) => {
   await open(page);
-  await page.getByRole('link', { name: 'scores' }).click();
+  await page.getByTestId('nav-scores').click();
 
   await expect(page.locator('.mode h3')).toHaveText(['Random', 'Grouped', 'Progressive', 'Route']);
   for (const mode of ['random', 'grouped', 'progressive', 'route']) {

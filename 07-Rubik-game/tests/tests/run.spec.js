@@ -23,11 +23,18 @@ const score = page => page.locator('.run-status .score');
 const progress = page => page.locator('.run-status .progress');
 const next = page => page.locator('.run .next');
 
-/** Starts a run under the given name. */
+/** The name a run is recorded under: the header's `change` line opens the field. */
+const signIn = async (page, name) => {
+  await page.getByTestId('change-name').click();
+  await page.getByTestId('name-input').fill(name);
+};
+
+/** Starts a run the way a player does: sign in, tap a mode card, start. */
 const startRun = async (page, name = 'throwaway') => {
   await open(page);
-  await page.getByLabel('Name').fill(name);
-  await page.getByRole('button', { name: 'start the run' }).click();
+  await signIn(page, name);
+  await page.getByTestId('mode-toggle-random').click();
+  await page.getByTestId('start-run').click();
   await expect(page.locator('img.diagram')).toBeVisible();
 };
 
@@ -46,23 +53,33 @@ test('has title', async ({ page }) => {
 test('asks for a name before the first question, and refuses an empty one', async ({ page }) => {
   await open(page);
 
-  const name = page.getByLabel('Name');
-  const start = page.getByRole('button', { name: 'start the run' });
-  await expect(name).toBeVisible();
-  await expect(start).toBeDisabled();
+  // the dashboard is home, and it starts nothing until someone owns the score
+  await expect(page.getByTestId('dashboard')).toBeVisible();
   await expect(page.locator('img.diagram')).toHaveCount(0);
+  await expect(page.getByTestId('no-open-run')).toBeVisible();
 
-  await name.fill('   ');
+  // the name field is one tap away, and the header says whose run this would be
+  await expect(page.getByTestId('name-input')).toHaveCount(0);
+  await page.getByTestId('change-name').click();
+  await expect(page.getByTestId('name-input')).toBeVisible();
+  await expect(page.getByTestId('playing-as')).toHaveText(/no name yet/);
+
+  await page.getByTestId('mode-toggle-random').click();
+  const start = page.getByTestId('start-run');
   await expect(start).toBeDisabled();
-  await expect(page.locator('img.diagram')).toHaveCount(0);
 
-  await name.fill('ada');
+  await page.getByTestId('name-input').fill('   ');
+  await expect(start).toBeDisabled();
+
+  await page.getByTestId('name-input').fill('ada');
   await expect(start).toBeEnabled();
+  await expect(page.getByTestId('playing-as')).toHaveText(/playing as ada/);
 });
 
 test('a run offers the first of 57 positions, four triggers and no case name', async ({ page }) => {
   await startRun(page, 'ada');
 
+  await expect(page).toHaveURL(/\/run$/);
   await expect(progress(page)).toHaveText('1 / 57');
   await expect(score(page)).toHaveText('0 points');
   await expect(page.locator('.run-status .mode-level')).toHaveText('Random · Test');
@@ -120,10 +137,14 @@ test('shows the diagram scaled, never cropped', async ({ page }) => {
 
 test('offers thumb-sized tap targets', async ({ page }) => {
   await open(page);
-  const start = await page.getByRole('button', { name: 'start the run' }).boundingBox();
+  await signIn(page, 'throwaway');
+  await page.getByTestId('mode-toggle-random').click();
+
+  const start = await page.getByTestId('start-run').boundingBox();
   expect(start.height).toBeGreaterThanOrEqual(44);
 
-  await startRun(page);
+  await page.getByTestId('start-run').click();
+  await expect(page.locator('img.diagram')).toBeVisible();
   await optionFor(page, await expectedTrigger(page)).click();
 
   const targets = await page.locator('.option, .run .next, .reveal .simulator').evaluateAll(elements =>
@@ -228,6 +249,30 @@ test('a miss puts the ladder back at the bottom', async ({ page }) => {
   await expect(score(page)).toHaveText('40 points');
 });
 
+test('a run survives a reload and is offered back on the dashboard', async ({ page }) => {
+  await startRun(page, 'ada');
+  await optionFor(page, await expectedTrigger(page)).click();
+  await next(page).click();
+
+  // the run view has its own address: a reload lands back in the question
+  await page.reload();
+  await expect(progress(page)).toHaveText('2 / 57');
+
+  // and the dashboard offers the same run rather than a second start
+  await page.getByTestId('nav-play').click();
+  const openRun = page.getByTestId('open-run');
+  await expect(openRun).toBeVisible();
+  await expect(openRun).toContainText('Random · Test');
+  await expect(page.getByTestId('open-run-progress')).toHaveText('2 / 57');
+  await expect(page.getByTestId('open-run-started'))
+    .toContainText(/^started (just now|\d+ (minute|hour|day|week)s? ago)$/);
+  await expect(page.getByTestId('no-open-run')).toHaveCount(0);
+
+  await page.getByTestId('continue-run').click();
+  await expect(page).toHaveURL(/\/run$/);
+  await expect(progress(page)).toHaveText('2 / 57');
+});
+
 test('a finished run shows score, correct count, accuracy and elapsed time', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'a full 57-position run is only run once');
 
@@ -249,7 +294,11 @@ test('a finished run shows score, correct count, accuracy and elapsed time', asy
   await expect(finish).toContainText('100%');
   await expect(finish).toContainText(/\d+ s|\d+ min \d+ s/);
 
-  await page.getByRole('button', { name: 'start another run' }).click();
-  await expect(page.getByLabel('Name')).toHaveValue('throwaway');
+  // the picker lives on the dashboard now, so that is where the button goes
+  await page.getByTestId('start-another').click();
+  await expect(page).toHaveURL(/localhost:3000\/$/);
+  await expect(page.getByTestId('dashboard')).toBeVisible();
+  await expect(page.getByTestId('playing-as')).toHaveText(/playing as throwaway/);
+  await expect(page.getByTestId('no-open-run')).toBeVisible();
   await expect(page.locator('img.diagram')).toHaveCount(0);
 });

@@ -32,21 +32,30 @@ const record = (attempts, correct, lastSeenAt = DAY) => ({
 });
 
 /**
+ * The name a stats page reports on is the one in the header: `change` opens the
+ * field, and what is typed is the player. Nothing is seeded on a later reload.
+ */
+const signIn = async (page, name) => {
+  await page.getByTestId('change-name').click();
+  await page.getByTestId('name-input').fill(name);
+};
+
+/**
  * Puts the players in localStorage, the way the template persists them, then
- * loads the play screen and types the name the stats page will report on — the
- * same two taps a player makes. Nothing is seeded on a later reload.
+ * loads the dashboard and types the name the stats page will report on — the
+ * same two taps a player makes.
  */
 const openPlay = async (page, players, name = 'ada') => {
   await page.goto('localhost:3000');
   await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify({ players: value })), [KEY, players]);
   await page.reload();
-  if (name) await page.getByLabel('Name').fill(name);
+  if (name) await signIn(page, name);
 };
 
-/** The play screen, one tap later: the stats page. */
+/** The dashboard, one tap later: the stats page. */
 const openStats = async (page, players, name = 'ada') => {
   await openPlay(page, players, name);
-  await page.getByRole('link', { name: 'stats' }).click();
+  await page.getByTestId('nav-stats').click();
   await expect(page.locator('.stats')).toBeVisible();
 };
 
@@ -77,7 +86,7 @@ const adaWithARun = () => ({
 test('the stats page is one tap from play and totals up the history', async ({ page }) => {
   await openPlay(page, adaWithARun());
 
-  await page.getByRole('link', { name: 'stats' }).click();
+  await page.getByTestId('nav-stats').click();
 
   await expect(page.locator('.stats')).toBeVisible();
   await expect(page.locator('.stats-player')).toHaveText('ada');
@@ -158,7 +167,7 @@ test('a weak spot starts a one-question drill on that position, whose score land
   const target = position(26);
   await weakRows(page).first().getByRole('link').click();
 
-  await expect(page).toHaveURL(/localhost:3000\/$/);
+  await expect(page).toHaveURL(/localhost:3000\/run$/);
   await expect(page.locator('.run-status .progress')).toHaveText('1 / 1');
   await expect(page.locator('.run-status .mode-level')).toHaveText('Drill · Test');
   await expect(page.locator('img.diagram')).toHaveAttribute('src', target.image);
@@ -179,25 +188,27 @@ test('a weak spot starts a one-question drill on that position, whose score land
   await expect(finish.locator('.board-link')).toHaveCount(0);
 
   // the answer went into the record the stats page reads...
-  await page.getByRole('link', { name: 'stats' }).click();
+  await page.getByTestId('nav-stats').click();
   await expect(page.locator('.weak-row[data-oll="26"]')).toContainText('5 attempts');
   await expect(page.locator('.weak-row[data-oll="26"]')).toContainText('20%');
   // ...and the drill's score is on no board at all
-  await page.getByRole('link', { name: 'scores' }).click();
+  await page.getByTestId('nav-scores').click();
   await expect(page.locator('.board-row')).toHaveCount(0);
 });
 
-test('the play screen after a drill comes back with the name, on a mode the picker offers', async ({ page }) => {
+test('the dashboard after a drill comes back with the name, on a mode it offers', async ({ page }) => {
   await openStats(page, { ada: { name: 'ada', positions: records(), runs: [] } });
 
   await weakRows(page).first().getByRole('link').click();
   await optionFor(page, position(26).route[0].trigger).click();
   await page.getByRole('button', { name: 'see the result' }).click();
-  await page.getByRole('button', { name: 'start another run' }).click();
+  await page.getByTestId('start-another').click();
 
-  await expect(page.getByLabel('Name')).toHaveValue('ada');
-  await expect(page.getByRole('button', { name: 'Random' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.mode-line')).toHaveText('Random · Test · 57 positions');
+  await expect(page).toHaveURL(/localhost:3000\/$/);
+  await expect(page.getByTestId('playing-as')).toHaveText(/playing as ada/);
+  // a drill is a run, not a mode: there is no card of it to start again
+  await expect(page.getByTestId('mode-card-drill')).toHaveCount(0);
+  await expect(page.getByTestId('mode-card-random')).toBeVisible();
 });
 
 test('a player with answers but no finished run still sees the practice, and is told nothing finished', async ({ page }) => {
@@ -239,12 +250,12 @@ test('reset stats clears the records and runs, keeps the name, and leaves other 
   await expect(page.locator('.stats')).toHaveAttribute('data-name', 'ada');
 
   // the runs are gone from the boards, and another player is untouched
-  await page.getByRole('link', { name: 'scores' }).click();
+  await page.getByTestId('nav-scores').click();
   await expect(page.locator('#board-random-test .board-row .name')).toHaveText(['bob']);
 
   // the name is kept: the next run is still recorded under it
-  await page.getByRole('link', { name: 'play' }).click();
-  await expect(page.getByLabel('Name')).toHaveValue('ada');
+  await page.getByTestId('nav-play').click();
+  await expect(page.getByTestId('playing-as')).toHaveText(/playing as ada/);
   expect(Object.keys(await storedPlayers(page)).sort()).toEqual(['ada', 'bob']);
 });
 
@@ -262,12 +273,12 @@ test('delete player removes the name, its records and its rows from the boards',
   await expect(page.locator('.stats .empty')).toContainText('no player yet');
 
   // ada's rows leave both boards she was on, bob's row stays
-  await page.getByRole('link', { name: 'scores' }).click();
+  await page.getByTestId('nav-scores').click();
   await expect(page.locator('#board-random-test .board-row .name')).toHaveText(['bob']);
   await expect(page.locator('#board-random-training .board-row')).toHaveCount(0);
 
-  // the device forgets the name too: play reopens with an empty field
-  await page.getByRole('link', { name: 'play' }).click();
-  await expect(page.getByLabel('Name')).toHaveValue('');
+  // the device forgets the name too: the header has none to play under
+  await page.getByTestId('nav-play').click();
+  await expect(page.getByTestId('playing-as')).toHaveText(/no name yet/);
   expect(Object.keys(await storedPlayers(page))).toEqual(['bob']);
 });

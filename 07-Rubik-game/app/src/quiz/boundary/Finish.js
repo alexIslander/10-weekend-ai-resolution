@@ -16,6 +16,12 @@ class Finish extends BElement {
         return run ?? {};
     }
 
+    /** Back to the dashboard: the run is over, and the picker lives there now. */
+    again() {
+        resetRun();
+        navigation.navigate("/");
+    }
+
     view() {
         const { score, correct, questions, mode, hintLevel } = this.state;
         const total = questions ? questions.length : 0;
@@ -31,7 +37,9 @@ class Finish extends BElement {
                 ${isBoardMode(mode)
                     ? html`<a class="board-link" href="/scores#${boardId({ mode, hintLevel })}">see the board</a>`
                     : nothing}
-                <button class="again" @click=${() => resetRun()}>start another run</button>
+                <button class="again" data-testid="start-another" @click=${() => this.again()}>
+                    start another run
+                </button>
             </section>
         `;
     }

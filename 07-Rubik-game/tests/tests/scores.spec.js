@@ -70,12 +70,25 @@ const expectedTrigger = async page => {
 
 const optionFor = (page, trigger) => page.locator(`.option:has(.code:text-is("${trigger}"))`);
 
+/** The name a run is recorded under: the header's `change` line opens the field. */
+const signIn = async (page, name) => {
+  await page.getByTestId('change-name').click();
+  await page.getByTestId('name-input').fill(name);
+};
+
+/** Starts a Random run from the dashboard. */
+const startRun = async page => {
+  await page.getByTestId('mode-toggle-random').click();
+  await page.getByTestId('start-run').click();
+  await expect(page.locator('img.diagram')).toBeVisible();
+};
+
 test('the scores page is one tap from play and shows a board per hint level', async ({ page }) => {
   await seed(page, {
     ada: { name: 'ada', positions: {}, runs: [run({ score: 120, correct: 40 })] }
   });
 
-  await page.getByRole('link', { name: 'scores' }).click();
+  await page.getByTestId('nav-scores').click();
 
   await expect(page.locator('.scores')).toBeVisible();
   // ADR-0004: a mode on the scores page, with a column per hint level
@@ -140,10 +153,10 @@ test('players, records and finished runs survive a reload', async ({ page }) => 
 test('an abandoned run writes no score and lands on no board', async ({ page }) => {
   await seed(page, { ada: { name: 'ada', positions: {}, runs: [] } });
 
-  await page.getByLabel('Name').fill('ada');
-  await page.getByRole('button', { name: 'start the run' }).click();
+  await signIn(page, 'ada');
+  await startRun(page);
   await optionFor(page, await expectedTrigger(page)).click();
-  await page.getByRole('link', { name: 'scores' }).click();
+  await page.getByTestId('nav-scores').click();
 
   await expect(board(page).locator('.board-row')).toHaveCount(0);
   expect((await storedState(page)).players.ada.runs).toEqual([]);
@@ -152,9 +165,10 @@ test('an abandoned run writes no score and lands on no board', async ({ page }) 
 test('a reload in the middle of a run keeps the run, and still writes no score', async ({ page }) => {
   await seed(page, { ada: { name: 'ada', positions: {}, runs: [] } });
 
-  await page.getByLabel('Name').fill('ada');
-  await page.getByRole('button', { name: 'start the run' }).click();
+  await signIn(page, 'ada');
+  await startRun(page);
   await optionFor(page, await expectedTrigger(page)).click();
+  // the run view is its own address, so a reload resumes it in place
   await page.reload();
 
   await expect(page.locator('.run-status .progress')).toHaveText('1 / 57');
@@ -163,7 +177,8 @@ test('a reload in the middle of a run keeps the run, and still writes no score',
 });
 
 test('the finish screen leads straight to the board of the run that just ended', async ({ page }) => {
-  await seed(page, { ada: { name: 'ada', positions: {}, runs: [] } }, lastQuestionRun('ada'));
+  // a run in progress lives at its own address, not on the dashboard
+  await seed(page, { ada: { name: 'ada', positions: {}, runs: [] } }, lastQuestionRun('ada'), '/run');
 
   await expect(page.locator('.run-status .progress')).toHaveText('57 / 57');
   await optionFor(page, await expectedTrigger(page)).click();
@@ -186,8 +201,8 @@ test('a second name writes into its own records and leaves the first alone', asy
     ada: { name: 'ada', positions: {}, runs: [adaRun] }
   });
 
-  await page.getByLabel('Name').fill('bob');
-  await page.getByRole('button', { name: 'start the run' }).click();
+  await signIn(page, 'bob');
+  await startRun(page);
   await optionFor(page, await expectedTrigger(page)).click();
 
   const state = await storedState(page);

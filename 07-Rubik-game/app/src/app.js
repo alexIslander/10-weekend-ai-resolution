@@ -4,7 +4,8 @@
  */
 import { initRouter } from "./router.js";
 import './SiteHeader.js';
-import './quiz/boundary/Play.js';
+import './quiz/boundary/Dashboard.js';
+import './quiz/boundary/Run.js';
 import './quiz/boundary/Scores.js';
 import './quiz/boundary/Stats.js';
 import store from "./store.js";
@@ -18,7 +19,10 @@ store.subscribe(_ => {
     save(state);
 })
 initRouter(document.querySelector('.view'), [
-    { path: '/', component: 'q-play' },
+    { path: '/', component: 'q-dashboard' },
+    // the run view has its own route: the dashboard offers it as a link, and a
+    // reload of a run in progress must land on the run, not on the dashboard
+    { path: '/run', component: 'q-run' },
     { path: '/stats', component: 'q-stats' },
     { path: '/scores', component: 'q-scores' }
 ]);

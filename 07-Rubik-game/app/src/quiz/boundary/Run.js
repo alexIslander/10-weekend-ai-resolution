@@ -34,7 +34,12 @@ class Run extends BElement {
         const run = this.state;
         if (run.phase === "running") return this.questionView(run);
         if (run.phase === "finished") return html`<q-finish></q-finish>`;
-        return nothing;
+        // reached by URL rather than from the dashboard: nothing is open
+        return html`
+            <p class="empty" data-testid="no-open-run">
+                no open run — <a href="/">back to the dashboard</a>
+            </p>
+        `;
     }
 
     questionView(run) {

@@ -1,7 +1,8 @@
 import BElement from "./BElement.js";
-import { html } from "lit-html";
+import { html, nothing } from "lit-html";
 import { icon } from "./icons.js";
 import { cycleTheme, nextTheme, THEME_CHANGED } from "./theme.js";
+import { nameTyped } from "./quiz/control/RunControl.js";
 
 /**
  * How a theme state reads on the pill, and the glyph it wears. The pill shows
@@ -31,6 +32,12 @@ const isHere = (path) => (path === "/" ? location.pathname === "/" : location.pa
  */
 class SiteHeader extends BElement {
 
+    constructor() {
+        super();
+        // whether the name field is open: a screen concern, held by the screen
+        this.editingName = false;
+    }
+
     extractState({ run }) {
         return { name: (run?.name ?? "").trim() };
     }
@@ -46,6 +53,29 @@ class SiteHeader extends BElement {
     disconnectedCallback() {
         window.removeEventListener(THEME_CHANGED, this.onThemeChange);
         super.disconnectedCallback();
+    }
+
+    /**
+     * The name a run would be recorded under. Anyone typing a name is that
+     * player (a name is identity, not authentication), so the field writes
+     * straight into the store and every screen follows.
+     */
+    nameField(name) {
+        return html`
+            <input type="text" class="name-input" data-testid="name-input" aria-label="Name"
+                   autocomplete="nickname" placeholder="your name" .value=${name}
+                   @input=${event => nameTyped(event.target.value)}>
+        `;
+    }
+
+    /** Opens or closes the name field, and puts the cursor in it when it opens. */
+    toggleNameField() {
+        this.editingName = !this.editingName;
+        this.triggerViewUpdate();
+        if (this.editingName) {
+            queueMicrotask(() =>
+                /** @type {HTMLInputElement|null} */ (this.querySelector('[data-testid="name-input"]'))?.focus());
+        }
     }
 
     view() {
@@ -67,6 +97,11 @@ class SiteHeader extends BElement {
                             <span class="session-name" data-testid="playing-as">
                                 ${icon("user")}${name ? `playing as ${name}` : "no name yet"}
                             </span>
+                            <button type="button" class="change-name" data-testid="change-name"
+                                    aria-expanded="${this.editingName}" @click=${() => this.toggleNameField()}>
+                                change
+                            </button>
+                            ${this.editingName ? this.nameField(name) : nothing}
                             <button type="button" class="theme-toggle" data-testid="theme-toggle"
                                     data-theme-state=${next}
                                     aria-label="switch to the ${THEME_WORDS[next].toLowerCase()} theme"

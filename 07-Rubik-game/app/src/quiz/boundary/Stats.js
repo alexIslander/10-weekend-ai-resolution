@@ -141,7 +141,7 @@ class Stats extends BElement {
     weakRow({ oll, name, group, attempts, accuracy, lastSeenAt }) {
         return html`
             <li class="weak-row" data-oll="${oll}" data-accuracy="${accuracy}">
-                <a class="drill" href="/" @click=${event => { if (!startDrill(oll)) event.preventDefault(); }}>
+                <a class="drill" href="/run" @click=${event => { if (!startDrill(oll)) event.preventDefault(); }}>
                     <span class="weak-name">${name}</span>
                     <span class="weak-accuracy">${percentage(accuracy)}</span>
                     <span class="weak-detail">
