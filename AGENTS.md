@@ -23,6 +23,15 @@ Each project folder owns its own commands: read its `README.md` before running a
 - `03-second-brain-ingester/`, `04-spring-boot-api/`, `05-MyLifeOps/`, `06-Rubik/`: see the project `README.md`.
 - `03-barefoot-python/`: no README yet — read the project for its entrypoint.
 
+### Root-level deploy pipeline
+There is no root `package.json`; these use Node 22's built-in runner and need no install.
+- `apps.json` – the Apps Registry: every App and Service with its Deploy Target and build.
+- `node --test scripts/` – every pipeline module test.
+- `node scripts/validate-apps.mjs` – validate the registry, exits non-zero on any problem.
+- `node scripts/plan-changes.mjs --changed <path>...` – print the deploy matrix for paths.
+- `.github/workflows/` – live workflows only. Retired ones are kept, unchanged, in
+  `docs/retired-workflows/`, because GitHub only runs what sits in the workflows folder.
+
 ## Coding Style & Naming Conventions
 - Documentation is Markdown; use ATX headings (`#`, `##`) and `-` for bullets.
 - Keep headings in sentence case and keep paragraphs short.
