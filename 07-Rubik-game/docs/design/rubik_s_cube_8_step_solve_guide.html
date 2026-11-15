@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rubik's Cube Solve Guide — 8 Steps to a Solved Cube</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================================================
+       1. CSS VARIABLES & THEME TOKENS
+       ========================================================================== */
+    :root {
+      /* Authentic Rubik's Palette */
+      --rubik-white: #FFFFFF;
+      --rubik-yellow: #FFD500;
+      --rubik-red: #B90000;
+      --rubik-orange: #FF5900;
+      --rubik-blue: #0045AD;
+      --rubik-green: #009B48;
+      --rubik-neutral: #CBD5E1;
+
+      /* Light Theme (Default - Crisp Official Print Guide Feel) */
+      --bg-page: #F4F6F9;
+      --bg-surface: #FFFFFF;
+      --bg-surface-alt: #F8FAFC;
+      --bg-header: rgba(255, 255, 255, 0.88);
+      --bg-pill: #EFF3F8;
+      --bg-pill-hover: #E2E8F0;
+      --bg-algo: #1E293B;
+      --text-algo: #F8FAFC;
+      --border-color: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #64748B;
+      --cube-frame: #0F172A;
+      --cube-empty: #E2E8F0;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 16px 32px -8px rgba(15, 23, 42, 0.12);
+      --accent-highlight: rgba(0, 69, 173, 0.08);
+    }
+
+    [data-theme="dark"] {
+      /* Dark Theme (Sleek Modern High-Contrast) */
+      --bg-page: #0B0F19;
+      --bg-surface: #131A2A;
+      --bg-surface-alt: #1A2336;
+      --bg-header: rgba(19, 26, 42, 0.88);
+      --bg-pill: #1E293B;
+      --bg-pill-hover: #2C3B54;
+      --bg-algo: #070A12;
+      --text-algo: #FFD500;
+      --border-color: #243047;
+      --border-strong: #334363;
+      --text-primary: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --cube-frame: #05080F;
+      --cube-empty: #29354D;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.6);
+      --accent-highlight: rgba(255, 213, 0, 0.1);
+    }
+
+    /* ==========================================================================
+       2. RESET & BASE TYPOGRAPHY
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 120px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.55;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ==========================================================================
+       3. STICKY HEADER & NAVIGATION
+       ========================================================================== */
+    .color-bar {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      height: 5px;
+      width: 100%;
+    }
+    .color-bar span:nth-child(1) { background: var(--rubik-white); border-bottom: 1px solid var(--border-color); }
+    .color-bar span:nth-child(2) { background: var(--rubik-yellow); }
+    .color-bar span:nth-child(3) { background: var(--rubik-red); }
+    .color-bar span:nth-child(4) { background: var(--rubik-orange); }
+    .color-bar span:nth-child(5) { background: var(--rubik-blue); }
+    .color-bar span:nth-child(6) { background: var(--rubik-green); }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-header);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    /* Mini 3x3 CSS Grid Logo */
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 9px);
+      grid-template-rows: repeat(3, 9px);
+      gap: 2px;
+      padding: 3px;
+      background: #0F172A;
+      border-radius: 6px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .logo-grid i {
+      display: block;
+      border-radius: 1.5px;
+    }
+    .logo-grid i:nth-child(1) { background: var(--rubik-red); }
+    .logo-grid i:nth-child(2) { background: var(--rubik-white); }
+    .logo-grid i:nth-child(3) { background: var(--rubik-blue); }
+    .logo-grid i:nth-child(4) { background: var(--rubik-yellow); }
+    .logo-grid i:nth-child(5) { background: var(--rubik-green); }
+    .logo-grid i:nth-child(6) { background: var(--rubik-orange); }
+    .logo-grid i:nth-child(7) { background: var(--rubik-blue); }
+    .logo-grid i:nth-child(8) { background: var(--rubik-yellow); }
+    .logo-grid i:nth-child(9) { background: var(--rubik-red); }
+
+    .brand-text {
+      font-weight: 900;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
+      background: var(--rubik-yellow);
+      color: #0F172A;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--rubik-blue);
+      transform: translateY(-1px);
+    }
+
+    .theme-toggle svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Quick-Jump Pills */
+    .step-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .step-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-pill {
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: var(--bg-pill);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .nav-pill:hover {
+      background: var(--bg-pill-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-pill.active {
+      background: var(--text-primary);
+      color: var(--bg-surface);
+    }
+
+    /* ==========================================================================
+       4. HERO SECTION
+       ========================================================================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .hero {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.25rem 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-md);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--rubik-blue);
+      background: var(--accent-highlight);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 0.9rem;
+    }
+    [data-theme="dark"] .hero-eyebrow {
+      color: var(--rubik-yellow);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 3.5vw, 2.65rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      color: var(--text-secondary);
+      font-size: 1.02rem;
+      max-width: 640px;
+    }
+
+    .hero-cube-showcase {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    /* ==========================================================================
+       5. SECTION HEADINGS & CARDS
+       ========================================================================== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+      background: var(--rubik-blue);
+      color: #FFFFFF;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ==========================================================================
+       6. THE BASICS SECTION
+       ========================================================================== */
+    .basics-section {
+      margin-bottom: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Piece Types Grid */
+    .pieces-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .piece-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .piece-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .piece-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .tile-badge-group {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--cube-frame);
+      border-radius: 7px;
+    }
+
+    .tile-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .color-pairs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .pair-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      display: inline-block;
+    }
+
+    /* Notation Grid */
+    .notation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .move-card {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.9rem 0.75rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .move-symbol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--rubik-blue);
+    }
+    [data-theme="dark"] .move-symbol {
+      color: var(--rubik-yellow);
+    }
+
+    .move-arrow {
+      font-size: 1.25rem;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .move-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .move-dir {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Core Triggers */
+    .triggers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .trigger-box {
+      border-left: 5px solid var(--rubik-orange);
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.85rem;
+    }
+
+    .trigger-box.right-trigger {
+      border-left-color: var(--rubik-green);
+    }
+
+    .trigger-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
+    /* ==========================================================================
+       7. ALGORITHM PILLS & CALLOUTS
+       ========================================================================== */
+    .algo-pill {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: var(--bg-algo);
+      color: var(--text-algo);
+      padding: 0.5rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .algo-inline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.86em;
+      font-weight: 700;
+      padding: 0.12rem 0.42rem;
+      border-radius: 5px;
+      background: var(--bg-pill);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .note-callout {
+      background: var(--bg-surface-alt);
+      border-left: 4px solid var(--rubik-yellow);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+    }
+
+    .note-callout strong {
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================================
+       8. MINI CSS 3x3 TOP-DOWN CUBE DIAGRAMS
+       ========================================================================== */
+    .diagram-shelf {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.15rem;
+      align-items: flex-start;
+      padding: 1rem;
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+
+    .diagram-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      text-align: center;
+    }
+
+    .diagram-caption {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      max-width: 96px;
+      line-height: 1.25;
+    }
+
+    /* Wrapper for Top-Down Cube + Optional Side Edge Indicators */
+    .cube-wrapper {
+      position: relative;
+      padding: 7px;
+      display: inline-block;
+    }
+
+    .cube-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 22px);
+      grid-template-rows: repeat(3, 22px);
+      gap: 3px;
+      padding: 4px;
+      background: var(--cube-frame);
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    .c-tile {
+      width: 22px;
+      height: 22px;
+      border-radius: 3.5px;
+      background: var(--cube-empty);
+      transition: background-color 0.2s ease;
+    }
+
+    /* Tile Colors */
+    .c-w { background: var(--rubik-white); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18); }
+    .c-y { background: var(--rubik-yellow); }
+    .c-r { background: var(--rubik-red); }
+    .c-o { background: var(--rubik-orange); }
+    .c-b { background: var(--rubik-blue); }
+    .c-g { background: var(--rubik-green); }
+    .c-x { background: var(--cube-empty); }
+
+    /* Side Flap Indicators (for Step 6/7/8 yellow orientation & solved faces) */
+    .side-flap {
+      position: absolute;
+      background: var(--rubik-yellow);
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px var(--cube-frame);
+    }
+    .side-flap.blue { background: var(--rubik-blue); }
+    .side-flap.red { background: var(--rubik-red); }
+    .side-flap.green { background: var(--rubik-green); }
+    .side-flap.orange { background: var(--rubik-orange); }
+
+    /* Specific Flap Positions */
+    .flap-bottom-left { width: 20px; height: 5px; bottom: 0; left: 11px; }
+    .flap-left-bottom { width: 5px; height: 20px; left: 0; bottom: 11px; }
+    .flap-top-full { width: 72px; height: 5px; top: 0; left: 11px; }
+    .flap-left-full { width: 5px; height: 72px; left: 0; top: 11px; }
+    .flap-bottom-edge { width: 20px; height: 5px; bottom: 0; left: 37px; }
+
+    /* ==========================================================================
+       9. ALL 8 SOLVE STEPS GRID & STEP CARDS
+       ========================================================================== */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .step-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card-top {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .step-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.15rem;
+      color: #FFFFFF;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Step Accent Colors */
+    .s1 { background: var(--rubik-yellow); color: #0F172A; }
+    .s2 { background: var(--rubik-blue); }
+    .s3 { background: var(--rubik-green); }
+    .s4 { background: var(--rubik-orange); }
+    .s5 { background: var(--rubik-red); }
+    .s6 { background: var(--rubik-yellow); color: #0F172A; }
+    .s7 { background: var(--rubik-blue); }
+    .s8 { background: var(--rubik-green); }
+
+    .step-title-wrap h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .step-goal {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .step-body {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .step-list {
+      padding-left: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .step-list li strong {
+      color: var(--text-primary);
+    }
+
+    .algo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-top: auto;
+    }
+
+    .algo-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .algo-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       10. FOOTER
+       ========================================================================== */
+    .site-footer {
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .site-footer strong {
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================================
+       11. RESPONSIVE ADJUSTMENTS
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+      }
+      .hero-cube-showcase {
+        justify-content: flex-start;
+      }
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Rubik's 6-Color Accent Strip -->
+  <div class="color-bar" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- Sticky Header with Theme Toggle & Quick-Jump Navigation -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <a href="#top" class="brand">
+          <div class="logo-grid" aria-hidden="true">
+            <i></i><i></i><i></i>
+            <i></i><i></i><i></i>
+            <i></i><i></i><i></i>
+          </div>
+          <span class="brand-text">
+            RUBIK'S SOLVE GUIDE
+            <span class="brand-badge">8 Steps</span>
+          </span>
+        </a>
+
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle Dark or Light Mode">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span id="themeLabel">Dark Mode</span>
+        </button>
+      </div>
+
+      <nav class="step-nav" aria-label="Guide Sections">
+        <a href="#basics" class="nav-pill">The Basics</a>
+        <a href="#step-1" class="nav-pill">1. Daisy</a>
+        <a href="#step-2" class="nav-pill">2. White Cross</a>
+        <a href="#step-3" class="nav-pill">3. White Corners</a>
+        <a href="#step-4" class="nav-pill">4. Middle Layer</a>
+        <a href="#step-5" class="nav-pill">5. Yellow Cross</a>
+        <a href="#step-6" class="nav-pill">6. Yellow Face</a>
+        <a href="#step-7" class="nav-pill">7. Yellow Corners</a>
+        <a href="#step-8" class="nav-pill">8. Yellow Edges</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="container">
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div>
+        <div class="hero-eyebrow">Official Layer-by-Layer Method</div>
+        <h1>RUBIK'S CUBE SOLVE GUIDE — 8 Steps to a Solved Cube</h1>
+        <p>
+          Master the classic 3×3 puzzle from scrambled to solved. Learn the anatomy of the cube, standard move notation, and the two foundational triggers that power all eight steps.
+        </p>
+      </div>
+
+      <!-- Mini Visual Progression in Hero -->
+      <div class="hero-cube-showcase" aria-hidden="true">
+        <div class="cube-3x3">
+          <div class="c-tile c-r"></div><div class="c-tile c-w"></div><div class="c-tile c-b"></div>
+          <div class="c-tile c-w"></div><div class="c-tile c-y"></div><div class="c-tile c-w"></div>
+          <div class="c-tile c-g"></div><div class="c-tile c-w"></div><div class="c-tile c-o"></div>
+        </div>
+        <span style="font-weight: 900; color: var(--text-muted);">→</span>
+        <div class="cube-3x3">
+          <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+          <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+          <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         THE BASICS SECTION
+         ====================================================================== -->
+    <section id="basics" class="basics-section">
+      <div class="section-header">
+        <span class="section-tag">Foundation</span>
+        <h2 class="section-title">The Basics</h2>
+      </div>
+
+      <!-- 1. Get to Know Your Cube -->
+      <div class="pieces-grid">
+        <article class="card piece-card">
+          <div class="piece-header">
+            <h3>Center Pieces</h3>
+            <div class="tile-badge-group" title="1 Colored Tile">
+              <span class="tile-swatch" style="background: var(--rubik-yellow);"></span>
+            </div>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            <strong>1 Colored Tile (6 total).</strong> Center pieces never move relative to each other—they anchor each face's color. Throughout this guide, keep <strong>Yellow on Top (UP)</strong> and <strong>White on Bottom (DOWN)</strong>.
+          </p>
+          <div class="color-pairs">
+            <span class="pair-chip"><i class="dot" style="background: var(--rubik-yellow);"></i> Top ↔ <i class="dot" style="background: var(--rubik-white);"></i> Bottom</span>
+            <span class="pair-chip"><i class="dot" style="background: var(--rubik-blue);"></i> Opposite <i class="dot" style="background: var(--rubik-green);"></i></span>
+            <span class="pair-chip"><i class="dot" style="background: var(--rubik-red);"></i> Opposite <i class="dot" style="background: var(--rubik-orange);"></i></span>
+          </div>
+        </article>
+
+        <article class="card piece-card">
+          <div class="piece-header">
+            <h3>Edge Pieces</h3>
+            <div class="tile-badge-group" title="2 Colored Tiles">
+              <span class="tile-swatch" style="background: var(--rubik-white);"></span>
+              <span class="tile-swatch" style="background: var(--rubik-blue);"></span>
+            </div>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            <strong>2 Colored Tiles (12 total).</strong> Located between the corners on every edge of the cube. Edge pieces always stay edge pieces and connect two adjacent center colors.
+          </p>
+        </article>
+
+        <article class="card piece-card">
+          <div class="piece-header">
+            <h3>Corner Pieces</h3>
+            <div class="tile-badge-group" title="3 Colored Tiles">
+              <span class="tile-swatch" style="background: var(--rubik-white);"></span>
+              <span class="tile-swatch" style="background: var(--rubik-red);"></span>
+              <span class="tile-swatch" style="background: var(--rubik-green);"></span>
+            </div>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            <strong>3 Colored Tiles (8 total).</strong> Located at the eight corners of the cube. Corner pieces always stay in corner positions and unite three adjoining faces.
+          </p>
+        </article>
+      </div>
+
+      <!-- 2. The Moves (Notation Guide) -->
+      <div class="card">
+        <div style="margin-bottom: 1rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.25rem;">The Moves (Notation Guide)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            A single letter means a <strong>90° clockwise</strong> turn as if looking directly at that face. An apostrophe (<span class="algo-inline">'</span>) means <strong>90° counter-clockwise</strong>. A <span class="algo-inline">2</span> means a <strong>180° double turn</strong>.
+          </p>
+        </div>
+
+        <div class="notation-grid">
+          <div class="move-card">
+            <span class="move-symbol">F</span>
+            <span class="move-arrow">↻</span>
+            <span class="move-name">Front</span>
+            <span class="move-dir">Clockwise</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">F'</span>
+            <span class="move-arrow">↺</span>
+            <span class="move-name">Front Prime</span>
+            <span class="move-dir">Counter-CW</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">U</span>
+            <span class="move-arrow">↻</span>
+            <span class="move-name">Up (Top)</span>
+            <span class="move-dir">Clockwise</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">U'</span>
+            <span class="move-arrow">↺</span>
+            <span class="move-name">Up Prime</span>
+            <span class="move-dir">Counter-CW</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">L</span>
+            <span class="move-arrow">↻</span>
+            <span class="move-name">Left</span>
+            <span class="move-dir">Clockwise (Down)</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">L'</span>
+            <span class="move-arrow">↺</span>
+            <span class="move-name">Left Prime</span>
+            <span class="move-dir">Counter-CW (Up)</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">R</span>
+            <span class="move-arrow">↻</span>
+            <span class="move-name">Right</span>
+            <span class="move-dir">Clockwise (Up)</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">R'</span>
+            <span class="move-arrow">↺</span>
+            <span class="move-name">Right Prime</span>
+            <span class="move-dir">Counter-CW (Down)</span>
+          </div>
+          <div class="move-card">
+            <span class="move-symbol">2</span>
+            <span class="move-arrow">⇄</span>
+            <span class="move-name">Double Turn</span>
+            <span class="move-dir">180° Half-Turn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Core Triggers -->
+      <div class="triggers-grid">
+        <div class="card trigger-box">
+          <div class="trigger-title">
+            <span>The Left Trigger</span>
+            <span style="font-size: 0.75rem; color: var(--rubik-orange); text-transform: uppercase;">Essential Combo</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Used throughout Steps 3, 4, and 5 to insert pieces cleanly on the left side.
+          </p>
+          <div>
+            <span class="algo-pill">L' &nbsp;U' &nbsp;L</span>
+          </div>
+        </div>
+
+        <div class="card trigger-box right-trigger">
+          <div class="trigger-title">
+            <span>The Right Trigger</span>
+            <span style="font-size: 0.75rem; color: var(--rubik-green); text-transform: uppercase;">Essential Combo</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            The mirror-image combo used on the right side to insert corners and edges.
+          </p>
+          <div>
+            <span class="algo-pill">R &nbsp;U &nbsp;R'</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         ALL 8 SOLVE STEPS
+         ====================================================================== -->
+    <section aria-label="8 Solve Steps">
+      <div class="section-header">
+        <span class="section-tag" style="background: var(--rubik-green);">Step-by-Step</span>
+        <h2 class="section-title">The 8-Step Solution</h2>
+      </div>
+
+      <div class="steps-grid">
+
+        <!-- STEP 1: THE DAISY -->
+        <article id="step-1" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s1">1</div>
+            <div class="step-title-wrap">
+              <h3>The Daisy</h3>
+              <span class="step-goal">Goal: 4 white edges around the yellow center</span>
+            </div>
+          </div>
+
+          <div class="diagram-shelf">
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="Daisy Goal Pattern">
+                  <div class="c-tile c-x"></div><div class="c-tile c-w"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-w"></div><div class="c-tile c-y"></div><div class="c-tile c-w"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-w"></div><div class="c-tile c-x"></div>
+                </div>
+              </div>
+              <span class="diagram-caption">Target UP Face (Daisy)</span>
+            </div>
+            <div style="flex: 1; font-size: 0.84rem; color: var(--text-secondary);">
+              Hold the cube with the <strong>Yellow center on TOP</strong>. Bring all four white edge pieces onto the UP face surrounding the yellow center like flower petals.
+            </div>
+          </div>
+
+          <div class="step-body">
+            <ul class="step-list">
+              <li><strong>Middle Layer Edges:</strong> Rotate the UP face (<span class="algo-inline">U'</span> or <span class="algo-inline">U</span>) so an empty petal slot sits above the white edge, then turn <span class="algo-inline">L'</span> or <span class="algo-inline">R</span> to lift it up.</li>
+              <li><strong>Bottom Layer Edges:</strong> Align an open petal slot directly above it and execute <span class="algo-inline">F2</span>.</li>
+              <li><strong>Flipped Edges:</strong> Turn <span class="algo-inline">F</span> or <span class="algo-inline">F'</span> to move the edge into the middle layer, then lift it into an open slot.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- STEP 2: THE WHITE CROSS -->
+        <article id="step-2" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s2">2</div>
+            <div class="step-title-wrap">
+              <h3>The White Cross</h3>
+              <span class="step-goal">Goal: White cross on bottom aligned with centers</span>
+            </div>
+          </div>
+
+          <div class="diagram-shelf">
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="White Cross Bottom Face">
+                  <div class="c-tile c-x"></div><div class="c-tile c-w"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-w"></div><div class="c-tile c-w"></div><div class="c-tile c-w"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-w"></div><div class="c-tile c-x"></div>
+                </div>
+              </div>
+              <span class="diagram-caption">Target DOWN Face</span>
+            </div>
+            <div style="flex: 1; font-size: 0.84rem; color: var(--text-secondary);">
+              Keep <strong>Yellow on TOP</strong>. Look at the side color attached to one of your four white daisy petals.
+            </div>
+          </div>
+
+          <div class="step-body">
+            <ol class="step-list">
+              <li>Rotate the <strong>UP</strong> face (<span class="algo-inline">U</span> or <span class="algo-inline">U'</span>) until that edge's side color matches its matching center piece on the front face.</li>
+              <li>Once matched, turn that front face 180° (<span class="algo-inline">F2</span>) to send the white edge down to the bottom layer.</li>
+              <li>Repeat for all 4 white petals to form the <strong>White Cross</strong> on the bottom.</li>
+            </ol>
+            <div class="algo-stack">
+              <div class="algo-row">
+                <span class="algo-label">Send Matched Edge to Bottom</span>
+                <span class="algo-pill">F2</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- STEP 3: THE WHITE CORNERS -->
+        <article id="step-3" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s3">3</div>
+            <div class="step-title-wrap">
+              <h3>The White Corners</h3>
+              <span class="step-goal">Goal: Complete the entire white bottom face</span>
+            </div>
+          </div>
+
+          <div class="diagram-shelf">
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="Completed White Face">
+                  <div class="c-tile c-w"></div><div class="c-tile c-w"></div><div class="c-tile c-w"></div>
+                  <div class="c-tile c-w"></div><div class="c-tile c-w"></div><div class="c-tile c-w"></div>
+                  <div class="c-tile c-w"></div><div class="c-tile c-w"></div><div class="c-tile c-w"></div>
+                </div>
+              </div>
+              <span class="diagram-caption">Solved DOWN Face</span>
+            </div>
+            <div style="flex: 1; font-size: 0.84rem; color: var(--text-secondary);">
+              Find a corner piece in the top layer that contains a <strong>white tile</strong>. Rotate <span class="algo-inline">U</span> until it sits directly above its matching two center colors.
+            </div>
+          </div>
+
+          <div class="step-body">
+            <ul class="step-list">
+              <li><strong>White faces Front-Left:</strong> Use the Left Trigger (<span class="algo-inline">L' U' L</span>).</li>
+              <li><strong>White faces Front-Right:</strong> Use the Right Trigger (<span class="algo-inline">R U R'</span>).</li>
+              <li><strong>White faces UP (Top):</strong> Position above an unsolved corner and run <span class="algo-inline">R U R'</span> twice (<span class="algo-inline">R U R' R U R'</span>) so white faces the side, then insert normally.</li>
+            </ul>
+            <div class="algo-stack">
+              <div class="algo-row">
+                <span class="algo-label">Left / Right Corner Insert</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                  <span class="algo-pill">L' U' L</span>
+                  <span class="algo-pill">R U R'</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- STEP 4: THE MIDDLE LAYER -->
+        <article id="step-4" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s4">4</div>
+            <div class="step-title-wrap">
+              <h3>The Middle Layer</h3>
+              <span class="step-goal">Goal: Solve the first two layers (F2L)</span>
+            </div>
+          </div>
+
+          <div class="step-body">
+            <p>
+              Find an edge piece on the <strong>UP face without yellow</strong>. Rotate <span class="algo-inline">U</span> to match its front tile with its center piece to form an upside-down "T". Look at its top color to see if it needs to go <strong>Left</strong> or <strong>Right</strong>:
+            </p>
+
+            <div class="algo-stack">
+              <div class="algo-row">
+                <span class="algo-label">Move Edge Left (then re-insert white corner)</span>
+                <span class="algo-pill">U' L' U &nbsp;+ &nbsp;L' U' L</span>
+              </div>
+              <div class="algo-row">
+                <span class="algo-label">Move Edge Right (then re-insert white corner)</span>
+                <span class="algo-pill">U R U' &nbsp;+ &nbsp;R U R'</span>
+              </div>
+            </div>
+
+            <div class="note-callout">
+              <strong>Solving Note (Trapped Edges):</strong> If a middle-layer edge is stuck in the wrong slot or flipped, perform either Move Left or Move Right once to pop it out into the UP layer, then solve it normally.
+            </div>
+          </div>
+        </article>
+
+        <!-- STEP 5: THE YELLOW CROSS -->
+        <article id="step-5" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s5">5</div>
+            <div class="step-title-wrap">
+              <h3>The Yellow Cross</h3>
+              <span class="step-goal">Goal: Form a yellow cross on the UP face</span>
+            </div>
+          </div>
+
+          <div class="diagram-shelf">
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="Yellow Dot">
+                  <div class="c-tile c-x"></div><div class="c-tile c-x"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-x"></div><div class="c-tile c-x"></div>
+                </div>
+              </div>
+              <span class="diagram-caption">1. Dot (Any Angle)</span>
+            </div>
+
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="Yellow L-Shape">
+                  <div class="c-tile c-x"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-x"></div><div class="c-tile c-x"></div>
+                </div>
+              </div>
+              <span class="diagram-caption">2. L-Shape (Top-Left)</span>
+            </div>
+
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="Yellow Horizontal Line">
+                  <div class="c-tile c-x"></div><div class="c-tile c-x"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-x"></div><div class="c-tile c-x"></div>
+                </div>
+              </div>
+              <span class="diagram-caption">3. Horizontal Line</span>
+            </div>
+          </div>
+
+          <div class="step-body">
+            <p>
+              Ignore the yellow corners for now. Match your UP face to one of the three states above (hold the <strong>L-shape at top-left</strong>, or the <strong>Line horizontally</strong>) and repeat the algorithm until the Yellow Cross appears:
+            </p>
+            <div class="algo-stack">
+              <div class="algo-row">
+                <span class="algo-label">F + Right Trigger + U' F'</span>
+                <span class="algo-pill">F &nbsp;R U R' &nbsp;U' F'</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- STEP 6: THE YELLOW FACE -->
+        <article id="step-6" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s6">6</div>
+            <div class="step-title-wrap">
+              <h3>The Yellow Face</h3>
+              <span class="step-goal">Goal: Orient all yellow tiles onto the UP face</span>
+            </div>
+          </div>
+
+          <div class="diagram-shelf">
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="0 Corners Oriented">
+                  <div class="c-tile c-x"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                </div>
+                <span class="side-flap flap-left-bottom" title="Yellow sticker on left"></span>
+              </div>
+              <span class="diagram-caption">0 Corners (Yellow Left)</span>
+            </div>
+
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="1 Corner Fish Pattern">
+                  <div class="c-tile c-x"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                </div>
+              </div>
+              <span class="diagram-caption">1 Corner ("Fish" Bottom-Left)</span>
+            </div>
+
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="2 Corners Oriented">
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-x"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-x"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                </div>
+                <span class="side-flap flap-bottom-left" title="Yellow sticker on front-left"></span>
+              </div>
+              <span class="diagram-caption">2 Corners (Yellow Front-Left)</span>
+            </div>
+          </div>
+
+          <div class="step-body">
+            <ul class="step-list">
+              <li><strong>0 Yellow Corners:</strong> Ensure a yellow corner tile faces <strong>Left</strong> on the bottom-left corner.</li>
+              <li><strong>1 Yellow Corner ("Fish"):</strong> Put the single yellow corner at the <strong>bottom-left</strong> ("fish nose").</li>
+              <li><strong>2 Yellow Corners:</strong> Place a yellow corner sticker facing <strong>Front-Left</strong>.</li>
+            </ul>
+            <div class="algo-stack">
+              <div class="algo-row">
+                <span class="algo-label">Repeat Until UP Face is Solid Yellow</span>
+                <span class="algo-pill">R &nbsp;U &nbsp;R' &nbsp;U &nbsp;R &nbsp;U2 &nbsp;R'</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- STEP 7: THE YELLOW CORNERS -->
+        <article id="step-7" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s7">7</div>
+            <div class="step-title-wrap">
+              <h3>The Yellow Corners</h3>
+              <span class="step-goal">Goal: Position all 4 top corners accurately</span>
+            </div>
+          </div>
+
+          <div class="diagram-shelf">
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="Matching Corners on Left">
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                </div>
+                <span class="side-flap flap-left-full blue" title="Matching Corners on Left"></span>
+              </div>
+              <span class="diagram-caption">Matching Corners on Left</span>
+            </div>
+            <div style="flex: 1; font-size: 0.84rem; color: var(--text-secondary);">
+              Rotate <span class="algo-inline">U</span> to find two adjacent corners on the same side that share the same color. Hold those matching corners on the <strong>LEFT</strong> face (if none match yet, run the algorithm once from any side).
+            </div>
+          </div>
+
+          <div class="step-body">
+            <p>
+              Execute the corner-swap sequence below, followed immediately by Step 6's algorithm to restore the yellow top face:
+            </p>
+            <div class="algo-stack">
+              <div class="algo-row">
+                <span class="algo-label">Part A: Swap Corners + Part B: Step 6 Algorithm</span>
+                <span class="algo-pill">L' U R U' L U R' &nbsp;+ &nbsp;R U R' U R U2 R'</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- STEP 8: THE YELLOW EDGES -->
+        <article id="step-8" class="card step-card">
+          <div class="step-card-top">
+            <div class="step-badge s8">8</div>
+            <div class="step-title-wrap">
+              <h3>The Yellow Edges</h3>
+              <span class="step-goal">Goal: Permute final edges to solve the cube!</span>
+            </div>
+          </div>
+
+          <div class="diagram-shelf">
+            <div class="diagram-item">
+              <div class="cube-wrapper">
+                <div class="cube-3x3" aria-label="Solved Face at Back">
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                  <div class="c-tile c-y"></div><div class="c-tile c-y"></div><div class="c-tile c-y"></div>
+                </div>
+                <span class="side-flap flap-top-full green" title="Solved Face at Back"></span>
+              </div>
+              <span class="diagram-caption">Solved Face at BACK</span>
+            </div>
+            <div style="flex: 1; font-size: 0.84rem; color: var(--text-secondary);">
+              Check if one of the four side faces is completely solved. If yes, place that <strong>solved face at the BACK</strong>. If no side is solved yet, hold the cube with any side facing you.
+            </div>
+          </div>
+
+          <div class="step-body">
+            <p>
+              Execute the final edge-cycling algorithm <strong>up to 3 times</strong> until every face is completely solved!
+            </p>
+            <div class="algo-stack">
+              <div class="algo-row">
+                <span class="algo-label">Final Edge Cycle (Repeat up to 3x)</span>
+                <span class="algo-pill">F2 &nbsp;U &nbsp;L &nbsp;R' &nbsp;F2 &nbsp;L' &nbsp;R &nbsp;U &nbsp;F2</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      <strong>Rubik's Cube 8-Step Solve Guide</strong> • Standard Layer-by-Layer Beginner Method • Yellow Top / White Bottom Orientation
+    </p>
+  </footer>
+
+  <script>
+    // ========================================================================
+    // Theme Toggle (Light / Dark Mode) & Active Navigation Pill Highlighting
+    // ========================================================================
+    (function () {
+      const htmlEl = document.documentElement;
+      const toggleBtn = document.getElementById('themeToggle');
+      const themeLabel = document.getElementById('themeLabel');
+      const themeIcon = document.getElementById('themeIcon');
+
+      const sunSVG = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      const moonSVG = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+
+      function applyTheme(theme) {
+        htmlEl.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
+          themeLabel.textContent = 'Light Mode';
+          themeIcon.innerHTML = sunSVG;
+        } else {
+          themeLabel.textContent = 'Dark Mode';
+          themeIcon.innerHTML = moonSVG;
+        }
+        try {
+          localStorage.setItem('rubiks-guide-theme', theme);
+        } catch (e) {
+          // Ignore storage restrictions in sandboxed environments
+        }
+      }
+
+      // Initialize saved theme or default to light
+      let initialTheme = 'light';
+      try {
+        const saved = localStorage.getItem('rubiks-guide-theme');
+        if (saved === 'dark' || saved === 'light') {
+          initialTheme = saved;
+        }
+      } catch (e) {}
+      applyTheme(initialTheme);
+
+      toggleBtn.addEventListener('click', () => {
+        const current = htmlEl.getAttribute('data-theme');
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      // Highlight active quick-jump nav pill on scroll
+      const navPills = document.querySelectorAll('.nav-pill');
+      const sections = Array.from(navPills).map(pill => {
+        const id = pill.getAttribute('href').slice(1);
+        return document.getElementById(id);
+      }).filter(Boolean);
+
+      function updateActivePill() {
+        const scrollPos = window.scrollY + 160;
+        let currentId = sections[0]?.id || '';
+
+        for (const section of sections) {
+          if (section.offsetTop <= scrollPos) {
+            currentId = section.id;
+          }
+        }
+
+        navPills.forEach(pill => {
+          const isMatch = pill.getAttribute('href') === `#${currentId}`;
+          pill.classList.toggle('active', isMatch);
+        });
+      }
+
+      window.addEventListener('scroll', updateActivePill, { passive: true });
+      updateActivePill();
+    })();
+  </script>
+</body>
+</html>
