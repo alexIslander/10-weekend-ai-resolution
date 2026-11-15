@@ -66,6 +66,16 @@ _Avoid_: Hard, exam, quiz, blind
 One play of a mode from the first position to the last, ending in one score.
 _Avoid_: Game, session, round
 
+**Open run**:
+A run that has started but not reached its last position: it has no score, it
+lands on no board, and it is waiting to be continued or skipped.
+_Avoid_: Unfinished game, saved game, session, resume point
+
+**Skip**:
+To discard an `open run`. It leaves no trace: the answers it collected are taken
+back out of the player's records, and nothing about it is ever scored.
+_Avoid_: Abandon, quit, cancel, forfeit, stop
+
 **Drill**:
 A run of one position, started from a `weak spot`: the question is asked at
 `Test` and the answer is recorded, but no board ranks its score.

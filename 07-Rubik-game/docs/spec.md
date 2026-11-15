@@ -169,7 +169,8 @@ neither outcome writes a score.
 
 **Navigation.** `Play` (mode, hint level, name, group picker), `Stats`, `Scores`, and the
 run view, following the template's route registration. English UI, portrait-first layout,
-diagrams scaled but never cropped.
+diagrams scaled but never cropped. *Superseded by ADR-0006:* `/` is a dashboard and the
+picker expands inside the chosen mode's card.
 
 ## Testing Decisions
 
