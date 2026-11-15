@@ -3,6 +3,7 @@
  * To deactivate localStorage persistence, comment out or remove the store.subscribe() block.
  */
 import { initRouter } from "./router.js";
+import './SiteHeader.js';
 import './quiz/boundary/Play.js';
 import './quiz/boundary/Scores.js';
 import './quiz/boundary/Stats.js';
