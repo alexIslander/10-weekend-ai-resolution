@@ -1,0 +1,129 @@
+name: Deploy one App
+
+# The reusable half: every invariant that used to be copied into ten workflows
+# exists here once -- credentials checked before the build, one pinned deploy
+# CLI major, stage derived from the ref, concurrency per App and ref.
+#
+# The interface is App Slug, ref and a dry-run flag. Stage is NOT an input: it
+# is derived from the ref below, so a caller cannot choose production by
+# accident (ADR-0002).
+
+on:
+  workflow_call:
+    inputs:
+      slug:
+        description: App Slug from apps.json
+        required: true
+        type: string
+      ref:
+        description: Branch or ref to deploy
+        required: true
+        type: string
+      dry_run:
+        description: Resolve, check credentials and build, but do not deploy
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 22
+  WRANGLER_VERSION: wrangler@4
+
+# Per App and ref, and no cancellation: two merges to main queue against each
+# other instead of cancelling, so main's head is the deployment that lands last.
+concurrency:
+  group: deploy-${{ inputs.slug }}-${{ inputs.ref }}
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    name: Resolve
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      stage: ${{ steps.describe.outputs.stage }}
+      dir: ${{ steps.describe.outputs.dir }}
+      project: ${{ steps.describe.outputs.project }}
+      branch: ${{ steps.describe.outputs.branch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # Resolution first. An unimplemented target (workers, aws) fails here,
+      # before a checkout of anything else, a credential check or a build.
+      - name: Describe the deploy
+        id: describe
+        env:
+          SLUG: ${{ inputs.slug }}
+          REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+
+          node scripts/describe-deploy.mjs --slug "$SLUG" --ref "$REF" > describe.json
+          cat describe.json
+
+          for field in stage dir project branch; do
+            echo "$field=$(jq -r ".$field" describe.json)" >> "$GITHUB_OUTPUT"
+          done
+
+  deploy:
+    name: ${{ needs.resolve.outputs.stage }}
+    needs: resolve
+    runs-on: ubuntu-latest
+    # Staging has no protection; production requires a reviewer and is limited
+    # to main. The name comes from the ref, never from the caller.
+    environment: ${{ needs.resolve.outputs.stage }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # Credentials before the build: a missing token must cost seconds, not a
+      # full build reported as a deploy failure.
+      - name: Check credentials
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::CLOUDFLARE_API_TOKEN is not set"; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::CLOUDFLARE_ACCOUNT_ID is not set"; exit 1; }
+          echo "credentials present"
+
+      - name: Build
+        env:
+          SLUG: ${{ inputs.slug }}
+        run: node scripts/build-app.mjs --slug "$SLUG"
+
+      - name: Deploy
+        if: inputs.dry_run == false
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DIR: ${{ needs.resolve.outputs.dir }}
+          PROJECT: ${{ needs.resolve.outputs.project }}
+          BRANCH: ${{ needs.resolve.outputs.branch }}
+        run: |
+          set -euo pipefail
+          echo "deploying $DIR to project $PROJECT on branch $BRANCH"
+          npx --yes "$WRANGLER_VERSION" pages deploy "$DIR" \
+            --project-name "$PROJECT" \
+            --branch "$BRANCH"
+
+      - name: Dry run, nothing deployed
+        if: inputs.dry_run
+        run: |
+          echo "dry run: ${{ needs.resolve.outputs.dir }} would go to project ${{ needs.resolve.outputs.project }} on branch ${{ needs.resolve.outputs.branch }}"

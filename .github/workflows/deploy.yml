@@ -1,0 +1,98 @@
+name: Deploy
+
+# One entrypoint for every App. This file holds no per-project knowledge: the
+# registry says which Apps exist, the planner says which ones this run is
+# about, and _deploy-app.yml does the work.
+#
+# Deliberately dispatch-only. A push trigger here would deploy the same Apps
+# the surviving per-project workflows already deploy (lit-starter-*.yml,
+# rubik-pages.yml), and retiring those is its own ticket. The planner still
+# knows how to plan a push; this workflow just does not ask it to yet.
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: App Slug from apps.json, or "all"
+        required: true
+        default: all
+        type: string
+      ref:
+        description: Branch or ref to deploy. Defaults to the branch this run is started from.
+        required: false
+        type: string
+      dry_run:
+        description: Resolve, check credentials and build, but do not deploy.
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-entrypoint-${{ inputs.ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      count: ${{ steps.matrix.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate the registry
+        run: node scripts/validate-apps.mjs
+
+      - name: Compute the matrix
+        id: matrix
+        env:
+          APP: ${{ inputs.app }}
+          REF: ${{ inputs.ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          # The stage is not an input: plan-changes derives it from the ref, with
+          # the same rule the reusable workflow applies.
+          node scripts/plan-changes.mjs --app "$APP" --ref "$REF" > plan.json
+
+          jq -c --arg ref "$REF" '[.deploy[] | {slug, ref: $ref}]' plan.json > matrix.json
+          echo "matrix=$(jq -c . matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "count=$(jq length matrix.json)" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "### Deploy matrix"
+            echo
+            echo "Ref: \`$REF\`"
+            echo
+            jq -r '.deploy[] | "- deploy \`\(.slug)\` at **\(.stage)**"' plan.json
+            jq -r '.skipped[] | "- skip \`\(.slug)\`: \(.reason)"' plan.json
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          cat plan.json
+
+  deploy:
+    name: Deploy ${{ matrix.slug }}
+    needs: plan
+    if: needs.plan.outputs.count != '0'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    uses: ./.github/workflows/_deploy-app.yml
+    with:
+      slug: ${{ matrix.slug }}
+      ref: ${{ matrix.ref }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets: inherit

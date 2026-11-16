@@ -30,12 +30,23 @@ There is no root `package.json`; these use Node 22's built-in runner and need no
 - `apps.json` – the Apps Registry: every App and Service with its Deploy Target and build.
 - `node --test scripts/` – every pipeline module test.
 - `node scripts/validate-apps.mjs` – validate the registry, exits non-zero on any problem.
-- `node scripts/plan-changes.mjs --changed <path>...` – print the deploy matrix for paths.
+- `node scripts/plan-changes.mjs --changed <path>...` – print the deploy matrix for paths;
+  `--app <slug|all> [--ref REF]` asks the manual question instead, with the stage
+  derived from the ref.
 - `node 08-dashboard/build.mjs` – build the Dashboard from the registry into
   `08-dashboard/dist/`; `node --test 08-dashboard/tests/` runs its tests.
 - `node scripts/provision.mjs` – print each entry's provisioning descriptions and change
   nothing; `--plan` diffs them against the account and `--apply` converges it. Both need
   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (see `docs/deploy-credentials.md`).
+- `node scripts/describe-deploy.mjs --slug <slug> --ref <ref>` – what the deploy workflow
+  is told for one App: stage, project, branch and the folder to upload. Refuses an
+  unimplemented target.
+- `node scripts/build-app.mjs --slug <slug>` – build one App by the convention in
+  `scripts/lib/build.mjs` (`package.json` → npm, `build.mjs` → node, neither → already the
+  artifact), so no workflow knows how any App builds.
+- `.github/workflows/deploy.yml` – the one deploy entrypoint, dispatch-only for now;
+  `_deploy-app.yml` is the reusable workflow it calls per App. Neither holds per-project
+  knowledge.
 - `.github/workflows/` – live workflows only. Retired ones are kept, unchanged, in
   `docs/retired-workflows/`, because GitHub only runs what sits in the workflows folder.
 

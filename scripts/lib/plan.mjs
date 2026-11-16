@@ -10,10 +10,11 @@
 // `ref` is optional because a local run has no ref; absent means staging, which
 // is the safe default (ADR-0002).
 
+import { stageFor } from './stage.mjs';
+
 const STAGES = ['staging', 'production'];
 const REGISTRY_FILES = ['apps.json'];
 const REGISTRY_PREFIXES = ['scripts/', '.github/workflows/'];
-const MAIN_REFS = ['main', 'refs/heads/main'];
 
 export function plan({ entries, changedPaths = [], trigger } = {}) {
   if (!Array.isArray(entries)) throw new TypeError('plan: entries must be an array');
@@ -105,10 +106,6 @@ function isRegistryPath(path) {
     REGISTRY_FILES.includes(path) ||
     REGISTRY_PREFIXES.some((prefix) => path.startsWith(prefix))
   );
-}
-
-function stageFor(ref) {
-  return MAIN_REFS.includes(ref) ? 'production' : 'staging';
 }
 
 function hasBuild(entry) {
