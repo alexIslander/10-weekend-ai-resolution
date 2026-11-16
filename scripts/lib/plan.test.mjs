@@ -90,7 +90,7 @@ for (const { ref, stage } of stageCases) {
 
 // --- push: registry-level changes -------------------------------------------
 
-const registryPaths = ['apps.json', 'scripts/lib/plan.mjs', '.github/workflows/rubik-pages.yml'];
+const registryPaths = ['apps.json', 'scripts/lib/plan.mjs', '.github/workflows/deploy.yml'];
 
 for (const registryPath of registryPaths) {
   test(`a change to ${registryPath} deploys every buildable entry`, () => {

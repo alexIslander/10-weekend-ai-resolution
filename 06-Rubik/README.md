@@ -146,13 +146,15 @@ The guides are served at:
 
 - https://rubik.csete.cc/
 
-They are published by the deploy pipeline: the `rubik` entry in the root
-`apps.json` deploys this folder to the `rubik` Cloudflare Pages project on a
-push to `main`. `index.html` is the landing page that links to every guide.
+They are published by the deploy pipeline: dispatching `deploy.yml` for
+`app=rubik` at `ref=main` deploys this folder to the `rubik` Cloudflare Pages
+project. The `rubik` entry in the root `apps.json` is what names the folder and
+the project. `index.html` is the landing page that links to every guide.
 
-The older GitHub Pages deploy (`.github/workflows/rubik-pages.yml`) was retired
-on 2026-11-16, once this URL served: the file is kept unchanged in
-`docs/retired-workflows/`, its artifact recipe assembled the guides by hand, and
-the repository's Pages site is disabled. The pipeline uploads the whole folder,
-so `tools/`, `tests/`, `source/` and this README are published as well, where
-that workflow filtered them out.
+The older GitHub Pages deploy was retired on 2026-11-16, once this URL served.
+What it was, what replaced it, and why the repository's Pages site is now
+disabled: [`docs/retired-workflows/README.md`](../docs/retired-workflows/README.md).
+
+One difference from that workflow, tracked as a later ticket: the pipeline
+uploads the whole folder, so `tools/`, `tests/`, `source/` and this README are
+published where the old recipe filtered them out.

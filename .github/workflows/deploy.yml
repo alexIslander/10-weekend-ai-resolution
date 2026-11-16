@@ -5,9 +5,9 @@ name: Deploy
 # about, and _deploy-app.yml does the work.
 #
 # Deliberately dispatch-only. A push trigger here would deploy the same Apps
-# the surviving per-project workflows already deploy (lit-starter-*.yml,
-# rubik-pages.yml), and retiring those is its own ticket. The planner still
-# knows how to plan a push; this workflow just does not ask it to yet.
+# the surviving per-project workflows already deploy (lit-starter-*.yml), and
+# retiring those is its own ticket. The planner still knows how to plan a push;
+# this workflow just does not ask it to yet.
 
 on:
   workflow_dispatch:

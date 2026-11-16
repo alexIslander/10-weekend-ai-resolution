@@ -8,7 +8,7 @@ A seventh, `rubik-pages.yml`, was moved here unchanged on 2026-11-16 for the opp
 reason: it ran, and it published. It has its own section below, because it does not
 belong in the defect table.
 
-They were retired because none of them could run. Every one of the six failed at step 2,
+The six were retired because none of them could run. Every one failed at step 2,
 `npm ci`, against a `05-MyLifeOps` folder that has no `package.json`, no lockfile and no
 Vite config. No run ever reached a deploy step, so nothing here ever deployed anything and
 no deployment history depends on it.
@@ -36,8 +36,10 @@ and one of three incompatible concurrency schemes across the ten workflows that 
 - The deploy pipeline described by [ADR-0001](../adr/0001-flat-hostnames-under-csete-cc.md)
   to [ADR-0005](../adr/0005-grey-cloud-cname-for-aws-origins.md), driven by `apps.json`,
   `scripts/lib/plan.mjs` and `scripts/lib/targets.mjs`.
-- `deploy.yml` and `_deploy-app.yml` are not written yet: they need GitHub Environments and
-  a scoped token that do not exist. When they land, they are the replacement entrypoints.
+- `deploy.yml` and `_deploy-app.yml` are the replacement entrypoints, and both exist as of
+  2026-11-16. They are dispatch-only for now: a push trigger would deploy the same Apps the
+  surviving per-project workflows still deploy, and retiring the last of those is its own
+  ticket.
 - The MyLifeOps build gap - no `package.json`, no lockfile, no Vite config, no admin
   sources - is its own spec. These six files are its starting point, not a template to
   copy: the fixes it needs are stated above, so re-adding them as-is would repeat known
