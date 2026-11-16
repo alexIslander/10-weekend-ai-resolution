@@ -6,7 +6,6 @@
 // testable without an account.
 
 const API = 'https://api.cloudflare.com/client/v4';
-const PAGE_SIZE = 100;
 
 export class CloudflareError extends Error {
   constructor(summary, { status, errors } = {}) {
@@ -57,6 +56,10 @@ export function pagesClient({ token, accountId, fetchImpl = globalThis.fetch } =
   };
 
   // Every project on the account, with the domains already attached to it.
+  //
+  // `per_page` is deliberately not sent: the Pages endpoint rejects the usual
+  // 100 with `8000024: Invalid list options provided`, and its own default page
+  // size is what `result_info` reports, so the loop follows that instead.
   const readState = async () => {
     const projects = {};
     let page = 1;
@@ -65,19 +68,27 @@ export function pagesClient({ token, accountId, fetchImpl = globalThis.fetch } =
     do {
       const payload = await request(
         'GET',
-        `/accounts/${accountId}/pages/projects?page=${page}&per_page=${PAGE_SIZE}`,
+        `/accounts/${accountId}/pages/projects?page=${page}`,
       );
       const list = Array.isArray(payload.result) ? payload.result : [];
 
-      for (const project of list) {
-        projects[project.name] = {
-          domains: Array.isArray(project.domains) ? [...project.domains] : [],
-        };
-      }
+      for (const project of list) projects[project.name] = { domains: [] };
 
       totalPages = Number(payload.result_info?.total_pages) || 1;
       page += 1;
     } while (page <= totalPages);
+
+    // The projects list carries the `*.pages.dev` hostnames only, so a custom
+    // domain has to be read from the project itself. Without this call a domain
+    // that is already attached looks missing and the plan never empties.
+    for (const name of Object.keys(projects)) {
+      const payload = await request(
+        'GET',
+        `/accounts/${accountId}/pages/projects/${name}/domains`,
+      );
+      projects[name].domains = (Array.isArray(payload.result) ? payload.result : [])
+        .map((domain) => domain.name);
+    }
 
     return { projects };
   };
