@@ -159,7 +159,10 @@ test('loadRegistry loads the real registry shape', () => {
     ['apps', 'lit-starter', 'admin-starter', 'rubik', 'rubik-game', 'dualreveal',
       'spring-api', 'second-brain', 'barefoot'],
   );
-  assert.equal(entries.every((entry) => entry.live === false), true);
+  // `live` is shape, not state: entries start false and flip to true when they
+  // are deployed, so this asserts the type and never today's values. Asserting
+  // "all false" would have failed the moment the Dashboard went live (#25).
+  assert.equal(entries.every((entry) => typeof entry.live === 'boolean'), true);
 });
 
 test('loadRegistry reads a registry from disk', (t) => {
