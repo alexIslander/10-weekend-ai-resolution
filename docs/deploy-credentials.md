@@ -11,7 +11,7 @@ same credential, and duplicating it would let one copy drift or expire unnoticed
 
 | Name | Kind | Consumer |
 |---|---|---|
-| `CLOUDFLARE_API_TOKEN` | secret | `_deploy-app.yml` deploy step; the provisioning tool in `scripts/` |
+| `CLOUDFLARE_API_TOKEN` | secret | `_deploy-app.yml` credential check and deploy step; `scripts/provision.mjs` |
 | `CLOUDFLARE_ACCOUNT_ID` | secret | same |
 
 `CLOUDFLARE_ACCOUNT_ID` is a secret rather than a repository variable on purpose:
@@ -39,10 +39,30 @@ Account-owned token, name `gh-pages-deploy-10-weekend-ai-resolution`, expiring.
 | Zone `csete.cc` | Zone: Read |
 | Zone `csete.cc` | DNS: Read |
 
-`DNS: Edit` is deliberately absent. Pages creates the CNAME for
-`<slug>.csete.cc` itself when the zone is in the same account, so the pipeline
-only needs to read records, never write them. If a custom-domain attach ever
-fails on DNS, add Edit then, with the failure as the justification.
+`DNS: Edit` is deliberately absent, and the first real attach proved both halves
+of that decision:
+
+- **Pages does not create the CNAME itself.** Attaching `<slug>.csete.cc` by API
+  succeeds and leaves the domain `pending` with `CNAME record not set`; the record
+  has to exist before the hostname serves. So the deploy path still needs only
+  read access, and DNS is a one-off per hostname, done with a token that has
+  `DNS: Edit` (or by hand in the dashboard).
+- **The CNAME target is not always `<slug>.pages.dev`.** The `rubik` project's
+  pages.dev host is `rubik-7pp.pages.dev`, because the plain name was taken. Read
+  `subdomain` from the project; never assemble the target from the App Slug.
+
+The five production records, all proxied, are:
+
+| hostname | CNAME target |
+|---|---|
+| `apps.csete.cc` | `10-weekend-ai-resolution.pages.dev` |
+| `lit-starter.csete.cc` | `01-lit-starter.pages.dev` |
+| `admin-starter.csete.cc` | `02-lit-admin-starter.pages.dev` |
+| `rubik.csete.cc` | `rubik-7pp.pages.dev` |
+| `rubik-game.csete.cc` | `rubik-game.pages.dev` |
+
+Staging needs none of this: branch aliases answer on `pages.dev` with no record
+and no certificate (ADR-0006).
 
 The token is also deliberately narrower than the "Edit Cloudflare Workers" template:
 no Workers Scripts, KV, R2, Tail or Routes permissions, and no all-zone scope.

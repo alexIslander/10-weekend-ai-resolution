@@ -3,8 +3,12 @@
 //
 //   node scripts/plan-changes.mjs --changed <path>...
 //   node scripts/plan-changes.mjs [--base origin/main] [--ref refs/heads/main]
+//   node scripts/plan-changes.mjs --app <slug|all> [--stage staging|production] [--ref REF]
 //
 // With no --changed, the paths come from `git diff --name-only <base>..HEAD`.
+// --app asks a manual question instead: this App, or every App. Its stage is
+// whatever --stage says, defaulting to the stage the ref implies, so a manual
+// run and a push cannot disagree about what `main` means (ADR-0002).
 // Prints the deploy matrix as JSON and nothing else.
 //
 // The registry is read, not validated: `scripts/validate-apps.mjs` is the gate
@@ -17,6 +21,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { plan } from './lib/plan.mjs';
+import { stageFor } from './lib/stage.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -26,12 +31,25 @@ function main(argv) {
   let result;
   try {
     const options = parseArgs(argv);
-    const changedPaths =
-      options.changed.length > 0 ? options.changed : changedSince(options.base, root);
-    const trigger =
-      options.ref === undefined ? { kind: 'push' } : { kind: 'push', ref: options.ref };
+    const entries = readEntries(join(root, 'apps.json'));
 
-    result = plan({ entries: readEntries(join(root, 'apps.json')), changedPaths, trigger });
+    if (options.app !== undefined) {
+      result = plan({
+        entries,
+        trigger: {
+          kind: 'manual',
+          app: options.app,
+          stage: options.stage ?? stageFor(options.ref),
+        },
+      });
+    } else {
+      const changedPaths =
+        options.changed.length > 0 ? options.changed : changedSince(options.base, root);
+      const trigger =
+        options.ref === undefined ? { kind: 'push' } : { kind: 'push', ref: options.ref };
+
+      result = plan({ entries, changedPaths, trigger });
+    }
   } catch (error) {
     console.error(`plan-changes: ${error.message}`);
     process.exitCode = 1;
@@ -42,7 +60,13 @@ function main(argv) {
 }
 
 function parseArgs(argv) {
-  const parsed = { changed: [], base: 'origin/main', ref: undefined };
+  const parsed = {
+    changed: [],
+    base: 'origin/main',
+    ref: undefined,
+    app: undefined,
+    stage: undefined,
+  };
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -59,6 +83,16 @@ function parseArgs(argv) {
       parsed.base = valueOf(argv, i, '--base');
     } else if (arg.startsWith('--base=')) {
       parsed.base = arg.slice('--base='.length);
+    } else if (arg === '--app') {
+      i += 1;
+      parsed.app = valueOf(argv, i, '--app');
+    } else if (arg.startsWith('--app=')) {
+      parsed.app = arg.slice('--app='.length);
+    } else if (arg === '--stage') {
+      i += 1;
+      parsed.stage = valueOf(argv, i, '--stage');
+    } else if (arg.startsWith('--stage=')) {
+      parsed.stage = arg.slice('--stage='.length);
     } else if (arg === '--ref') {
       i += 1;
       parsed.ref = valueOf(argv, i, '--ref');
@@ -67,6 +101,13 @@ function parseArgs(argv) {
     } else {
       throw new Error(`unknown argument "${arg}"`);
     }
+  }
+
+  if (parsed.app === undefined && parsed.stage !== undefined) {
+    throw new Error('--stage only means something with --app');
+  }
+  if (parsed.app !== undefined && parsed.changed.length > 0) {
+    throw new Error('--app and --changed ask different questions; pick one');
   }
 
   return parsed;
