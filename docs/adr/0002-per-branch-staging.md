@@ -21,6 +21,7 @@ are working on — not whatever has accumulated on an integration branch.
 - There is no single canonical staging URL. Staging is identified by branch, which is the
   thing under test.
 - Long branch names produce long hostnames, and `/` in a branch name becomes `-` in the
-  Pages alias.
+  Pages alias. How the alias is produced, what a project needs enabled, and what happens to
+  an alias when its branch is deleted: ADR-0006.
 - Promoting to production is a merge to `main`, not a redeploy of the tested artifact.
   The production deployment is rebuilt from the merged commit.

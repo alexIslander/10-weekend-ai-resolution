@@ -22,6 +22,8 @@ Each project folder owns its own commands: read its `README.md` before running a
 - `00-dualreveal/`, `01-lit-starter/`, `02-lit-admin-starter/`: npm scripts (`dev`, `build`, `start`, `test`).
 - `03-second-brain-ingester/`, `04-spring-boot-api/`, `05-MyLifeOps/`, `06-Rubik/`: see the project `README.md`.
 - `03-barefoot-python/`: no README yet — read the project for its entrypoint.
+- `08-dashboard/`: no install and no build tool — `node 08-dashboard/build.mjs` writes
+  `dist/`, `node --test 08-dashboard/tests/` runs its tests.
 
 ### Root-level deploy pipeline
 There is no root `package.json`; these use Node 22's built-in runner and need no install.
@@ -29,6 +31,11 @@ There is no root `package.json`; these use Node 22's built-in runner and need no
 - `node --test scripts/` – every pipeline module test.
 - `node scripts/validate-apps.mjs` – validate the registry, exits non-zero on any problem.
 - `node scripts/plan-changes.mjs --changed <path>...` – print the deploy matrix for paths.
+- `node 08-dashboard/build.mjs` – build the Dashboard from the registry into
+  `08-dashboard/dist/`; `node --test 08-dashboard/tests/` runs its tests.
+- `node scripts/provision.mjs` – print each entry's provisioning descriptions and change
+  nothing; `--plan` diffs them against the account and `--apply` converges it. Both need
+  `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (see `docs/deploy-credentials.md`).
 - `.github/workflows/` – live workflows only. Retired ones are kept, unchanged, in
   `docs/retired-workflows/`, because GitHub only runs what sits in the workflows folder.
 
