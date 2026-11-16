@@ -1,0 +1,63 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2026-06-02T02:01:59Z",
+      "resolved": "github:NixOS/nixpkgs/ffa10e26ae11d676b2db836259889f1f571cb14f?lastModified=1780365719&narHash=sha256-QfWfccTN%2B70ZQ4m2qlU9PiKfz2Yppq94058iJyARNwc%3D"
+    },
+    "maven@3.9": {
+      "last_modified": "2026-05-21T08:15:18Z",
+      "resolved": "github:NixOS/nixpkgs/4a29d733e8a7d5b824c3d8c958a946a9867b3eb2#maven",
+      "source": "devbox-search",
+      "version": "3.9.12",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ihsrikvwhnz9imvqzlgmgajc1i88phdq-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ihsrikvwhnz9imvqzlgmgajc1i88phdq-maven-3.9.12"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/5mmm91ljxfhkniscl8fspngizmq576qx-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/5mmm91ljxfhkniscl8fspngizmq576qx-maven-3.9.12"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/nbhqg5sn1903p2gccby5wn76ylh56nr4-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/nbhqg5sn1903p2gccby5wn76ylh56nr4-maven-3.9.12"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/pfi6mjf7mi0hl0nzlbipdsycfq0z22p3-maven-3.9.12",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/pfi6mjf7mi0hl0nzlbipdsycfq0z22p3-maven-3.9.12"
+        }
+      }
+    },
+    "openjdk@17": {
+      "last_modified": "2022-11-21T15:52:25Z",
+      "resolved": "github:NixOS/nixpkgs/6b5019a48f876f3288efc626fa8b70ad0c64eb46#openjdk",
+      "source": "devbox-search",
+      "version": "17.0.3"
+    }
+  }
+}

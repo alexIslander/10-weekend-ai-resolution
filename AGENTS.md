@@ -18,20 +18,32 @@ Within a project, keep code organized and predictable:
 - `assets/` for images or downloadable artifacts when needed.
 
 ## Build, Test, and Development Commands
-Run from the project folder (e.g. `00-dualreveal/`):
-- `npm run dev` – Next.js dev server (DualReveal).
-- `npm run build` – production bundle.
-- `npm run start` – production server.
-- `npm run test` / `npm run test:e2e` – Playwright e2e tests (DualReveal).
+Each project folder owns its own commands: read its `README.md` before running anything. This file deliberately holds no per-project command list, so nothing goes stale here.
+- `00-dualreveal/`, `01-lit-starter/`, `02-lit-admin-starter/`: npm scripts (`dev`, `build`, `start`, `test`).
+- `03-second-brain-ingester/`, `04-spring-boot-api/`, `05-MyLifeOps/`, `06-Rubik/`: see the project `README.md`.
+- `03-barefoot-python/`: no README yet — read the project for its entrypoint.
+
+### Root-level deploy pipeline
+There is no root `package.json`; these use Node 22's built-in runner and need no install.
+- `apps.json` – the Apps Registry: every App and Service with its Deploy Target and build.
+- `node --test scripts/` – every pipeline module test.
+- `node scripts/validate-apps.mjs` – validate the registry, exits non-zero on any problem.
+- `node scripts/plan-changes.mjs --changed <path>...` – print the deploy matrix for paths.
+- `.github/workflows/` – live workflows only. Retired ones are kept, unchanged, in
+  `docs/retired-workflows/`, because GitHub only runs what sits in the workflows folder.
 
 ## Coding Style & Naming Conventions
 - Documentation is Markdown; use ATX headings (`#`, `##`) and `-` for bullets.
 - Keep headings in sentence case and keep paragraphs short.
 - Prefer ASCII characters and avoid decorative Unicode.
 - New documentation files should use kebab-case names (e.g., `project-overview.md`).
+- Prioritize the single responsibility principle in implementation code.
+- Avoid producing enormous classes or modules; split orchestration, normalization, I/O, and formatting into focused components before a file becomes hard to review.
 
 ## Testing Guidelines
 - Per-project: e.g. DualReveal’s Playwright tests live in `00-dualreveal/tests/e2e`.
+- `01-lit-starter/tests/` uses Vitest with `jsdom` for controller and template behavior.
+- `02-lit-admin-starter/tests/` uses Vitest with `jsdom` for Lit shell rendering and login flow coverage.
 - Use Playwright for browser automation and keep tests flow-focused.
 - Run tests from the project directory: `npm run test`.
 
@@ -48,3 +60,23 @@ Do not commit secrets. If the project gains external dependencies or API keys, s
 
 ## Agent-Specific Instructions
 Keep this guide up to date as the repository grows. If you change structure or add tooling, update the relevant sections here so new contributors can get started quickly.
+- For projects that use `devbox.json` workflow entrypoints, add or update the matching `shell.scripts` entry whenever a new runnable slice or workflow command is introduced, and reflect that change in the project README in the same update.
+- For projects that use `devbox.json` test entrypoints, add or update a bounded `shell.scripts` test command whenever new slice-specific tests are introduced, so the new coverage is runnable through a stable Devbox command instead of only through ad hoc `pytest` arguments.
+
+## Local git hooks
+- The repo includes `.githooks/pre-commit` to validate staged GitHub Actions workflow files.
+- Enable it locally with `git config core.hooksPath .githooks`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub Issues in this repo, driven by the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles, default label strings: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` at the root, ADRs in `docs/adr/`, project glossaries under `<project>/docs/glossary.md`. See `docs/agents/domain.md`.

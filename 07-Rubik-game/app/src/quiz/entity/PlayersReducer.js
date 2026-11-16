@@ -1,0 +1,33 @@
+import { createReducer } from "@reduxjs/toolkit";
+import { answerGivenAction, runFinishedAction, runSkippedAction } from "../control/RunControl.js";
+import { playerDeletedAction, statsResetAction } from "../control/PlayersControl.js";
+import { recordAnswer, withoutAnswers } from "../core/records.mjs";
+
+/**
+ * What the game remembers about a player: one record per name, holding the
+ * per-position records and one entry per finished run. Boards are derived from
+ * those finished runs, never stored twice.
+ *
+ * A name is identity, not authentication: typing an existing name adopts its
+ * history.
+ */
+export const players = createReducer({}, (builder) => {
+    builder.addCase(answerGivenAction, (state, { payload: { name, question, outcome, at } }) => {
+        const player = state[name] ??= { name, positions: {}, runs: [] };
+        player.positions[question.oll] = recordAnswer(player.positions[question.oll], outcome.correct, at);
+    }).addCase(runFinishedAction, (state, { payload: { name, ...finishedRun } }) => {
+        const player = state[name] ??= { name, positions: {}, runs: [] };
+        player.runs.push(finishedRun);
+    }).addCase(runSkippedAction, (state, { payload: { name, snapshot } }) => {
+        // a skipped run leaves no trace: its answers leave the records (ADR-0005).
+        // A run persisted before the snapshot existed carries none, and guessing
+        // which answers were its own would be worse than leaving them.
+        if (!state[name] || !snapshot) return;
+        state[name] = withoutAnswers(state[name], snapshot);
+    }).addCase(statsResetAction, (state, { payload: name }) => {
+        // the name stays: the next run and the next board row are written under it
+        if (state[name]) state[name] = { name, positions: {}, runs: [] };
+    }).addCase(playerDeletedAction, (state, { payload: name }) => {
+        delete state[name];
+    });
+});

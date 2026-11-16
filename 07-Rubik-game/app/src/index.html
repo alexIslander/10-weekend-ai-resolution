@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rubik triggers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- root-absolute URLs: with the index.html fallback, this document is also
+       served for nested routes — relative URLs would resolve against them and 404 -->
+  <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+  <meta name="theme-color" content="#f4f6f9">
+  <!-- The only network references in this document: the guide's type. Offline,
+       the fallback to system-ui degrades quietly (ADR-0006). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap">
+  <!-- The theme, before the first paint: the store hydrates with the module
+       graph, which would paint the wrong theme first, so the choice lives in its
+       own key and is resolved here, synchronously. app/src/theme.js owns the
+       cycle from then on; this is the same three states, spelled once more
+       because an inline classic script cannot import a module. -->
+  <script>
+    (function () {
+      var states = ["auto", "light", "dark"];
+      var stored = "auto";
+      try {
+        var saved = localStorage.getItem("rubik-theme");
+        if (states.indexOf(saved) !== -1) stored = saved;
+      } catch (error) {
+        // storage denied: Auto is still a theme
+      }
+      var dark = stored === "dark" ||
+        (stored === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      var root = document.documentElement;
+      root.setAttribute("data-theme", dark ? "dark" : "light");
+      root.style.colorScheme = dark ? "dark" : "light";
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", dark ? "#0b0f19" : "#f4f6f9");
+    })();
+  </script>
+  <link rel="stylesheet" href="/tokens.css">
+  <link rel="stylesheet" href="/style.css">
+  <!-- state management is switchable here: "@reduxjs/toolkit" resolves to the
+       minimal, standards-based /reduction.js -- point it back to
+       /libs/redux-toolkit.modern.js to use the original Redux Toolkit -->
+  <script type="importmap">
+  {
+    "imports": {
+      "lit-html": "/libs/lit-html.js",
+      "@reduxjs/toolkit": "/reduction.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="color-bar" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <q-site-header></q-site-header>
+  <main class="container">
+    <section class="view"></section>
+  </main>
+  <footer class="site-footer">
+    built on the <a href="https://bce.design">bce.design</a> quickstarter
+  </footer>
+  <!-- init.js shims window.process, needed only by the original Redux Toolkit --
+       re-enable when the import map points "@reduxjs/toolkit" back to
+       /libs/redux-toolkit.modern.js -->
+  <!-- <script src="/init.js"></script> -->
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+/* CSS Custom Properties for MyLifeOps Design System */
+:root {
+  /* Color Schemes */
+  --bg: #ffffff;
+  --text: #000000;
+  --surface: #f5f5f5;
+  --surface2: #e5e5e5;
+  --border: #d0d0d0;
+  --border2: #b0b0b0;
+
+  /* Spacing */
+  --sp-xs: 0.25rem;
+  --sp-sm: 0.5rem;
+  --sp-md: 1rem;
+  --sp-lg: 2rem;
+
+  /* Border Radius */
+  --r: 0.5rem;
+  --rsm: 0.25rem;
+
+  /* Transitions */
+  --tr: 200ms ease;
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --bg: #1a1a1a;
+  --text: #ffffff;
+  --surface: #2a2a2a;
+  --surface2: #3a3a3a;
+  --border: #4a4a4a;
+  --border2: #5a5a5a;
+}

@@ -1,0 +1,74 @@
+/* The design system's vocabulary, taken from the solve guide the app drills
+   (docs/design/rubik_s_cube_8_step_solve_guide.html) — see ADR-0006.
+
+   Colours live here and nowhere else: style.css consumes these names, so no
+   component knows which theme is on. `[data-theme]` is set on <html> by the
+   inline script in index.html before the first paint, and mirrored below for
+   every token a theme changes. */
+
+:root {
+  /* The cube's six colours. They are the cube's, not the theme's, so the dark
+     block does not repeat them: a white sticker is white in both themes. */
+  --rubik-white: #ffffff;
+  --rubik-yellow: #ffd500;
+  --rubik-red: #b90000;
+  --rubik-orange: #ff5900;
+  --rubik-blue: #0045ad;
+  --rubik-green: #009b48;
+  --rubik-neutral: #cbd5e1;
+
+  /* Surfaces and type, light theme. */
+  --bg-page: #f4f6f9;
+  --bg-surface: #ffffff;
+  --bg-surface-alt: #f8fafc;
+  --bg-header: rgba(255, 255, 255, 0.88);
+  --bg-pill: #eff3f8;
+  --bg-pill-hover: #e2e8f0;
+  --bg-algo: #1e293b;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-algo: #f8fafc;
+  --border-color: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --cube-frame: #0f172a;
+  --cube-empty: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 16px 32px -8px rgba(15, 23, 42, 0.12);
+  --accent-highlight: rgba(0, 69, 173, 0.08);
+
+  /* Spacing and corner radii. */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+}
+
+/* Dark theme: every colour token above, mirrored. */
+[data-theme="dark"] {
+  --bg-page: #0b0f19;
+  --bg-surface: #131a2a;
+  --bg-surface-alt: #1a2336;
+  --bg-header: rgba(19, 26, 42, 0.88);
+  --bg-pill: #1e293b;
+  --bg-pill-hover: #2c3b54;
+  --bg-algo: #070a12;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-algo: #ffd500;
+  --border-color: #243047;
+  --border-strong: #334363;
+  --cube-frame: #05080f;
+  --cube-empty: #29354d;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.6);
+  --accent-highlight: rgba(255, 213, 0, 0.1);
+}

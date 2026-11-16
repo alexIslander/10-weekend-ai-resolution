@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "second-brain-ingester"
+version = "0.1.0"
+description = "Ingest source material into structured second-brain artifacts."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { text = "MIT" }
+authors = [
+  { name = "scsete" }
+]
+dependencies = [
+  "pydantic>=2.9,<3.0",
+  "pydantic-settings>=2.5,<3.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy>=1.11,<2.0",
+  "pre-commit>=4.0,<5.0",
+  "pytest>=8.3,<9.0",
+  "ruff>=0.6,<0.7"
+]
+
+[project.scripts]
+second-brain-ingester = "second_brain_ingester.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/second_brain_ingester"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "src"
+strict = true
+packages = ["second_brain_ingester"]
+

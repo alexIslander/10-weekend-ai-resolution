@@ -1,0 +1,62 @@
+name: Rubik OLL guides — GitHub Pages
+
+# Publishes the static 06-Rubik guides. The repo is a monorepo, so only the
+# built HTML, images and reference PDF are assembled into the Pages artifact;
+# tests, tools and the project README stay out of the published site.
+
+on:
+  push:
+    branches:
+      - feature/06-rubik
+      - main
+    paths:
+      - '.github/workflows/rubik-pages.yml'
+      - '06-Rubik/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: rubik-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assemble Pages site
+        run: |
+          set -euo pipefail
+          mkdir -p site
+          cp 06-Rubik/*.html site/
+          cp 06-Rubik/*.pdf site/
+          cp -R 06-Rubik/img site/img
+          # GitHub Pages needs an entry point at the site root.
+          test -f site/index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

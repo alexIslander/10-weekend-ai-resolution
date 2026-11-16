@@ -1,0 +1,1400 @@
+/* The component layer: everything here consumes the tokens in /tokens.css and
+   names no colour of its own (ADR-0006). One container, one card, one pill.
+
+   The playing surfaces wear the guide's components: the question and its
+   solving note on the run screen, the finish screen's result, and the stats and
+   scores pages as `.card` sections whose figures are rows, never a table. */
+
+/* ---------- reset and base ---------- */
+/* ---------- reset and base ---------- */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--text-primary);
+    background-color: var(--bg-page);
+    scroll-behavior: smooth;
+    scroll-padding-top: 120px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4 {
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+p {
+    margin: 0;
+}
+
+a {
+    color: var(--rubik-blue);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+[data-theme="dark"] a {
+    color: var(--rubik-yellow);
+}
+
+:focus-visible {
+    outline: 2px solid var(--rubik-blue);
+    outline-offset: 2px;
+}
+
+[data-theme="dark"] :focus-visible {
+    outline-color: var(--rubik-yellow);
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+}
+
+/* ---------- shell: colour bar, sticky header, container, footer ---------- */
+
+.color-bar {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    height: 5px;
+    width: 100%;
+}
+
+.color-bar span:nth-child(1) { background: var(--rubik-white); box-shadow: inset 0 -1px 0 var(--border-color); }
+.color-bar span:nth-child(2) { background: var(--rubik-yellow); }
+.color-bar span:nth-child(3) { background: var(--rubik-red); }
+.color-bar span:nth-child(4) { background: var(--rubik-orange); }
+.color-bar span:nth-child(5) { background: var(--rubik-blue); }
+.color-bar span:nth-child(6) { background: var(--rubik-green); }
+
+q-site-header {
+    display: block;
+}
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-header);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+/* the header's own colours: a nav pill is not a content link, so it keeps the
+   pill palette in both themes */
+.header-top .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-primary);
+}
+
+.header-top .brand:hover {
+    text-decoration: none;
+}
+
+/* the 3x3 logo is CSS, not an image: nine tiles in a dark frame */
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 9px);
+    grid-template-rows: repeat(3, 9px);
+    gap: 2px;
+    padding: 3px;
+    background: var(--cube-frame);
+    border-radius: 6px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.logo-grid i {
+    display: block;
+    border-radius: 1.5px;
+}
+
+.logo-grid i:nth-child(1) { background: var(--rubik-red); }
+.logo-grid i:nth-child(2) { background: var(--rubik-white); }
+.logo-grid i:nth-child(3) { background: var(--rubik-blue); }
+.logo-grid i:nth-child(4) { background: var(--rubik-yellow); }
+.logo-grid i:nth-child(5) { background: var(--rubik-green); }
+.logo-grid i:nth-child(6) { background: var(--rubik-orange); }
+.logo-grid i:nth-child(7) { background: var(--rubik-blue); }
+.logo-grid i:nth-child(8) { background: var(--rubik-yellow); }
+.logo-grid i:nth-child(9) { background: var(--rubik-red); }
+
+.brand-text {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 900;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+}
+
+.brand-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 5px;
+    background: var(--rubik-yellow);
+    color: #0f172a;
+}
+
+.session {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.session-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+
+.change-name {
+    min-height: 0;
+    padding: 0 0.15rem;
+    border: 0;
+    background: none;
+    color: var(--rubik-blue);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+[data-theme="dark"] .change-name {
+    color: var(--rubik-yellow);
+}
+
+.change-name:hover:not(:disabled) {
+    background: none;
+    transform: none;
+}
+
+.name-input {
+    width: min(12rem, 100%);
+    min-height: 40px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-strong);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s ease, transform 0.2s ease, background-color 0.25s ease;
+}
+
+.theme-toggle:hover {
+    border-color: var(--rubik-blue);
+    transform: translateY(-1px);
+}
+
+.step-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+}
+
+.step-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.step-nav .nav-pill {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--bg-pill);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.step-nav .nav-pill:hover {
+    background: var(--bg-pill-hover);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.step-nav .nav-pill.active {
+    background: var(--text-primary);
+    color: var(--bg-surface);
+}
+
+.container {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+}
+
+.site-footer {
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-surface);
+    padding: 2rem 1.25rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ---------- surfaces ---------- */
+
+.card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.stat-note,
+.scores-intro {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* ---------- controls ---------- */
+
+button {
+    font: inherit;
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.85rem;
+    min-height: 44px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+    background: var(--bg-pill);
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+input,
+select {
+    font: inherit;
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.65rem;
+    min-height: 44px;
+    width: 100%;
+}
+
+input::placeholder {
+    color: var(--text-muted);
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+legend {
+    padding: 0;
+}
+
+/* the pill-shaped choice a mode or hint level is picked with */
+.choice {
+    border-radius: var(--radius-pill);
+    border-color: transparent;
+    background: var(--bg-pill);
+    color: var(--text-secondary);
+    padding: 0.45rem 0.9rem;
+}
+
+.choice[aria-pressed="true"] {
+    background: var(--text-primary);
+    color: var(--bg-surface);
+}
+
+/* ---------- the mode picker, inside the card that was tapped ---------- */
+
+.field {
+    display: grid;
+    gap: var(--spacing-xs);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.mode-line {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0.7rem;
+}
+
+.start-button {
+    background: var(--rubik-blue);
+    border-color: transparent;
+    color: #ffffff;
+    padding: 0.7rem 1rem;
+    font-weight: 800;
+}
+
+.start-button:hover:not(:disabled) {
+    background: var(--rubik-blue);
+    border-color: var(--rubik-blue);
+}
+
+/* ---------- run screen: the guide's question card ---------- */
+
+/* one card per question: pills on top, the sticker, the prompt, the answers,
+   and — once an answer is in — the verdict, the solving note and the way on */
+.run {
+    display: grid;
+    justify-items: stretch;
+    gap: var(--spacing-md);
+    width: min(34rem, 100%);
+}
+
+.run-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.pill {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+    background: var(--bg-pill);
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.7rem;
+    white-space: nowrap;
+}
+
+.training-hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: baseline;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--accent-highlight);
+    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.7rem;
+}
+
+.training-hint .case-name {
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* The diagram is white stickers on a clear ground: the guide's sticker tile, a
+   white face inside the cube's frame, in either theme. */
+.cube-wrapper {
+    justify-self: center;
+    padding: 3px;
+    background: var(--cube-frame);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    line-height: 0;
+}
+
+.cube-frame {
+    display: block;
+    padding: 4px;
+    background: var(--rubik-white);
+    border-radius: 8px;
+}
+
+img.diagram {
+    display: block;
+    width: 82px;
+    height: 82px;
+}
+
+/* the prompt is a section title, set the way the guide sets one */
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+/* answers are neutral notation cards: the cube's colours stay off them, so the
+   verdict is the only thing that says right or wrong in colour */
+.answers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.move-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    min-height: 64px;
+    padding: 0.6rem 0.5rem;
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+}
+
+.move-card:hover:not(:disabled) {
+    border-color: var(--border-strong);
+    transform: none;
+}
+
+.move-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.move-code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.move-card[data-state="correct"] {
+    border-color: var(--text-primary);
+    box-shadow: inset 0 0 0 1px var(--text-primary);
+}
+
+.move-card[data-state="correct"] .move-code {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.move-card[data-state="wrong"] {
+    border-style: dashed;
+    border-color: var(--border-strong);
+}
+
+.move-card[data-state="wrong"] .move-code {
+    text-decoration: line-through;
+}
+
+/* Route mode: the chips are typed, so they read as an algorithm with a square
+   of the trigger's colour in front of each step */
+.chosen {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    margin: 0;
+    padding: 0.4rem;
+    list-style: none;
+    background: var(--bg-surface-alt);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+}
+
+.chosen-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--bg-algo);
+    color: var(--text-algo);
+    border-radius: var(--radius-sm);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.tile {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.tile--yellow { background: var(--rubik-yellow); }
+.tile--blue { background: var(--rubik-blue); }
+.tile--green { background: var(--rubik-green); }
+.tile--orange { background: var(--rubik-orange); }
+
+.chosen-empty {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.submit,
+.next {
+    justify-self: stretch;
+    background: var(--text-primary);
+    border-color: transparent;
+    color: var(--bg-surface);
+    font-weight: 800;
+}
+
+/* the verdict: the guide's green check or red cross, and the sentence beside it */
+.verdict {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.verdict-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    color: #ffffff;
+    box-shadow: var(--shadow-sm);
+}
+
+.verdict-badge .icon {
+    width: 13px;
+    height: 13px;
+}
+
+.verdict-badge--correct { background: var(--rubik-green); }
+.verdict-badge--incorrect { background: var(--rubik-red); }
+
+/* the reveal: the guide's yellow solving note, with the route as an algorithm */
+.solve-note {
+    display: grid;
+    gap: 0.5rem;
+    padding: var(--spacing-md);
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--rubik-yellow);
+    border-radius: var(--radius-md);
+}
+
+.solve-note-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.position-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.route-step {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.85rem;
+    font-weight: 800;
+    border-radius: var(--radius-sm);
+    padding: 0.2rem 0.55rem;
+}
+
+.route-step--trigger {
+    background: var(--bg-algo);
+    color: var(--text-algo);
+}
+
+.route-step--auf {
+    background: var(--bg-pill);
+    color: var(--text-secondary);
+}
+
+.route .arrow {
+    color: var(--text-muted);
+}
+
+.simulator {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* ---------- skip, and the confirm that names what it costs ---------- */
+
+.skip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    padding: 0 0.8rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    background: var(--bg-pill);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.skip:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--bg-pill-hover);
+}
+
+/* an open run older than a week: skipping stops being a quiet aside */
+.skip.is-stale {
+    background: var(--text-primary);
+    color: var(--bg-surface);
+}
+
+.run-status .skip,
+.open-run-actions .skip {
+    margin-left: auto;
+}
+
+.skip-confirm {
+    flex-basis: 100%;
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.7rem 0.85rem;
+    border-left: 4px solid var(--rubik-red);
+    background: var(--bg-surface-alt);
+    border-radius: var(--radius-sm);
+}
+
+.skip-confirm p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.skip-confirm strong {
+    color: var(--text-primary);
+}
+
+.skip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skip-actions .danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* ---------- finish screen ---------- */
+
+.finish {
+    display: grid;
+    gap: var(--spacing-md);
+    justify-items: start;
+    max-width: 34rem;
+}
+
+.score-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+}
+
+.score-number {
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.score-caption {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.result {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1rem;
+    margin: 0;
+    width: 100%;
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+}
+
+.result dt {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.result dd {
+    margin: 0;
+    font-weight: 800;
+}
+
+.board-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    background: var(--rubik-blue);
+    color: #ffffff;
+    border-radius: var(--radius-sm);
+    padding: 0 0.9rem;
+    font-weight: 700;
+}
+
+.board-link:hover {
+    text-decoration: none;
+    background: var(--rubik-blue);
+}
+
+/* a filled link keeps the cube colour's white type: the dark theme's `a` colour
+   would otherwise repaint it yellow, which is not readable on blue */
+[data-theme="dark"] .board-link,
+[data-theme="dark"] .continue {
+    color: #ffffff;
+}
+
+/* ---------- stats screen: one card per block ---------- */
+
+.stats {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.stats-summary {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.stats-player {
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-sm);
+    margin: 0;
+}
+
+.totals dt {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.totals dd {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.stat-section {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+/* The figures are rows of one grid, with the labels on a head row: they line up
+   like a table and still fit a 390 px phone without scrolling sideways. */
+.stat-heading,
+.stat-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: 0.5rem 0.9rem;
+    align-items: baseline;
+}
+
+.stat-heading {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.stat-heading--group,
+.stat-row--group {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.stat-row {
+    padding: 0.45rem 0.5rem;
+    background: var(--bg-surface-alt);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: right;
+}
+
+.stat-row .stat-name {
+    font-weight: 700;
+    text-align: left;
+}
+
+.weak-spots {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.weak-row a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.9rem;
+    min-height: 44px;
+    padding: 0.55rem 0.7rem;
+    color: var(--text-primary);
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+}
+
+.weak-row a:hover {
+    text-decoration: none;
+    border-color: var(--border-strong);
+}
+
+.weak-name {
+    font-weight: 700;
+}
+
+.weak-accuracy {
+    font-weight: 800;
+    color: var(--rubik-blue);
+}
+
+[data-theme="dark"] .weak-accuracy {
+    color: var(--rubik-yellow);
+}
+
+.weak-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.weak-seen {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.danger-zone {
+    display: grid;
+    gap: var(--spacing-sm);
+    border-left: 5px solid var(--rubik-red);
+}
+
+.danger-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.danger {
+    border-color: var(--rubik-red);
+    color: var(--rubik-red);
+    background: transparent;
+}
+
+/* ---------- scores screen: one card per mode, a board per hint level ---------- */
+
+.scores {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.mode {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.mode-boards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.board {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.board-rows {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.board-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.15rem 0.75rem;
+    align-items: baseline;
+    padding: 0.45rem 0.6rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+}
+
+.board-row .rank {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--text-muted);
+}
+
+.board-row-name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.board-row-score {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 800;
+}
+
+.board-row-meta {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ---------- dashboard: hero, the open run, one card per mode ---------- */
+
+.dashboard {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.hero {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--accent-highlight);
+    color: var(--rubik-blue);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+[data-theme="dark"] .hero-eyebrow {
+    color: var(--rubik-yellow);
+}
+
+.hero h2 {
+    font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+}
+
+.hero-sub {
+    max-width: 60ch;
+    color: var(--text-secondary);
+}
+
+.hero-empty {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* the run that is waiting: the one thing on the page asking for a tap */
+.open-run {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-sm);
+    border-left: 5px solid var(--rubik-blue);
+}
+
+.open-run-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rubik-blue);
+}
+
+[data-theme="dark"] .open-run-label {
+    color: var(--rubik-yellow);
+}
+
+.open-run-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.open-run-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.open-run-facts span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--bg-pill);
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.65rem;
+}
+
+.open-run-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.continue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0 1.1rem;
+    border-radius: var(--radius-sm);
+    background: var(--rubik-blue);
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.continue:hover {
+    text-decoration: none;
+}
+
+/* one card per mode; the picker grows inside the card that was tapped */
+.modes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    align-items: start;
+    gap: var(--spacing-md);
+}
+
+.step-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+}
+
+.step-card.open {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+}
+
+.mode-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 56px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+}
+
+.mode-head:hover:not(:disabled) {
+    background: none;
+    transform: none;
+}
+
+.step-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.step-badge .icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* ADR-0006 fixes each mode's colour; AUF and Adaptive keep theirs reserved */
+.mode-badge--yellow { background: var(--rubik-yellow); color: #0f172a; }
+.mode-badge--blue { background: var(--rubik-blue); color: #ffffff; }
+.mode-badge--green { background: var(--rubik-green); color: #ffffff; }
+.mode-badge--orange { background: var(--rubik-orange); color: #ffffff; }
+
+.mode-title {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.mode-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.mode-meta {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.mode-record {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.mode-accuracy {
+    font-size: 0.85rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.mode-accuracy.not-played {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.check-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--rubik-green);
+    color: #ffffff;
+}
+
+.check-badge .icon {
+    width: 11px;
+    height: 11px;
+}
+
+.chevron {
+    display: inline-flex;
+    color: var(--text-muted);
+}
+
+.chevron .icon {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+}
+
+.step-card.open .chevron .icon {
+    transform: rotate(180deg);
+}
+
+.picker {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+}
+
+.picker .start-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    gap: 0.45rem;
+    padding: 0 1.1rem;
+    min-height: 44px;
+}
+
+/* ---------- narrow screens: the app is played on a phone in portrait ---------- */
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1.25rem 1rem 3rem;
+    }
+
+    .header-inner {
+        padding: 0.6rem 1rem;
+    }
+
+    .brand-text {
+        font-size: 0.95rem;
+    }
+
+    /* the figures stay on one line: a name, then three short numbers */
+    .stat-heading,
+    .stat-row {
+        gap: 0.35rem 0.6rem;
+    }
+
+    .stat-row {
+        font-size: 0.82rem;
+    }
+}
+
+/* ---------- reduced motion: no lifts, no smooth scroll, no colour fades ------ */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+        transition: none;
+    }
+
+    *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+
+    .theme-toggle:hover,
+    button:hover:not(:disabled) {
+        transform: none;
+    }
+}

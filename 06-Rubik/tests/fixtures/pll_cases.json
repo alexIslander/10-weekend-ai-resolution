@@ -1,0 +1,107 @@
+[
+ {
+  "name": "A1",
+  "alg": "x [(R' U R') D2] [(R U' R') D2] R2",
+  "image": "friedrich-pll-01.png"
+ },
+ {
+  "name": "A2",
+  "alg": "x' [(R U' R) D2] [(R' U R) D2] R2",
+  "image": "friedrich-pll-02.png"
+ },
+ {
+  "name": "U1",
+  "alg": "R2 U [R U R' U'] (R' U') (R' U R')",
+  "image": "friedrich-pll-07.png"
+ },
+ {
+  "name": "U2",
+  "alg": "[R U'] [R U] [R U] [R U'] R' U' R2",
+  "image": "friedrich-pll-06.png"
+ },
+ {
+  "name": "H",
+  "alg": "M2 U M2 U2 M2 U M2",
+  "image": "friedrich-pll-05.png"
+ },
+ {
+  "name": "T",
+  "alg": "[R U R' U'] [R' F] [R2 U' R'] U' [R U R' F']",
+  "image": "friedrich-pll-10.png"
+ },
+ {
+  "name": "J1",
+  "alg": "[R' U L'] [U2 R U' R' U2] [R L U']",
+  "image": "friedrich-pll-08.png"
+ },
+ {
+  "name": "J2",
+  "alg": "[R U R' F'] {[R U R' U'] [R' F] [R2 U' R'] U'}",
+  "image": "friedrich-pll-09.png"
+ },
+ {
+  "name": "R1",
+  "alg": "[L U2' L' U2'] [L F'] [L' U' L U] [L F] L2' U",
+  "image": "friedrich-pll-12.png"
+ },
+ {
+  "name": "R2",
+  "alg": "[R' U2 R U2] [R' F] [R U R' U'] [R' F'] R2 U'",
+  "image": "friedrich-pll-11.png"
+ },
+ {
+  "name": "V",
+  "alg": "[R' U R' d'] [R' F'] [R2 U' R' U] [R' F R F]",
+  "image": "friedrich-pll-18.png"
+ },
+ {
+  "name": "G1",
+  "alg": "R2 u R' U R' U' R u' R2 [y' R' U R]",
+  "image": "friedrich-pll-15.png"
+ },
+ {
+  "name": "G2",
+  "alg": "[R' U' R] y R2 u R' U R U' R u' R2",
+  "image": "friedrich-pll-16.png"
+ },
+ {
+  "name": "G3",
+  "alg": "R2 u' R U' R U R' u R2 [y R U' R']",
+  "image": "friedrich-pll-14.png"
+ },
+ {
+  "name": "G4",
+  "alg": "[R U R'] y' R2 u' R U' R' U R' u R2",
+  "image": "friedrich-pll-17.png"
+ },
+ {
+  "name": "F",
+  "alg": "[R' U2 R' d'] [R' F'] [R2 U' R' U] [R' F R U' F]",
+  "image": "friedrich-pll-13.png"
+ },
+ {
+  "name": "Z",
+  "alg": "M2 U M2 U M' U2 M2 U2 M' U2",
+  "image": "friedrich-pll-04.png"
+ },
+ {
+  "name": "Y",
+  "alg": "F R U' R' U' [R U R' F'] {[R U R' U'] [R' F R F']}",
+  "image": "friedrich-pll-21.png"
+ },
+ {
+  "name": "N1",
+  "alg": "{(L U' R) U2 (L' U R')} {(L U' R) U2 (L' U R')} U",
+  "image": "friedrich-pll-19.png"
+ },
+ {
+  "name": "N2",
+  "alg": "{(R' U L') U2 (R U' L)} {(R' U L') U2 (R U' L)} U'",
+  "image": "friedrich-pll-20.png"
+ },
+ {
+  "name": "E",
+  "alg": "X' (R U' R') D (R U R') u2 (R' U R) D (R' U' R)",
+  "image": "friedrich-pll-03.png"
+ }
+]

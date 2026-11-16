@@ -1,0 +1,58 @@
+name: Lit starter CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/lit-starter-ci.yml'
+      - '.github/workflows/lit-starter-preview.yml'
+      - '.github/workflows/lit-starter-production.yml'
+      - '01-lit-starter/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/lit-starter-ci.yml'
+      - '.github/workflows/lit-starter-preview.yml'
+      - '.github/workflows/lit-starter-production.yml'
+      - '01-lit-starter/**'
+
+env:
+  NODE_VERSION: 22
+
+concurrency:
+  group: lit-starter-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: 01-lit-starter/package-lock.json
+
+      - name: Install dependencies
+        working-directory: 01-lit-starter
+        run: npm ci
+
+      - name: Run tests
+        working-directory: 01-lit-starter
+        run: npm run test
+
+      - name: Build production bundle
+        working-directory: 01-lit-starter
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lit-starter-dist
+          path: 01-lit-starter/dist
