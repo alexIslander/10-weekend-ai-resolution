@@ -42,7 +42,7 @@ test('reads every project with the domains already attached', async () => {
     projects: { rubik: { domains: ['rubik.csete.cc'] }, apps: { domains: [] } },
   });
   assert.equal(calls[0].method, 'GET');
-  assert.match(calls[0].url, /\/accounts\/acct\/pages\/projects\?page=1&per_page=100$/);
+  assert.match(calls[0].url, /\/accounts\/acct\/pages\/projects\?page=1$/);
   assert.equal(calls[0].auth, 'Bearer test-token');
 });
 

@@ -6,7 +6,6 @@
 // testable without an account.
 
 const API = 'https://api.cloudflare.com/client/v4';
-const PAGE_SIZE = 100;
 
 export class CloudflareError extends Error {
   constructor(summary, { status, errors } = {}) {
@@ -57,6 +56,10 @@ export function pagesClient({ token, accountId, fetchImpl = globalThis.fetch } =
   };
 
   // Every project on the account, with the domains already attached to it.
+  //
+  // `per_page` is deliberately not sent: the Pages endpoint rejects the usual
+  // 100 with `8000024: Invalid list options provided`, and its own default page
+  // size is what `result_info` reports, so the loop follows that instead.
   const readState = async () => {
     const projects = {};
     let page = 1;
@@ -65,7 +68,7 @@ export function pagesClient({ token, accountId, fetchImpl = globalThis.fetch } =
     do {
       const payload = await request(
         'GET',
-        `/accounts/${accountId}/pages/projects?page=${page}&per_page=${PAGE_SIZE}`,
+        `/accounts/${accountId}/pages/projects?page=${page}`,
       );
       const list = Array.isArray(payload.result) ? payload.result : [];
 
