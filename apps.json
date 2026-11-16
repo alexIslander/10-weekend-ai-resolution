@@ -34,7 +34,7 @@
       "target": "pages",
       "project": "rubik",
       "build": { "dir": "06-Rubik", "out": "." },
-      "live": false
+      "live": true
     },
     {
       "slug": "rubik-game",
