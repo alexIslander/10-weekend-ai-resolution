@@ -12,11 +12,28 @@ const respond = (payload, status = 200) => ({
   json: async () => payload,
 });
 
-const recordingFetch = (...payloads) => {
+const projectsPayload = (names, totalPages = 1) =>
+  respond({
+    success: true,
+    result: names.map((name) => ({ name, domains: [`${name}.pages.dev`] })),
+    result_info: { page: 1, total_pages: totalPages },
+  });
+
+const domainsPayload = (...names) =>
+  respond({
+    success: true,
+    result: names.map((name) => ({ name, status: 'pending' })),
+  });
+
+// Fetch that answers by URL, so a list call and four domain calls can be told
+// apart. `routes` maps a URL fragment to a payload.
+const routedFetch = (routes) => {
   const calls = [];
   const fetchImpl = async (url, init) => {
     calls.push({ url, method: init.method, body: init.body, auth: init.headers.authorization });
-    return payloads[Math.min(calls.length - 1, payloads.length - 1)];
+    const fragment = Object.keys(routes).find((key) => url.includes(key));
+    if (fragment === undefined) throw new Error(`no route for ${url}`);
+    return routes[fragment];
   };
   return { calls, fetchImpl };
 };
@@ -24,50 +41,70 @@ const recordingFetch = (...payloads) => {
 const client = (fetchImpl) =>
   pagesClient({ token: 'test-token', accountId: 'acct', fetchImpl });
 
-test('reads every project with the domains already attached', async () => {
-  const { calls, fetchImpl } = recordingFetch(
-    respond({
-      success: true,
-      result: [
-        { name: 'rubik', domains: ['rubik.csete.cc'] },
-        { name: 'apps' },
-      ],
-      result_info: { page: 1, total_pages: 1 },
-    }),
-  );
+test('reads every project and asks each one for its own domains', async () => {
+  const { calls, fetchImpl } = routedFetch({
+    '/pages/projects?page=1': projectsPayload(['rubik', 'apps']),
+    '/pages/projects/rubik/domains': domainsPayload('rubik.csete.cc', 'rubik.pages.dev'),
+    '/pages/projects/apps/domains': domainsPayload('apps.csete.cc'),
+  });
 
   const state = await client(fetchImpl).readState();
 
   assert.deepEqual(state, {
-    projects: { rubik: { domains: ['rubik.csete.cc'] }, apps: { domains: [] } },
+    projects: {
+      rubik: { domains: ['rubik.csete.cc', 'rubik.pages.dev'] },
+      apps: { domains: ['apps.csete.cc'] },
+    },
   });
   assert.equal(calls[0].method, 'GET');
   assert.match(calls[0].url, /\/accounts\/acct\/pages\/projects\?page=1$/);
   assert.equal(calls[0].auth, 'Bearer test-token');
 });
 
+test('a custom domain still pending validation counts as attached', async () => {
+  const { fetchImpl } = routedFetch({
+    '/pages/projects?page=1': projectsPayload(['rubik']),
+    '/pages/projects/rubik/domains': domainsPayload('rubik.csete.cc'),
+  });
+
+  const state = await client(fetchImpl).readState();
+
+  assert.deepEqual(state.projects.rubik.domains, ['rubik.csete.cc']);
+});
+
+test('ignores the pages.dev hostnames the list carries, since the domain call decides', async () => {
+  const { fetchImpl } = routedFetch({
+    '/pages/projects?page=1': projectsPayload(['rubik']),
+    '/pages/projects/rubik/domains': respond({ success: true, result: [] }),
+  });
+
+  const state = await client(fetchImpl).readState();
+
+  assert.deepEqual(state.projects.rubik.domains, []);
+});
+
 test('follows pagination rather than stopping at the first page', async () => {
-  const { calls, fetchImpl } = recordingFetch(
-    respond({
+  const { calls, fetchImpl } = routedFetch({
+    '/pages/projects?page=1': projectsPayload(['one'], 2),
+    '/pages/projects?page=2': respond({
       success: true,
-      result: [{ name: 'one', domains: [] }],
-      result_info: { page: 1, total_pages: 2 },
-    }),
-    respond({
-      success: true,
-      result: [{ name: 'two', domains: [] }],
+      result: [{ name: 'two' }],
       result_info: { page: 2, total_pages: 2 },
     }),
-  );
+    '/pages/projects/one/domains': domainsPayload('one.csete.cc'),
+    '/pages/projects/two/domains': domainsPayload('two.csete.cc'),
+  });
 
   const state = await client(fetchImpl).readState();
 
   assert.deepEqual(Object.keys(state.projects), ['one', 'two']);
-  assert.match(calls[1].url, /page=2/);
+  assert.equal(calls.filter((call) => call.url.includes('page=2')).length, 1);
 });
 
 test('creates a project with main as its production branch', async () => {
-  const { calls, fetchImpl } = recordingFetch(respond({ success: true, result: {} }));
+  const { calls, fetchImpl } = routedFetch({
+    '/pages/projects': respond({ success: true, result: {} }),
+  });
 
   await client(fetchImpl).createProject('rubik');
 
@@ -80,7 +117,9 @@ test('creates a project with main as its production branch', async () => {
 });
 
 test('attaches a domain to a named project', async () => {
-  const { calls, fetchImpl } = recordingFetch(respond({ success: true, result: {} }));
+  const { calls, fetchImpl } = routedFetch({
+    '/pages/projects/rubik/domains': respond({ success: true, result: {} }),
+  });
 
   await client(fetchImpl).attachDomain('rubik', 'rubik.csete.cc');
 
@@ -89,12 +128,12 @@ test('attaches a domain to a named project', async () => {
 });
 
 test('a refused call surfaces Cloudflare own error code and message', async () => {
-  const { fetchImpl } = recordingFetch(
-    respond(
+  const { fetchImpl } = routedFetch({
+    '/pages/projects': respond(
       { success: false, errors: [{ code: 8000002, message: 'project already exists' }] },
       409,
     ),
-  );
+  });
 
   await assert.rejects(() => client(fetchImpl).createProject('rubik'), (error) => {
     assert.ok(error instanceof CloudflareError);

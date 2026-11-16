@@ -72,15 +72,23 @@ export function pagesClient({ token, accountId, fetchImpl = globalThis.fetch } =
       );
       const list = Array.isArray(payload.result) ? payload.result : [];
 
-      for (const project of list) {
-        projects[project.name] = {
-          domains: Array.isArray(project.domains) ? [...project.domains] : [],
-        };
-      }
+      for (const project of list) projects[project.name] = { domains: [] };
 
       totalPages = Number(payload.result_info?.total_pages) || 1;
       page += 1;
     } while (page <= totalPages);
+
+    // The projects list carries the `*.pages.dev` hostnames only, so a custom
+    // domain has to be read from the project itself. Without this call a domain
+    // that is already attached looks missing and the plan never empties.
+    for (const name of Object.keys(projects)) {
+      const payload = await request(
+        'GET',
+        `/accounts/${accountId}/pages/projects/${name}/domains`,
+      );
+      projects[name].domains = (Array.isArray(payload.result) ? payload.result : [])
+        .map((domain) => domain.name);
+    }
 
     return { projects };
   };
