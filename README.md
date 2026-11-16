@@ -9,6 +9,10 @@ Workspace for multiple projects, each in its own numbered subfolder.
 | `00-dualreveal/` | DualReveal – private quiz flow for couples |
 | `01-lit-starter/` | Standalone Lit starter with Vite, Vitest, and Cloudflare Pages docs |
 | `02-lit-admin-starter/` | Standalone Lit admin dashboard starter with Vite and Vitest |
+| `08-dashboard/` | Dashboard served at `apps.csete.cc`, built from `apps.json` |
+
+Apps and Services are listed once, in `apps.json` (the Apps Registry); the Dashboard
+renders that file and the deploy pipeline plans from it.
 
 New projects go in the next numbered folder (e.g. `02-project-name/`).
 

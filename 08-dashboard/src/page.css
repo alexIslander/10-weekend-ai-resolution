@@ -1,0 +1,149 @@
+/* The Dashboard's whole look. One file, no fonts or images to fetch. */
+
+:root {
+  --ink: #101317;
+  --ink-soft: #4a525c;
+  --paper: #f6f5f2;
+  --card: #ffffff;
+  --edge: #dcd8d0;
+  --accent: #2f6f5f;
+  --flag: #8a5a12;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 3rem 1.25rem 4rem;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+main,
+.masthead,
+.foot {
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.masthead h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0.35rem 0 2.5rem;
+  color: var(--ink-soft);
+}
+
+.apps {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.1rem 1.2rem 1.25rem;
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  background: var(--card);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgb(16 19 23 / 8%);
+}
+
+.tile__title {
+  font-weight: 620;
+  font-size: 1.06rem;
+}
+
+.tile__host {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+.tile__flag {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  color: var(--flag);
+}
+
+.services {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--edge);
+}
+
+.services h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.services ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.service {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.service:hover,
+.service:focus-visible {
+  border-bottom-color: currentcolor;
+}
+
+.empty {
+  margin: 0;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.foot {
+  margin-top: 3rem;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    transition: none;
+  }
+
+  .tile:hover,
+  .tile:focus-visible {
+    transform: none;
+  }
+}

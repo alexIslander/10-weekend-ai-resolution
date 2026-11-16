@@ -29,6 +29,8 @@ There is no root `package.json`; these use Node 22's built-in runner and need no
 - `node --test scripts/` – every pipeline module test.
 - `node scripts/validate-apps.mjs` – validate the registry, exits non-zero on any problem.
 - `node scripts/plan-changes.mjs --changed <path>...` – print the deploy matrix for paths.
+- `node 08-dashboard/build.mjs` – build the Dashboard from the registry into
+  `08-dashboard/dist/`; `node --test 08-dashboard/tests/` runs its tests.
 - `.github/workflows/` – live workflows only. Retired ones are kept, unchanged, in
   `docs/retired-workflows/`, because GitHub only runs what sits in the workflows folder.
 
