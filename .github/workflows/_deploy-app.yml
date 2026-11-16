@@ -76,7 +76,8 @@ jobs:
           done
 
   deploy:
-    name: ${{ needs.resolve.outputs.stage }}
+    # A static name: a skipped job would otherwise display the raw expression.
+    name: Deploy
     needs: resolve
     runs-on: ubuntu-latest
     # Staging has no protection; production requires a reviewer and is limited
