@@ -7,7 +7,7 @@
       "target": "pages",
       "project": "10-weekend-ai-resolution",
       "build": { "dir": "08-dashboard", "out": "dist" },
-      "live": false
+      "live": true
     },
     {
       "slug": "lit-starter",
