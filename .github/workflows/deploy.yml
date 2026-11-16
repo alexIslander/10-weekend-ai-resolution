@@ -76,8 +76,8 @@ jobs:
             echo
             echo "Ref: \`$REF\`"
             echo
-            jq -r '.deploy[] | "- deploy \`\(.slug)\` at **\(.stage)**"' plan.json
-            jq -r '.skipped[] | "- skip \`\(.slug)\`: \(.reason)"' plan.json
+            jq -r '.deploy[] | "- deploy `\(.slug)` at **\(.stage)**"' plan.json
+            jq -r '.skipped[] | "- skip `\(.slug)`: \(.reason)"' plan.json
           } >> "$GITHUB_STEP_SUMMARY"
 
           cat plan.json
