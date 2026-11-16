@@ -142,12 +142,17 @@ future edit to these guides.
 
 ## Published site
 
-The guides are published to GitHub Pages by `.github/workflows/rubik-pages.yml`
-on every push to `feature/06-rubik` (or `main`) that touches `06-Rubik/`:
+The guides are served at:
 
-- https://alexislander.github.io/10-weekend-ai-resolution/
+- https://rubik.csete.cc/
 
-All guides (online and print), `index.html`, `img/` and the reference PDF are
-assembled into the site; `index.html` is the landing page that links to every
-guide. `tools/`, `tests/`, `source/` and this README stay out of the published
-artifact.
+They are published by the deploy pipeline: the `rubik` entry in the root
+`apps.json` deploys this folder to the `rubik` Cloudflare Pages project on a
+push to `main`. `index.html` is the landing page that links to every guide.
+
+The older GitHub Pages deploy (`.github/workflows/rubik-pages.yml`) was retired
+on 2026-11-16, once this URL served: the file is kept unchanged in
+`docs/retired-workflows/`, its artifact recipe assembled the guides by hand, and
+the repository's Pages site is disabled. The pipeline uploads the whole folder,
+so `tools/`, `tests/`, `source/` and this README are published as well, where
+that workflow filtered them out.

@@ -4,6 +4,10 @@ Six workflows were moved here unchanged on 2026-11-15, when the deploy pipeline 
 designed. Nothing was deleted. They are kept as evidence, and as the input to the
 MyLifeOps spec.
 
+A seventh, `rubik-pages.yml`, was moved here unchanged on 2026-11-16 for the opposite
+reason: it ran, and it published. It has its own section below, because it does not
+belong in the defect table.
+
 They were retired because none of them could run. Every one of the six failed at step 2,
 `npm ci`, against a `05-MyLifeOps` folder that has no `package.json`, no lockfile and no
 Vite config. No run ever reached a deploy step, so nothing here ever deployed anything and
@@ -38,6 +42,34 @@ and one of three incompatible concurrency schemes across the ten workflows that 
   sources - is its own spec. These six files are its starting point, not a template to
   copy: the fixes it needs are stated above, so re-adding them as-is would repeat known
   defects.
+
+## `rubik-pages.yml`: the Rubik guides' GitHub Pages deploy
+
+Moved here unchanged on 2026-11-16, after `rubik.csete.cc` served the same guides through
+the deploy pipeline.
+
+Unlike the six above it worked. It assembled `06-Rubik/*.html`, the images and the
+reference PDF into a Pages artifact and published it on every push to `main` or
+`feature/06-rubik` that touched `06-Rubik/`, at
+`https://alexislander.github.io/10-weekend-ai-resolution/`.
+
+It was retired because it was a second mechanism publishing one App. It had its own
+trigger, its own `rubik-pages` concurrency group, its own artifact recipe that kept
+`tools/`, `tests/` and `source/` out by copying a list of paths, and its own hostname.
+Two copies of one folder drift the moment either recipe changes, and the guide's own
+README then has to say which copy is the real one.
+
+What replaces it: the `rubik` entry in `apps.json`, through `deploy.yml` and
+`_deploy-app.yml`. It deploys `06-Rubik` as-is to the `rubik` Pages project and serves it
+at `https://rubik.csete.cc/`. One known difference, tracked in the epic as a later
+ticket: the pipeline uploads the whole folder, so `tools/`, `tests/` and `source/` are
+published too, where this workflow filtered them out.
+
+The repository's GitHub Pages site was **disabled** on 2026-11-16
+(`DELETE /repos/alexIslander/10-weekend-ai-resolution/pages`), so nothing re-publishes and
+the old URL no longer answers. That break is intentional: `rubik.csete.cc` is the only
+copy. Re-enabling Pages would need this workflow back, which would restore the second
+copy the retirement removed.
 
 Do not move these files back into `.github/workflows/`. GitHub only runs workflows in that
 folder, which is the point of retiring them rather than leaving them to fail.
