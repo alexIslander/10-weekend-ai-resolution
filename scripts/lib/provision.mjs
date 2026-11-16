@@ -13,23 +13,15 @@ import { resolveTarget, TargetNotImplemented } from './targets.mjs';
 export function describeProvisioning(entries) {
   assertEntries(entries);
 
-  const descriptions = [];
-  const skipped = [];
+  const { targets, skipped } = divide(entries);
 
-  for (const entry of entries) {
-    const resolution = resolve(entry);
-    if (resolution.skipped !== undefined) {
-      skipped.push(resolution.skipped);
-      continue;
-    }
-
-    descriptions.push({
+  return {
+    descriptions: targets.map(({ entry, target }) => ({
       slug: entry.slug,
-      steps: [resolution.target.provision(entry), resolution.target.attachDomain(entry)],
-    });
-  }
-
-  return { descriptions, skipped };
+      steps: [target.provision(entry), target.attachDomain(entry)],
+    })),
+    skipped,
+  };
 }
 
 // What still has to happen, given what the account already has.
@@ -40,18 +32,11 @@ export function describeProvisioning(entries) {
 export function provisioningPlan(entries, state) {
   assertEntries(entries);
 
+  const { targets, skipped } = divide(entries);
   const projects = state?.projects ?? {};
   const steps = [];
-  const skipped = [];
 
-  for (const entry of entries) {
-    const resolution = resolve(entry);
-    if (resolution.skipped !== undefined) {
-      skipped.push(resolution.skipped);
-      continue;
-    }
-
-    const { target } = resolution;
+  for (const { entry, target } of targets) {
     const existing = projects[entry.project];
 
     if (existing === undefined) {
@@ -88,6 +73,21 @@ export async function applyPlan(steps, client) {
   }
 
   return applied;
+}
+
+// The one rule both callers share: an entry either has a target that can
+// describe work, or it is reported and left alone.
+function divide(entries) {
+  const targets = [];
+  const skipped = [];
+
+  for (const entry of entries) {
+    const resolution = resolve(entry);
+    if (resolution.skipped !== undefined) skipped.push(resolution.skipped);
+    else targets.push({ entry, target: resolution.target });
+  }
+
+  return { targets, skipped };
 }
 
 function resolve(entry) {

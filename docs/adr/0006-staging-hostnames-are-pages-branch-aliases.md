@@ -36,7 +36,7 @@ Two more answers the workflow ticket needs:
 
 Pages has project settings for preview deployments — *All non-production branches*,
 *None*, or *Custom branches* with wildcards. Those govern which branches Pages **builds**
-when it is connected to a git provider. These six projects are not connected to git: the
+when it is connected to a git provider. These five Pages Apps are not connected to git: the
 pipeline builds locally and uploads the artifact. Pages is not the builder, so the setting
 has nothing to decide, and a project created by `wrangler pages create` deploys any branch
 alias on request. This is the reason the whole ticket has no configuration step in it.
@@ -66,9 +66,10 @@ direction: the build belongs where the registry and the pinned CLI are).
 - Two branch names that slug to the same label share one alias: `fix/api` and `fix-api`
   both deploy to `fix-api.<project>.pages.dev`, and the later deploy wins. Nothing guards
   this; rename the branch.
-- The alias label is a DNS label, so branch slugs are practically capped at 63 characters.
-  Both `feature/` prefixes and the project name are long, so a descriptive branch name can
-  approach that cap. Nothing enforces it; keep branch names short.
+- The alias label is a DNS label, so DNS caps a branch slug at 63 characters — Pages
+  documents no limit of its own. Both the `feature/` prefix and the project name are long,
+  so a descriptive branch name can approach that cap; nothing enforces it, so keep branch
+  names short.
 - Staging sites are public and unauthenticated, and the alias is guessable from the branch
   name. If a specific App's staging must be private, that is Cloudflare Access in front of
   the alias — a separate decision, not a pipeline one.

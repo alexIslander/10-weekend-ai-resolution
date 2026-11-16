@@ -31,5 +31,5 @@ export function buildDashboard({
   writeFileSync(index, page);
   copyFileSync(join(dashboardDir, 'src', 'page.css'), stylesheet);
 
-  return { outDir, files: [index, stylesheet], view, entries: entries.length };
+  return { files: [index, stylesheet], view };
 }

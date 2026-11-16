@@ -14,7 +14,9 @@ const escape = (text) => String(text).replace(/[&<>"']/g, (char) => ESCAPES.get(
 
 const hostOf = (url) => new URL(url).host;
 
-export function renderPage(view, { title = 'Apps' } = {}) {
+const TITLE = 'Apps';
+
+export function renderPage(view) {
   if (view === null || typeof view !== 'object') {
     throw new TypeError('renderPage: view must be an object');
   }
@@ -25,13 +27,13 @@ export function renderPage(view, { title = 'Apps' } = {}) {
     '<head>',
     '  <meta charset="utf-8">',
     '  <meta name="viewport" content="width=device-width, initial-scale=1">',
-    `  <title>${escape(title)}</title>`,
+    `  <title>${escape(TITLE)}</title>`,
     '  <meta name="description" content="Every App and Service in this monorepo, from the Apps Registry.">',
     '  <link rel="stylesheet" href="./style.css">',
     '</head>',
     '<body>',
     '  <header class="masthead">',
-    `    <h1>${escape(title)}</h1>`,
+    `    <h1>${escape(TITLE)}</h1>`,
     '    <p class="lede">Everything this repo serves, in one place.</p>',
     '  </header>',
     '  <main>',

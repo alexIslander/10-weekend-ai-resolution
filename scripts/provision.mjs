@@ -10,11 +10,11 @@
 // --plan and --apply need CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in the
 // environment. See docs/deploy-credentials.md for the scopes they must carry.
 
-import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { pagesClient } from './lib/pages-client.mjs';
+import { loadRegistry } from './lib/registry.mjs';
 import {
   applyPlan,
   describeProvisioning,
@@ -30,7 +30,9 @@ main(process.argv.slice(2)).catch((error) => {
 
 async function main(argv) {
   const mode = parseArgs(argv);
-  const entries = readEntries(join(root, 'apps.json'));
+  // Validated, not merely read: provisioning must not act on a registry the
+  // Dashboard's build would refuse.
+  const entries = loadRegistry(join(root, 'apps.json'), root);
 
   if (mode === 'describe') {
     print(describeProvisioning(entries));
@@ -72,10 +74,6 @@ function requireEnv(name) {
     throw new Error(`${name} is not set — see docs/deploy-credentials.md`);
   }
   return value.trim();
-}
-
-function readEntries(path) {
-  return JSON.parse(readFileSync(path, 'utf8')).entries;
 }
 
 function print(result) {

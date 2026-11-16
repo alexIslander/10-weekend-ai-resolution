@@ -22,6 +22,8 @@ Each project folder owns its own commands: read its `README.md` before running a
 - `00-dualreveal/`, `01-lit-starter/`, `02-lit-admin-starter/`: npm scripts (`dev`, `build`, `start`, `test`).
 - `03-second-brain-ingester/`, `04-spring-boot-api/`, `05-MyLifeOps/`, `06-Rubik/`: see the project `README.md`.
 - `03-barefoot-python/`: no README yet — read the project for its entrypoint.
+- `08-dashboard/`: no install and no build tool — `node 08-dashboard/build.mjs` writes
+  `dist/`, `node --test 08-dashboard/tests/` runs its tests.
 
 ### Root-level deploy pipeline
 There is no root `package.json`; these use Node 22's built-in runner and need no install.

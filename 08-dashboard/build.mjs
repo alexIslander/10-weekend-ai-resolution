@@ -2,8 +2,8 @@
 // The Dashboard's build entrypoint. Thin adapter over buildDashboard(): argv
 // and console output live here, the build does not.
 //
-//   node 08-dashboard/build.mjs            → 08-dashboard/dist
-//   node 08-dashboard/build.mjs --out DIR  → DIR
+//   node 08-dashboard/build.mjs            -> 08-dashboard/dist
+//   node 08-dashboard/build.mjs --out DIR  -> DIR
 
 import { relative } from 'node:path';
 
