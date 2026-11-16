@@ -31,6 +31,9 @@ There is no root `package.json`; these use Node 22's built-in runner and need no
 - `node scripts/plan-changes.mjs --changed <path>...` – print the deploy matrix for paths.
 - `node 08-dashboard/build.mjs` – build the Dashboard from the registry into
   `08-dashboard/dist/`; `node --test 08-dashboard/tests/` runs its tests.
+- `node scripts/provision.mjs` – print each entry's provisioning descriptions and change
+  nothing; `--plan` diffs them against the account and `--apply` converges it. Both need
+  `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (see `docs/deploy-credentials.md`).
 - `.github/workflows/` – live workflows only. Retired ones are kept, unchanged, in
   `docs/retired-workflows/`, because GitHub only runs what sits in the workflows folder.
 
