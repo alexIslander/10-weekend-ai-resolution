@@ -43,7 +43,7 @@
       "target": "pages",
       "project": "rubik-game",
       "build": { "dir": "07-Rubik-game/app/src", "out": "." },
-      "live": false
+      "live": true
     },
     {
       "slug": "dualreveal",
