@@ -21,6 +21,16 @@ The build broken into tracer bullets, published as sub-issues of spec #2 and lab
 | 16 | Elapsed time from play, not the wall clock | #13, #14 | Answer time accumulated in the run; the finish screen and the board tie-break read it, so a resumed run no longer carries its downtime |
 | 17 | Docs and e2e pass | #13, #14, #15, #16 | README rewritten (dashboard, skip, theme), spec navigation pointing at ADR-0006, all specs green on `data-testid` hooks, light and dark screenshots |
 
+## The live player's UX round (ADR-0007)
+
+| # | Ticket | Blocked by | Delivers |
+| --- | --- | --- | --- |
+| 18 | First-visit name gate, and a name field that closes | #13 | Modal `what should we call you?`, `later`, hero and header re-entry; the header field closes on Enter/blur — **done** |
+| 19 | The dashboard teaches the game | #13 | How-it-works card, the four triggers with formulas and a guide link, the mode cards' rule line — **done** |
+| 20 | Grouped draws practice sets | #6 | Eight sets of 6–8 positions derived from booklet order, set picker, node tests — **done** |
+| 21 | Route first-step lanes | #8 | `All` / `S` / `AS` / `ET` / `WT` lanes with the guide's counts — **done** |
+| 22 | Route draws its map | #21, #20 | `route[].shape`/`warn` in the generated data, the chain above the answer, filled after submit, named only at Training — **done** |
+
 Frontier: **#12**. It lands before #9–#11: the dashboard needs tiles for modes
 that do not ship yet (their colours and glyphs are fixed by ADR-0006), and every
 e2e spec is invalidated once, in #12–#15, rather than twice.

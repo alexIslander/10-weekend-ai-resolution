@@ -25,7 +25,9 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%20R%20U2%20R%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -39,7 +41,9 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -53,11 +57,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%20R%20U%27%20R%27%20U%20R%20U2%20R%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -71,11 +79,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U2%20R2%20U%20R2%20U%20R2%20U2%20R%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -89,11 +101,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20r%20U%20R%20U%27%20r%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -107,11 +123,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%27%20r%20U%20R%20U%27%20r%27%20F%20y%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -125,11 +145,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%20D%20R%27%20U2%20R%20D%27%20R2&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -143,15 +167,21 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 21,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U%20R%20U%27%20R%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -165,7 +195,9 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -179,11 +211,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20R%20U%27%20R%27%20U2%20r&alg=F%20R%20U%20R%27%20U%27%20F%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -197,11 +233,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%20R%20U2%20r%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20U%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -215,15 +255,21 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 35,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%27%20U%27%20R%27%20F%27%20R%20U%20R2%20U%27%20R%27&alg=U2%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -237,11 +283,15 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20F%20R%27%20F%27%20R%20U%20R&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -255,11 +305,15 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20x%27%20U%27%20R%20U%20l%27%20U%27%20R%27%20U%27%20R%20U%20R%27%20U%20R&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -273,11 +327,15 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U%20R%20U%20R%27%20U%27%20R%20U%27%20R%27&alg=U2%20R%20U%20R%27%20U%20R%20U2%20R%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -291,11 +349,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%20R%27%20U%27%20M%27%20U%20R%20U%27%20r%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20U2%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -309,11 +371,15 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M%20U%20R%20U%27%20R%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -327,15 +393,21 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 40,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20U%20R&alg=U%27%20F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -349,15 +421,21 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 50,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20B%27%20R%27%20U%27%20R%20U%20B%20U%27%20R%27&alg=U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -371,11 +449,15 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20F%27%20U%27%20F%20U%20R%20y%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -389,7 +471,9 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -403,11 +487,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -421,15 +509,21 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 2,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20r%20R%27%20U%27%20R%20U%20R%27%20U%27%20R%20U%20r%27%20U%20r&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -443,11 +537,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20B%27%20R%27%20U%27%20R%20y%20U%27%20R%20U%20R%27%20U%20R&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -461,15 +559,21 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 22,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%27%20R%27%20U%27%20R%20U%20R2%20F%20R2%20U%20R%27%20U%27%20R%27%20F%27%20R%20y%27&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -483,15 +587,21 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 51,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R2%20F%27%20R%20U%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -505,11 +615,15 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20F%20R%27%20F%27%20R%20U%27%20R%20U%27%20R%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -523,11 +637,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U2%20R%27%20F%20R%27%20F%27%20R2%20U2%20R%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -541,15 +659,21 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 16,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%20U%27%20R%27%20U%20R%20U%20R%27%20F%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -563,15 +687,21 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 41,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20R%20y%20r%20U%27%20r%27%20U%20r%20U%20r%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -585,15 +715,21 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 35,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20F%27%20R%27%20F%20R%20U%27%20R%27%20F%27%20R&alg=U%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -607,11 +743,15 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20r%27%20U%20R%20U%27%20R%27%20r%20U%27%20r%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -625,11 +765,15 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%27%20r%20U%27%20R%27%20U%20R%20r%27%20U%20r&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20U%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -643,15 +787,21 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 21,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%20U%27%20R%27%20F%27%20U%20F%20R%20U%20R%27%20U%20R%20U%27%20R%27%20y%27&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -665,15 +815,21 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 52,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U2%20R%27%20U%20R%20U2%20R%27%20U%27%20F%27%20y&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20U2%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -687,11 +843,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -705,15 +865,21 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 40,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20R%27%20U2%20R%20U%20R%27%20U%20R&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -727,11 +893,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -745,11 +915,15 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%27%20U%27%20L%27%20U%20L%20U%27%20L%27%20U%20L%20F&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U2%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -763,11 +937,15 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U%20r2%20U%27%20r2%20U%27%20r2%20U%20r%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -781,11 +959,15 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%27%20r2%20U%20r2%20U%20r2%20U%27%20r&alg=U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -799,15 +981,21 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 24,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U2%20R%20U%20R%27%20U%27%20R%20U%20R%27%20U%20r&alg=f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -821,15 +1009,21 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 22,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U2%20R%27%20U%27%20R%20U%20R%27%20U%27%20R%20U%27%20r%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20f%20R%20U%20R%27%20U%27%20f%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -843,11 +1037,15 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U2%20R%27%20U%27%20R%20U%27%20r%27&alg=U%20R%20U%20R%27%20U%20R%20U2%20R%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -861,11 +1059,15 @@
       "route": [
         {
           "auf": "U'",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%27%20U2%20R%20U%20R%27%20U%20r&alg=U%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -879,15 +1081,21 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 40,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20M%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R2%20r&alg=U2%20R%20U%20R%27%20U%20R%20U2%20R%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -901,11 +1109,15 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20M%27%20U%20R%27%20U2%20R%20U%20R%27%20U%20R%20M&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -919,11 +1131,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "U2",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20L%20U%20F%27%20U%27%20L%27%20U%20L%20F%20L%27&alg=R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20U2%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -937,11 +1153,15 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20R%27%20U%27%20F%20U%20R%20U%27%20R%27%20F%27%20R&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -955,15 +1175,21 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 50,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U2%20F%20R%27%20F%27%20R2%20U2%20R%27&alg=U%20F%20R%20U%20R%27%20U%27%20F%27%20U%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -977,11 +1203,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 44,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20f%20U%20R%20U%27%20R%27%20f%27%20F%20U%20R%20U%27%20R%27%20F%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27&type=alg"
@@ -995,11 +1225,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20U%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -1013,11 +1247,15 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20U%20R%20U%27%20R%27%20F%27%20U%27%20f%20U%20R%20U%27%20R%27%20f%27&alg=f%20R%20U%20R%27%20U%27%20f%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"
@@ -1031,15 +1269,21 @@
       "route": [
         {
           "auf": "U2",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 8,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M%20U2%20F%20R%27%20F%27%20R2%20U2%20R%27%20y%27&alg=U2%20F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -1053,15 +1297,21 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 35,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 27,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20M%20U%20R%20U%27%20R%27%20U%27%20M%27&alg=F%20R%20U%20R%27%20U%27%20F%27%20f%20R%20U%20R%27%20U%27%20f%27%20R%20U%20R%27%20U%20R%20U2%20R%27&type=alg"
@@ -1075,15 +1325,21 @@
       "route": [
         {
           "auf": "U",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 16,
+          "warn": false
         },
         {
           "auf": "U'",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 26,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "AS"
+          "trigger": "AS",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20F%20R%27%20F%27%20R%20U2%20F%20R%27%20F%27%20R%20U%27%20R%20U%27%20R%27&alg=U%20f%20R%20U%20R%27%20U%27%20f%27%20U%27%20F%20R%20U%20R%27%20U%27%20F%27%20R%20U2%20R%27%20U%27%20R%20U%27%20R%27&type=alg"
@@ -1097,15 +1353,21 @@
       "route": [
         {
           "auf": "none",
-          "trigger": "S"
+          "trigger": "S",
+          "shape": 4,
+          "warn": false
         },
         {
           "auf": "none",
-          "trigger": "WT"
+          "trigger": "WT",
+          "shape": 45,
+          "warn": false
         },
         {
           "auf": "U",
-          "trigger": "ET"
+          "trigger": "ET",
+          "shape": 0,
+          "warn": false
         }
       ],
       "simulatorUrl": "https://alg.cubing.net/?puzzle=3x3x3&setup=z2%20r%20U%20R%27%20U%27%20M2%20U%20R%20U%27%20R%27%20U%27%20M%27&alg=R%20U%20R%27%20U%20R%20U2%20R%27%20f%20R%20U%20R%27%20U%27%20f%27%20U%20F%20R%20U%20R%27%20U%27%20F%27&type=alg"

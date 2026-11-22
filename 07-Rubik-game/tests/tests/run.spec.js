@@ -3,11 +3,10 @@ const { test, expect } = require('@playwright/test');
 
 // the positions the app ships, so a test can know the answer the booklet gives
 const cases = require('../../app/src/quiz/entity/cases.json');
+const { gateOpen, open, signIn } = require('./support');
 
 // the game is played on a phone, in portrait
 test.use({ viewport: { width: 390, height: 844 } });
-
-const open = page => page.goto('localhost:3000');
 
 /**
  * The position on screen, read from the run card's `data-oll` — never from the
@@ -36,15 +35,9 @@ const next = page => page.getByTestId('next');
 const revealSteps = (page, kind = 'trigger') =>
   page.locator(`[data-testid="reveal-step"][data-kind="${kind}"]`);
 
-/** The name a run is recorded under: the header's `change` line opens the field. */
-const signIn = async (page, name) => {
-  await page.getByTestId('change-name').click();
-  await page.getByTestId('name-input').fill(name);
-};
-
-/** Starts a run the way a player does: sign in, tap a mode card, start. */
+/** Starts a run the way a player does: name yourself, tap a mode card, start. */
 const startRun = async (page, name = 'throwaway') => {
-  await open(page);
+  await page.goto('localhost:3000');
   await signIn(page, name);
   await page.getByTestId('mode-toggle-random').click();
   await page.getByTestId('start-run').click();
@@ -63,30 +56,72 @@ test('has title', async ({ page }) => {
   await expect(page).toHaveTitle('Rubik triggers');
 });
 
-test('asks for a name before the first question, and refuses an empty one', async ({ page }) => {
-  await open(page);
+test('a first arrival is asked for a name before anything else', async ({ page }) => {
+  await page.goto('localhost:3000');
 
-  // the dashboard is home, and it starts nothing until someone owns the score
+  // the gate is a modal dialog: it covers the dashboard, and stays until named
+  const gate = page.getByTestId('name-gate');
+  await expect(gate).toBeVisible();
+  expect(await gateOpen(page)).toBe(true);
   await expect(page.getByTestId('dashboard')).toBeVisible();
   await expect(page.getByTestId('diagram')).toHaveCount(0);
-  await expect(page.getByTestId('no-open-run')).toBeVisible();
 
-  // the name field is one tap away, and the header says whose run this would be
-  await expect(page.getByTestId('name-input')).toHaveCount(0);
-  await page.getByTestId('change-name').click();
-  await expect(page.getByTestId('name-input')).toBeVisible();
-  await expect(page.getByTestId('playing-as')).toHaveText(/no name yet/);
+  // an empty or blank name does not open it
+  await page.getByTestId('gate-continue').click();
+  expect(await gateOpen(page)).toBe(true);
+  await page.getByTestId('gate-name').fill('   ');
+  await page.getByTestId('gate-continue').click();
+  expect(await gateOpen(page)).toBe(true);
+
+  // a name closes it, names the header, and unblocks the first run
+  await page.getByTestId('gate-name').fill('ada');
+  await page.getByTestId('gate-continue').click();
+  expect(await gateOpen(page)).toBe(false);
+  await expect(page.getByTestId('playing-as')).toHaveText(/playing as ada/);
 
   await page.getByTestId('mode-toggle-random').click();
-  const start = page.getByTestId('start-run');
-  await expect(start).toBeDisabled();
+  await expect(page.getByTestId('start-run')).toBeEnabled();
+});
 
-  await page.getByTestId('name-input').fill('   ');
-  await expect(start).toBeDisabled();
+test('the name gate can be put off, and the dashboard then asks in its own line', async ({ page }) => {
+  await page.goto('localhost:3000');
+  await page.getByTestId('gate-later').click();
+  expect(await gateOpen(page)).toBe(false);
+
+  // nothing is lost by waiting: the hero says the score has no owner, and the
+  // gate is one tap away again
+  await expect(page.getByTestId('playing-as')).toHaveText(/no name yet/);
+  await expect(page.getByTestId('hero-add-name')).toBeVisible();
+  await page.getByTestId('mode-toggle-random').click();
+  await expect(page.getByTestId('start-run')).toBeDisabled();
+
+  await page.getByTestId('hero-add-name').click();
+  expect(await gateOpen(page)).toBe(true);
+  await page.getByTestId('gate-name').fill('ada');
+  await page.getByTestId('gate-continue').click();
+  await expect(page.getByTestId('playing-as')).toHaveText(/playing as ada/);
+  await expect(page.getByTestId('start-run')).toBeEnabled();
+});
+
+test('the header name field closes once the name is in, instead of staying open', async ({ page }) => {
+  await open(page);
+
+  await page.getByTestId('change-name').click();
+  await expect(page.getByTestId('name-input')).toBeVisible();
+  // while typing, the field is what the header says: no duplicate "playing as" line
+  await expect(page.getByTestId('playing-as')).toHaveCount(0);
 
   await page.getByTestId('name-input').fill('ada');
-  await expect(start).toBeEnabled();
+  await page.getByTestId('name-input').press('Enter');
+  await expect(page.getByTestId('name-input')).toHaveCount(0);
   await expect(page.getByTestId('playing-as')).toHaveText(/playing as ada/);
+
+  // leaving the field with a name in it closes it too
+  await page.getByTestId('change-name').click();
+  await page.getByTestId('name-input').fill('bea');
+  await page.getByTestId('hero').click();
+  await expect(page.getByTestId('name-input')).toHaveCount(0);
+  await expect(page.getByTestId('playing-as')).toHaveText(/playing as bea/);
 });
 
 test('a run offers the first of 57 positions, four triggers and no case name', async ({ page }) => {

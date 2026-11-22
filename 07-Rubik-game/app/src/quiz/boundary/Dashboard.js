@@ -1,11 +1,14 @@
 import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
-import { groupChosen, hintLevelChosen, modeChosen, skipRun, startRun } from "../control/RunControl.js";
-import { answersOf, defaultHintLevel, groupFor, HINT_LEVELS, poolOf } from "../core/run.mjs";
+import { hintLevelChosen, modeChosen, setChosen, skipRun, startRun } from "../control/RunControl.js";
+import { TRIGGER_NAMES } from "../core/drill.mjs";
+import { answersOf, defaultHintLevel, HINT_LEVELS, poolOf } from "../core/run.mjs";
+import { setOf, setsOf } from "../core/sets.mjs";
 import { modeStats } from "../core/stats.mjs";
-import { groups, positions } from "../entity/Positions.js";
+import { positions } from "../entity/Positions.js";
 import { idleState } from "../entity/RunReducer.js";
 import { icon } from "../../icons.js";
+import { askForName } from "./NameGate.js";
 import { ago, label, percentage } from "./format.js";
 import { skipControl } from "./Skip.js";
 
@@ -14,23 +17,40 @@ const STALE_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * The four modes that ship, each with the colour and glyph ADR-0006 reserves for
- * it. The two modes still to come keep their place in that reservation — their
- * cards appear when they do, so the grid never reshuffles under the player.
+ * it, and the rule it plays by in one line — the card should answer "what would
+ * this mode ask me?" before it is tapped.
  */
 const MODE_CARDS = [
-    { mode: "random", colour: "yellow", glyph: "shuffle" },
-    { mode: "grouped", colour: "blue", glyph: "layer-group" },
-    { mode: "progressive", colour: "green", glyph: "arrow-trend-up" },
-    { mode: "route", colour: "orange", glyph: "route" }
+    { mode: "random", colour: "yellow", glyph: "shuffle", rule: "all 57, shuffled" },
+    { mode: "grouped", colour: "blue", glyph: "layer-group", rule: "one practice set" },
+    { mode: "progressive", colour: "green", glyph: "arrow-trend-up", rule: "one step, then two, then three" },
+    { mode: "route", colour: "orange", glyph: "route", rule: "the whole route" }
 ];
+
+/**
+ * The four triggers as the guide names them, with the formula each one applies.
+ * The game asks which trigger; this table is the only place the screen spells
+ * one out, so a learner can read what the four codes on the buttons mean.
+ */
+const TRIGGER_TABLE = [
+    { code: "S", name: TRIGGER_NAMES.S, alg: "R U R' U R U2' R'", what: "turns the last corner a Sune's way round" },
+    { code: "AS", name: TRIGGER_NAMES.AS, alg: "R U2' R' U' R U' R'", what: "Sune's mirror — the same move from the other corner" },
+    { code: "ET", name: TRIGGER_NAMES.ET, alg: "F R U R' U' F'", what: "flips the last edges with the front face" },
+    { code: "WT", name: TRIGGER_NAMES.WT, alg: "f R U R' U' f'", what: "the same flip with the two front layers" }
+];
+
+/** Where the booklet lives: the drills are its routes, cut into one question each. */
+const GUIDE_URL = "https://rubik.csete.cc/";
 
 /**
  * The home screen: what the app knows about this player, and the way into a run.
  *
  * An open run comes first, because it is the one thing waiting on the player.
- * Then one card per mode: the rule it plays by, the accuracy this player has
- * earned at it over finished runs, and — once a card is tapped — that mode's
- * hint level, group and start, expanded inside the card itself (ADR-0006).
+ * Then — for a player with no history — the two cards that teach the game: how
+ * a run works, and what the four triggers are. Then one card per mode, with the
+ * rule it plays by, the accuracy this player has earned at it, and — once a
+ * card is tapped — that mode's hint level, set and start, expanded inside the
+ * card itself (ADR-0006).
  *
  * Which positions a mode draws, and what an answer is worth, is the core's
  * business; this screen only offers the choices and says what they mean.
@@ -54,17 +74,20 @@ class Dashboard extends BElement {
             this.confirmFor = state.startedAt;
             this.confirmingSkip = false;
         }
+        const player = players?.[name];
         return {
             name,
             mode: state.mode,
             hintLevel: state.hintLevel,
-            group: groupFor(groups, state),
+            set: setOf(positions, state),
             phase: state.phase,
             index: state.index ?? 0,
             total: state.questions?.length ?? 0,
             answers: answersOf(state),
             startedAt: state.startedAt,
-            player: players?.[name]
+            player,
+            // a player with answers has met the game; the teaching cards fold away
+            newPlayer: !player?.runs?.length && Object.keys(player?.positions ?? {}).length === 0
         };
     }
 
@@ -76,6 +99,8 @@ class Dashboard extends BElement {
                 <section class="modes" aria-label="Modes">
                     ${MODE_CARDS.map(card => this.modeView(card))}
                 </section>
+                ${this.howView({ folded: !this.state.newPlayer })}
+                ${this.triggersView({ folded: !this.state.newPlayer })}
             </article>
         `;
     }
@@ -95,6 +120,12 @@ class Dashboard extends BElement {
                     : html`<p class="hero-empty" data-testid="no-open-run">
                         no open run — pick a mode below to start one.
                     </p>`}
+                ${this.state.name === ""
+                    ? html`<button type="button" class="hero-name" data-testid="hero-add-name"
+                               @click=${() => askForName()}>
+                        ${icon("user")} add your name so scores are recorded
+                    </button>`
+                    : nothing}
             </section>
         `;
     }
@@ -148,6 +179,86 @@ class Dashboard extends BElement {
         skipRun();
     }
 
+    /**
+     * How the game works, in the player's own words: what is asked, what the
+     * four triggers are, what a route is, what Training gives away, where the
+     * points come from. Open on a first visit, folded away once there is
+     * history — the detail stays one tap from every run.
+     */
+    howView({ folded = false } = {}) {
+        return html`
+            <details class="card study-card" data-testid="how-it-works" ?open=${!folded}>
+                <summary>
+                    <span class="study-icon">${icon("brain")}</span>
+                    <span class="study-title">how the game works</span>
+                    <span class="study-note">position → trigger</span>
+                </summary>
+                <div class="study-body">
+                    <dl class="study-list">
+                        <dt>Position</dt>
+                        <dd>The top face plus the ring of side stickers: one of the 57 OLL
+                            cases the booklet covers.</dd>
+                        <dt>Trigger</dt>
+                        <dd>One of four formulas — Sune (S), Anti-Sune (AS), Edge Trigger
+                            (ET), Wide Edge Trigger (WT) — that each fix part of the last layer.</dd>
+                        <dt>Step · route</dt>
+                        <dd>A step applies one trigger. A route is one to three steps in
+                            order, with an AUF turn (<code>U</code> <code>U'</code> <code>U2</code>)
+                            lining up the next trigger between them.</dd>
+                        <dt>Practice set</dt>
+                        <dd><code>Grouped</code> drills one set at a time. A set is one booklet group,
+                            or several neighbouring ones, never fewer than six positions —
+                            two cases are a lookup, not a drill.</dd>
+                        <dt>Training · Test</dt>
+                        <dd><code>Training</code> shows the case name and OLL number while you answer;
+                            <code>Test</code> shows only the diagram, so a right answer means recall.</dd>
+                        <dt>Score</dt>
+                        <dd>10 points per correct answer, times a streak multiplier that
+                            climbs to 5; a miss resets it. Every answer is also recorded per
+                            position, which is what the stats page's weak spots are made of.</dd>
+                    </dl>
+                    <p class="study-link">
+                        The drills come from the booklet's routes: <a href="${GUIDE_URL}"
+                        target="_blank" rel="noopener">the full guide at rubik.csete.cc</a>.
+                    </p>
+                </div>
+            </details>
+        `;
+    }
+
+    /**
+     * The four triggers, spelled out: code, name, formula, and what it does.
+     * Folded away like the study card, and open on a first visit.
+     */
+    triggersView({ folded = false } = {}) {
+        return html`
+            <details class="card study-card" data-testid="triggers" ?open=${!folded}>
+                <summary>
+                    <span class="study-icon study-icon--triggers">${icon("arrows-rotate")}</span>
+                    <span class="study-title">the four triggers</span>
+                    <span class="study-note">S · AS · ET · WT</span>
+                </summary>
+                <div class="study-body">
+                    <p class="study-lede">Every one of the 57 positions solves with these,
+                        in at most three applications. The buttons in a run are these four.</p>
+                    <ul class="trigger-table">
+                        ${TRIGGER_TABLE.map(({ code, name, alg, what }) => html`
+                            <li class="trigger-row" data-testid="trigger-${code}">
+                                <span class="trigger-code">${code}</span>
+                                <span class="trigger-name">${name}</span>
+                                <code class="trigger-alg">${alg}</code>
+                                <span class="trigger-what">${what}</span>
+                            </li>`)}
+                    </ul>
+                    <p class="study-link">
+                        Recognition tips and every route, drawn out:
+                        <a href="${GUIDE_URL}" target="_blank" rel="noopener">rubik.csete.cc</a>.
+                    </p>
+                </div>
+            </details>
+        `;
+    }
+
     modeView(card) {
         // an open run owns the slice: it says what is being played, so no second
         // start is offered over it until it is finished or skipped (#14)
@@ -157,14 +268,15 @@ class Dashboard extends BElement {
             <article class="card step-card ${open ? "open" : ""}"
                      data-testid="mode-card-${card.mode}" data-mode="${card.mode}">
                 ${this.modeHead(card, { open, running })}
+                <p class="mode-rule" data-testid="mode-rule-${card.mode}">${card.rule}</p>
                 ${open ? this.pickerView(card.mode) : nothing}
             </article>
         `;
     }
 
     /**
-     * A card's face: its colour and glyph, its name, the hint level it starts at,
-     * and what this player has done at it so far. Tapping it opens the picker,
+     * A card's face: its colour and glyph, its name, the rule it plays by, and
+     * what this player has done at it so far. Tapping it opens the picker,
      * unless a run is already open.
      */
     modeHead({ mode, colour, glyph }, { open, running }) {
@@ -194,8 +306,9 @@ class Dashboard extends BElement {
 
     /** The picker, inside the card that was tapped: nothing to navigate to. */
     pickerView(mode) {
-        const { name, hintLevel, group } = this.state;
-        const count = poolOf(positions, { mode, group }).length;
+        const { name, hintLevel } = this.state;
+        const chosen = this.state.set;
+        const count = poolOf(positions, { mode, set: chosen?.id }).length;
         return html`
             <div class="picker">
                 <fieldset class="field">
@@ -207,9 +320,9 @@ class Dashboard extends BElement {
                                     @click=${() => hintLevelChosen(level)}>${label(level)}</button>`)}
                     </div>
                 </fieldset>
-                ${mode === "grouped" ? this.groupPicker() : nothing}
+                ${this.setPicker(mode, chosen)}
                 <p class="mode-line" data-testid="position-count">
-                    ${label(mode)}${mode === "grouped" ? ` · ${group}` : ""} · ${label(hintLevel)} · ${count} positions
+                    ${label(mode)} · ${label(hintLevel)} · ${count} positions
                 </p>
                 <button type="button" class="start-button" data-testid="start-run"
                         ?disabled=${name === ""} @click=${() => this.start()}>
@@ -219,16 +332,27 @@ class Dashboard extends BElement {
         `;
     }
 
-    /** Grouped asks which of the 14 groups; every other mode asks everything. */
-    groupPicker() {
-        const { group } = this.state;
+    /**
+     * The set a narrower mode draws from. `Grouped` offers practice sets, which
+     * pair the booklet's small groups so every run has at least six positions;
+     * `Route` offers a first-step lane per trigger, the cut the booklet's route
+     * map makes. A mode that asks everything offers no set at all.
+     */
+    setPicker(mode, chosen) {
+        const offered = setsOf(mode, positions);
+        if (offered.length === 0) return nothing;
         return html`
-            <label class="field">Group
-                <select data-testid="group-select" @change=${event => groupChosen(event.target.value)}>
-                    ${groups.map(name => html`
-                        <option value="${name}" .selected=${name === group}>${name}</option>`)}
+            <label class="field">${mode === "grouped" ? "Practice set" : "First step"}
+                <select data-testid="set-select" @change=${event => setChosen(event.target.value)}>
+                    ${offered.map(option => html`
+                        <option value="${option.id}" .selected=${option.id === chosen?.id}
+                        >${option.label} · ${option.count}</option>`)}
                 </select>
             </label>
+            ${mode === "grouped"
+                ? html`<p class="field-note">Neighbouring booklet groups are paired so
+                    every set has at least six positions to rehearse.</p>`
+                : nothing}
         `;
     }
 

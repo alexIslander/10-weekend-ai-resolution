@@ -17,6 +17,14 @@ import { shuffle } from "./random.mjs";
 /** The four triggers, as the booklet names them. */
 export const TRIGGERS = ["S", "AS", "ET", "WT"];
 
+/** How each trigger reads in words: one spelling for every screen. */
+export const TRIGGER_NAMES = {
+    S: "Sune",
+    AS: "Anti-Sune",
+    ET: "Edge Trigger",
+    WT: "Wide Edge Trigger"
+};
+
 /**
  * Builds the question for one position in the trigger drill: which trigger
  * solves it from its diagram, and the four triggers in an order the player has

@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 // the positions the app ships, so a test can know the route of what it sees
 const cases = require('../../app/src/quiz/entity/cases.json');
+const { open, signIn } = require('./support');
 
 // the game is played on a phone, in portrait
 test.use({ viewport: { width: 390, height: 844 } });
@@ -11,14 +12,6 @@ test.use({ viewport: { width: 390, height: 844 } });
 const KEY = 'rubik-game.localstorage.control';
 
 const DAY = new Date(2026, 10, 14, 10, 0, 0).getTime();
-
-const open = page => page.goto('localhost:3000');
-
-/** The name a run is recorded under: the header's `change` line opens the field. */
-const signIn = async (page, name) => {
-  await page.getByTestId('change-name').click();
-  await page.getByTestId('name-input').fill(name);
-};
 
 const optionFor = (page, trigger) => page.getByTestId(`answer-${trigger}`);
 
@@ -66,7 +59,8 @@ test('Route is a mode like the others, asking for the whole sequence at Test', a
   await page.getByTestId('mode-toggle-route').click();
   await expect(page.getByTestId('hint-test')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('position-count')).toHaveText('Route · Test · 57 positions');
-  await expect(page.getByTestId('group-select')).toHaveCount(0);
+  // Route offers its own sets: the four first-step lanes, on top of all 57
+  await expect(page.getByTestId('set-select')).toBeVisible();
 
   await page.getByTestId('start-run').click();
 
@@ -95,17 +89,56 @@ test('chips append in tap order, and a wrong first chip is not judged early', as
   await expect(submit(page)).toBeEnabled();
 });
 
-test('the screen gives the route length away neither before nor during the answer', async ({ page }) => {
+test('Route draws the shape chain above the answer, empty until the route is submitted', async ({ page }) => {
   await open(page);
   await startRoute(page);
 
-  // the only counter on screen is the run's own progress
-  await expect(progress(page)).toHaveText('1 / 57');
+  const position = await positionOnScreen(page);
+
+  // the map: one box per step, one checkpoint shape fewer, then solved
+  const chain = page.getByTestId('route-chain');
+  await expect(chain).toHaveAttribute('data-steps', String(position.steps));
+  await expect(chain.getByTestId('chain-step')).toHaveCount(position.steps);
+  await expect(chain.getByTestId('chain-shape')).toHaveCount(position.steps - 1);
+  await expect(chain.getByTestId('chain-solved')).toHaveCount(1);
+  await expect(page.getByTestId('chain-caption'))
+    .toContainText(position.steps === 1 ? '1 step' : `${position.steps} steps`);
+
+  // at Test the checkpoints are pictures and nothing else: no trigger is given away
+  const stepText = await chain.getByTestId('chain-step').allTextContents();
+  expect(stepText.map(text => text.trim())).toEqual(position.route.map((_, index) => String(index + 1)));
+  if (position.steps > 1) {
+    await expect(chain.getByTestId('chain-shape').first().locator('img')).toHaveAttribute('alt', 'checkpoint shape');
+  }
   await expect(page.getByTestId('reveal')).toHaveCount(0);
 
+  // a tapped chip is the answer being typed, not a claim the map makes
   await optionFor(page, 'ET').click();
+  await expect(chain.getByTestId('chain-step').first()).toHaveText('1');
   await expect(page.getByTestId('reveal')).toHaveCount(0);
-  await expect(page.getByTestId('reveal-route')).toHaveCount(0);
+
+  // and after submit the map carries the route, turns and all
+  await submit(page).click();
+  const filled = await chain.getByTestId('chain-step').allTextContents();
+  expect(filled.map(text => text.trim())).toEqual(
+    position.route.map(step => step.auf === 'none' ? step.trigger : `${step.auf} + ${step.trigger}`));
+});
+
+test('a Route run started from a first-step lane only asks that lane', async ({ page }) => {
+  await open(page);
+  await signIn(page, 'ada');
+  await page.getByTestId('mode-toggle-route').click();
+  await page.getByTestId('set-select').selectOption('ET');
+  await expect(page.getByTestId('position-count')).toHaveText('Route · Test · 18 positions');
+
+  await page.getByTestId('start-run').click();
+  await expect(page.getByTestId('run-progress')).toHaveText('1 / 18');
+  for (let question = 0; question < 4; question++) {
+    expect((await positionOnScreen(page)).route[0].trigger).toBe('ET');
+    await optionFor(page, 'ET').click();
+    await submit(page).click();
+    await page.getByTestId('next').click();
+  }
 });
 
 test('a route submitted too short is wrong, and the whole route is still revealed', async ({ page }) => {
@@ -182,7 +215,7 @@ test('a finished Route run lands on its own board, without retyping the name', a
     phase: 'running',
     mode: 'route',
     hintLevel: 'test',
-    group: null,
+    set: 'all',
     name: 'ada',
     questions: [{ kind: 'route', oll: position.oll, expected: triggersOf(position) }],
     index: 0,

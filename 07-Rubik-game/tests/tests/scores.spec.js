@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 // the positions the app ships, so a seeded run can know the answers
 const cases = require('../../app/src/quiz/entity/cases.json');
+const { seed: seedState, signIn, storedState } = require('./support');
 
 // the game is played on a phone, in portrait
 test.use({ viewport: { width: 390, height: 844 } });
@@ -33,9 +34,7 @@ const boardNames = page => board(page).getByTestId('board-row-name').allTextCont
  */
 const seed = async (page, players, runState, path = '/') => {
   const state = runState ? { run: runState, players } : { players };
-  await page.goto(`localhost:3000${path}`);
-  await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify(value)), [KEY, state]);
-  await page.reload();
+  await seedState(page, state, path);
 };
 
 /** A run that is one answer away from the finish screen. */
@@ -59,7 +58,6 @@ const lastQuestionRun = name => ({
   finishedAt: null
 });
 
-const storedState = page => page.evaluate(key => JSON.parse(localStorage.getItem(key) || 'null'), KEY);
 
 const expectedTrigger = async page => {
   const oll = Number(await page.getByTestId('run').getAttribute('data-oll'));
@@ -69,12 +67,6 @@ const expectedTrigger = async page => {
 };
 
 const optionFor = (page, trigger) => page.getByTestId(`answer-${trigger}`);
-
-/** The name a run is recorded under: the header's `change` line opens the field. */
-const signIn = async (page, name) => {
-  await page.getByTestId('change-name').click();
-  await page.getByTestId('name-input').fill(name);
-};
 
 /** Starts a Random run from the dashboard. */
 const startRun = async page => {

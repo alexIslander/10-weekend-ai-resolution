@@ -81,7 +81,17 @@ export const buildCases = () => {
         image: `/${position.image}`,
         group,
         steps: position.steps,
-        route: position.route.map(step => ({ auf: normalizeAuf(step.auf), trigger: step.tool })),
+        // `shape` is the OLL number of the position the cube is in *after* this
+        // step, or 0 for solved. Route mode draws those checkpoints as the
+        // chain the route walks through, so the game carries them verbatim.
+        route: position.route.map(step => ({
+          auf: normalizeAuf(step.auf),
+          trigger: step.tool,
+          shape: step.shape,
+          // the booklet warns where a lane has fewer steps left than that shape's
+          // own row needs: the picture is right, the row would be wrong
+          warn: step.warn === true,
+        })),
         simulatorUrl: position.href,
       };
     })

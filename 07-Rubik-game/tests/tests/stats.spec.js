@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 // the positions the app ships, so a seeded record can name a real position
 const cases = require('../../app/src/quiz/entity/cases.json');
+const { signIn, storedState } = require('./support');
 
 // the game is played on a phone, in portrait
 test.use({ viewport: { width: 390, height: 844 } });
@@ -32,15 +33,6 @@ const record = (attempts, correct, lastSeenAt = DAY) => ({
 });
 
 /**
- * The name a stats page reports on is the one in the header: `change` opens the
- * field, and what is typed is the player. Nothing is seeded on a later reload.
- */
-const signIn = async (page, name) => {
-  await page.getByTestId('change-name').click();
-  await page.getByTestId('name-input').fill(name);
-};
-
-/**
  * Puts the players in localStorage, the way the template persists them, then
  * loads the dashboard and types the name the stats page will report on — the
  * same two taps a player makes.
@@ -49,7 +41,10 @@ const openPlay = async (page, players, name = 'ada') => {
   await page.goto('localhost:3000');
   await page.evaluate(([key, value]) => localStorage.setItem(key, JSON.stringify({ players: value })), [KEY, players]);
   await page.reload();
+  // the gate is up on this reload: a name is what makes the stats page report,
+  // and with no name the gate is put off so the page can still be read
   if (name) await signIn(page, name);
+  else await page.getByTestId('gate-later').click();
 };
 
 /** The dashboard, one tap later: the stats page. */

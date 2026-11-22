@@ -79,7 +79,14 @@ export const assertCases = (cases, { imageExists = image => existsSync(APP_ROOT 
     for (const step of route) {
       if (!AUFS.includes(step.auf)) fail(`OLL ${oll} has AUF "${step.auf}"`);
       if (!TRIGGERS.includes(step.trigger)) fail(`OLL ${oll} has trigger "${step.trigger}"`);
+      if (typeof step.warn !== "boolean") fail(`OLL ${oll} does not say whether its step is a warn`);
+      if (!Number.isInteger(step.shape) || (step.shape !== 0 && !olls.includes(step.shape))) {
+        fail(`OLL ${oll} passes through shape ${step.shape}, which is not a position`);
+      }
     }
+    // the chain ends where it must: only the last step can reach the solved state
+    if (route.at(-1).shape !== 0) fail(`OLL ${oll} does not end solved`);
+    if (route.slice(0, -1).some(step => step.shape === 0)) fail(`OLL ${oll} reaches the solved state before its last step`);
     if (!imageExists(image)) fail(`OLL ${oll} references a missing diagram ${image}`);
   }
   return cases;

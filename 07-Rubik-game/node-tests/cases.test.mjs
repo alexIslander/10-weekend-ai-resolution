@@ -57,7 +57,7 @@ test("every step has a trigger and an AUF from the allowed set", () => {
   const triggers = new Set();
   for (const { oll, route } of positions) {
     for (const step of route) {
-      assert.deepEqual(Object.keys(step).sort(), ["auf", "trigger"], `OLL ${oll} step shape`);
+      assert.deepEqual(Object.keys(step).sort(), ["auf", "shape", "trigger", "warn"], `OLL ${oll} step shape`);
       assert.ok(AUFS.includes(step.auf), `OLL ${oll} has AUF "${step.auf}"`);
       assert.ok(TRIGGERS.includes(step.trigger), `OLL ${oll} has trigger "${step.trigger}"`);
       aufs.add(step.auf);
@@ -103,4 +103,26 @@ test("every position links to the simulator at its own setup", () => {
 
 test("the generator's own assertions accept the committed file", () => {
   assert.doesNotThrow(() => assertCases(cases, { imageExists: image => existsSync(APP_ROOT + image.slice(1)) }));
+});
+
+test("the route map's checkpoints are real positions, and only the last step is solved", () => {
+  const byOll = new Map(positions.map(position => [position.oll, position]));
+  for (const position of positions) {
+    for (const [index, step] of position.route.entries()) {
+      const last = index === position.route.length - 1;
+      if (last) {
+        assert.equal(step.shape, 0, `OLL ${position.oll} does not end solved`);
+        continue;
+      }
+      const checkpoint = byOll.get(step.shape);
+      assert.ok(checkpoint, `OLL ${position.oll} passes through OLL ${step.shape}, which is not a case`);
+      assert.ok(existsSync(APP_ROOT + checkpoint.image.slice(1)),
+        `OLL ${position.oll}'s checkpoint ${step.shape} has no diagram`);
+      assert.equal(step.warn, false, "today's booklet marks no checkpoint as a warn");
+    }
+  }
+  // the shape the guide's route map draws is the one the game draws
+  const twoStep = positions.find(({ oll }) => oll === 24);
+  assert.equal(twoStep.route[0].shape, 26, "OCLL4 (T-Shape) lands on OCLL6 first");
+  assert.equal(twoStep.route[1].shape, 0);
 });

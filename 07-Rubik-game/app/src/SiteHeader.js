@@ -59,13 +59,49 @@ class SiteHeader extends BElement {
      * The name a run would be recorded under. Anyone typing a name is that
      * player (a name is identity, not authentication), so the field writes
      * straight into the store and every screen follows.
+     *
+     * The field is a moment, not a fixture: `Enter` puts the name away, so does
+     * leaving it with something typed, and an empty one does not close at all —
+     * there would be nothing to read where it was.
      */
     nameField(name) {
         return html`
             <input type="text" class="name-input" data-testid="name-input" aria-label="Name"
                    autocomplete="nickname" placeholder="your name" .value=${name}
-                   @input=${event => nameTyped(event.target.value)}>
+                   @input=${event => nameTyped(event.target.value)}
+                   @keydown=${event => this.nameKey(event)}
+                   @blur=${event => this.nameBlurred(event)}>
         `;
+    }
+
+    /** Enter closes the field; Escape puts the stored name back and closes it. */
+    nameKey(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            this.closeNameField();
+        }
+        if (event.key === "Escape") {
+            event.preventDefault();
+            this.closeNameField();
+        }
+    }
+
+    /**
+     * Leaving the field with a name in it closes it. The `change` button is the
+     * exception: its own click would otherwise close the field and immediately
+     * reopen it.
+     */
+    nameBlurred(event) {
+        const next = event.relatedTarget;
+        if (next instanceof Element && next.closest('[data-testid="change-name"]')) return;
+        if (this.state.name === "") return;
+        this.closeNameField();
+    }
+
+    closeNameField() {
+        if (!this.editingName) return;
+        this.editingName = false;
+        this.triggerViewUpdate();
     }
 
     /** Opens or closes the name field, and puts the cursor in it when it opens. */
@@ -94,14 +130,15 @@ class SiteHeader extends BElement {
                             </span>
                         </a>
                         <div class="session">
-                            <span class="session-name" data-testid="playing-as">
-                                ${icon("user")}${name ? `playing as ${name}` : "no name yet"}
-                            </span>
+                            ${this.editingName
+                                ? this.nameField(name)
+                                : html`<span class="session-name" data-testid="playing-as">
+                                    ${icon("user")}${name ? `playing as ${name}` : "no name yet"}
+                                </span>`}
                             <button type="button" class="change-name" data-testid="change-name"
                                     aria-expanded="${this.editingName}" @click=${() => this.toggleNameField()}>
-                                change
+                                ${this.editingName ? "done" : name ? "change" : "add name"}
                             </button>
-                            ${this.editingName ? this.nameField(name) : nothing}
                             <button type="button" class="theme-toggle" data-testid="theme-toggle"
                                     data-theme-state=${next}
                                     aria-label="switch to the ${THEME_WORDS[next].toLowerCase()} theme"

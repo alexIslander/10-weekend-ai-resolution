@@ -226,7 +226,7 @@ q-site-header {
 }
 
 .name-input {
-    width: min(12rem, 100%);
+    width: min(10rem, 45vw);
     min-height: 40px;
     padding: 0.3rem 0.5rem;
     font-size: 0.85rem;
@@ -412,6 +412,13 @@ legend {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
+}
+
+.field-note {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin: 0;
 }
 
 .mode-line {
@@ -617,6 +624,134 @@ img.diagram {
 .tile--blue { background: var(--rubik-blue); }
 .tile--green { background: var(--rubik-green); }
 .tile--orange { background: var(--rubik-orange); }
+
+/* Route mode's map: the shapes the route walks through, one box per trigger.
+   It scrolls sideways rather than wrapping — a chain reads left to right, and a
+   three-step route is wider than a phone. */
+.chain-block {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.chain-caption {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.chain-scroll {
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+}
+
+.chain {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.15rem;
+    list-style: none;
+    width: max-content;
+}
+
+.chain-cell {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    gap: 0.15rem;
+    border-radius: var(--radius-sm);
+}
+
+.chain-step {
+    min-width: 3.25rem;
+    min-height: 3.25rem;
+    padding: 0.2rem;
+    background: var(--bg-surface-alt);
+    border: 1px dashed var(--border-strong);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.chain-step[data-state="next"] {
+    border-color: var(--rubik-blue);
+    background: var(--accent-highlight);
+    box-shadow: 0 0 0 2px var(--accent-highlight);
+}
+
+.chain-step[data-state="given"] {
+    background: var(--bg-algo);
+    border-style: solid;
+    border-color: transparent;
+    color: var(--text-algo);
+    padding: 0.2rem 0.45rem;
+}
+
+.chain-alg {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.chain-shape {
+    align-content: start;
+}
+
+.chain-frame {
+    padding: 3px;
+    background: var(--cube-frame);
+    border-radius: 8px;
+    line-height: 0;
+}
+
+.chain-diagram {
+    display: block;
+    width: 44px;
+    height: 44px;
+    background: var(--rubik-white);
+    border-radius: 5px;
+}
+
+.chain-label {
+    max-width: 4.5rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+
+.chain-warn {
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--rubik-orange);
+}
+
+.chain-solved {
+    min-width: 3.25rem;
+    min-height: 3.25rem;
+    padding: 0.2rem;
+    background: var(--rubik-green);
+    color: #ffffff;
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.chain-solved .icon {
+    width: 16px;
+    height: 16px;
+}
+
+.chain-arrow {
+    flex: 0 0 auto;
+    color: var(--text-muted);
+    font-weight: 800;
+}
 
 .chosen-empty {
     font-size: 0.85rem;
@@ -1146,6 +1281,178 @@ img.diagram {
     font-size: 0.9rem;
 }
 
+/* a first visit with no name: the way back to the gate after it is dismissed */
+.hero-name {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    gap: 0.45rem;
+    margin-top: var(--spacing-sm);
+    padding: 0 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--rubik-blue);
+    border-color: transparent;
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.hero-name:hover:not(:disabled) {
+    background: var(--rubik-blue);
+}
+
+/* how the game works, and what the four triggers are: folded cards that open
+   on a first visit and stay one tap away after it */
+.study-card {
+    padding: 0;
+}
+
+.study-card > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: var(--spacing-md);
+    cursor: pointer;
+    list-style: none;
+}
+
+.study-card > summary::-webkit-details-marker {
+    display: none;
+}
+
+.study-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: var(--accent-highlight);
+    color: var(--rubik-blue);
+}
+
+[data-theme="dark"] .study-icon {
+    color: var(--rubik-yellow);
+}
+
+.study-icon--triggers {
+    background: var(--bg-pill);
+    color: var(--text-primary);
+}
+
+.study-icon .icon {
+    width: 20px;
+    height: 20px;
+}
+
+.study-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.study-note {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.study-body {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-md) var(--spacing-md);
+}
+
+.study-lede,
+.study-link {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+}
+
+.study-link {
+    color: var(--text-muted);
+}
+
+.study-list {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.45rem 0.9rem;
+    margin: 0;
+}
+
+.study-list dt {
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.study-list dd {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+}
+
+.study-list code {
+    padding: 0 0.2rem;
+    border-radius: 4px;
+    background: var(--bg-pill);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+}
+
+.trigger-table {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.trigger-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "code name" "alg alg" "what what";
+    align-items: center;
+    gap: 0.2rem 0.6rem;
+    padding: 0.6rem 0.7rem;
+    background: var(--bg-surface-alt);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.trigger-code {
+    grid-area: code;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--bg-algo);
+    color: var(--text-algo);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.trigger-name {
+    grid-area: name;
+    font-weight: 800;
+}
+
+.trigger-alg {
+    grid-area: alg;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.trigger-what {
+    grid-area: what;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
 /* the run that is waiting: the one thing on the page asking for a tap */
 .open-run {
     display: grid;
@@ -1288,6 +1595,13 @@ img.diagram {
     color: var(--text-muted);
 }
 
+.mode-rule {
+    margin: -0.1rem 0 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
 .mode-record {
     display: flex;
     align-items: center;
@@ -1353,7 +1667,105 @@ img.diagram {
     min-height: 44px;
 }
 
+/* ---------- the name gate: the one question a first visit is asked ---------- */
+
+.gate {
+    max-width: min(30rem, calc(100% - 2rem));
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.gate::backdrop {
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(2px);
+}
+
+.gate-card {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.gate-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-pill);
+    background: var(--accent-highlight);
+    color: var(--rubik-blue);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+[data-theme="dark"] .gate-eyebrow {
+    color: var(--rubik-yellow);
+}
+
+.gate h2 {
+    font-size: 1.4rem;
+    line-height: 1.15;
+}
+
+.gate-lede {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.gate .name-input {
+    width: 100%;
+}
+
+.gate-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.gate-later {
+    min-height: 44px;
+    padding: 0 0.15rem;
+    border: 0;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.gate-later:hover:not(:disabled) {
+    background: none;
+    transform: none;
+}
+
 /* ---------- narrow screens: the app is played on a phone in portrait ---------- */
+
+@media (min-width: 760px) {
+    /* a wide card can carry the formula beside its name instead of under it */
+    .trigger-row {
+        grid-template-columns: auto auto minmax(0, 1fr);
+        grid-template-areas: "code name alg" "what what what";
+    }
+}
+
+@media (max-width: 520px) {
+    /* the summary keeps its title and loses its ornament: two-line headings on
+       a phone push the mode cards further down than they are worth */
+    .study-note {
+        display: none;
+    }
+}
 
 @media (max-width: 480px) {
     .container {

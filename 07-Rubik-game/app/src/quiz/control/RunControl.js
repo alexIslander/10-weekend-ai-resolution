@@ -1,14 +1,15 @@
 import { createAction } from "@reduxjs/toolkit";
 import store from "../../store.js";
-import { answer, buildRun, groupFor, HINT_LEVELS, MODES, DRILL } from "../core/run.mjs";
+import { answer, buildRun, HINT_LEVELS, MODES, DRILL } from "../core/run.mjs";
 import { askPosition, TRIGGERS } from "../core/drill.mjs";
 import { snapshotRecords } from "../core/records.mjs";
-import { groups, positionOf, positions } from "../entity/Positions.js";
+import { setOf, setsOf } from "../core/sets.mjs";
+import { positionOf, positions } from "../entity/Positions.js";
 
 export const nameTypedAction = createAction("nameTypedAction");
 export const modeChosenAction = createAction("modeChosenAction");
 export const hintLevelChosenAction = createAction("hintLevelChosenAction");
-export const groupChosenAction = createAction("groupChosenAction");
+export const setChosenAction = createAction("setChosenAction");
 export const runStartedAction = createAction("runStartedAction");
 export const chipAppendedAction = createAction("chipAppendedAction");
 export const answerGivenAction = createAction("answerGivenAction");
@@ -38,10 +39,15 @@ export const hintLevelChosen = (hintLevel) => {
     store.dispatch(hintLevelChosenAction(hintLevel));
 }
 
-/** Chooses the group a Grouped run drills. */
-export const groupChosen = (group) => {
-    if (!groups.includes(group)) return;
-    store.dispatch(groupChosenAction(group));
+/**
+ * Chooses the set the next run draws from: a practice set for `Grouped`, a
+ * first-step lane for `Route`. A mode that asks everything offers none.
+ * @param {string} set the set id the picker lists
+ */
+export const setChosen = (set) => {
+    const { run } = store.getState();
+    if (!setsOf(run.mode, positions).some(option => option.id === set)) return;
+    store.dispatch(setChosenAction(set));
 }
 
 /**
@@ -56,13 +62,13 @@ export const startRun = (name, { random = Math.random, now = Date.now } = {}) =>
     const player = name.trim();
     if (!player) return false;
     const { run, players } = store.getState();
-    const group = groupFor(groups, run);
+    const set = setOf(positions, run)?.id ?? null;
     store.dispatch(runStartedAction({
         name: player,
         mode: run.mode,
         hintLevel: run.hintLevel,
-        group,
-        questions: buildRun(positions, { mode: run.mode, group, random }),
+        set,
+        questions: buildRun(positions, { mode: run.mode, set, random }),
         startedAt: now(),
         // what the run's answers are added to, so a Skip can take them back out
         snapshot: snapshotRecords(players?.[player])
@@ -88,7 +94,7 @@ export const startDrill = (oll, { random = Math.random, now = Date.now } = {}) =
         name,
         mode: DRILL,
         hintLevel: "test",
-        group: null,
+        set: null,
         questions: [askPosition(position, random)],
         startedAt: now(),
         // a drill is an open run too: skipping it takes its answer back out

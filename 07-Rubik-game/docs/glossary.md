@@ -32,6 +32,12 @@ The ordered steps that solve a position from its diagram, e.g.
 `AS → WT → S`.
 _Avoid_: Solution, sequence, algorithm
 
+**Route map**:
+The chain a Route question draws above the answer: one box per step, the
+checkpoint shape between them, and the solved badge at the end. It says how many
+steps there are; the triggers are still the player's to name.
+_Avoid_: Diagram, chain (say route map), flow
+
 **AUF**:
 An *adjust upper face* turn (`U`, `U'`, `U2`) made between two steps to line
 the next trigger up. Belongs to a route, not to a step.
@@ -39,8 +45,29 @@ _Avoid_: Setup, adjustment, pre-move
 
 **Group**:
 One of the 14 headings the booklet sorts positions under (`T-Shapes`,
-`Lightning Bolts`, …). Every position belongs to exactly one group.
+`Lightning Bolts`, …). Every position belongs to exactly one group. The reveal
+and the stats page use it; a `Grouped` run does not draw one directly.
 _Avoid_: Family, category, class
+
+**Practice set**:
+What a `Grouped` run draws: one group, or several neighbouring groups, holding
+at least six positions (`T-Shapes · Squares · C-Shapes`). The booklet's groups
+are filled in order until a set has six, and a group is never split between two
+sets.
+_Avoid_: Group (that is the booklet's heading), category, bundle
+
+**First-step lane**:
+What a `Route` run can draw instead of all 57: every position whose route opens
+with one trigger (`Starts with Sune (S)`, 12 positions). The booklet's route map
+cuts the same lanes.
+_Avoid_: Group, filter, subset
+
+**Checkpoint**:
+The shape a route is in after one of its steps, drawn in the Route map between
+one trigger and the next and named by its OLL number. A checkpoint is a pattern,
+not a state: the same picture can need a different follow-up, which is what the
+booklet's `warn` marks.
+_Avoid_: Intermediate, stage, substep
 
 ### Playing
 
@@ -94,8 +121,14 @@ _Avoid_: Difficulty, weight, score
 
 **Player**:
 A name a run's score is attributed to. Anyone typing the name becomes that
-player; nothing is proved.
+player; nothing is proved. A first visit is asked for one in the name gate, and
+`later` leaves the page readable without it.
 _Avoid_: User, account, profile
+
+**Name gate**:
+The modal dialog a page load with no stored name opens. It can be put off, and
+the dashboard and header both reopen it.
+_Avoid_: Login, signup, onboarding
 
 **Board**:
 The ranked list of finished runs for one mode at one hint level.

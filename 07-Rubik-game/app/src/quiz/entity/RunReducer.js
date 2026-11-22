@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { playerDeletedAction } from "../control/PlayersControl.js";
-import { answerGivenAction, chipAppendedAction, groupChosenAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runSkippedAction, runStartedAction } from "../control/RunControl.js";
+import { answerGivenAction, chipAppendedAction, hintLevelChosenAction, modeChosenAction, nameTypedAction, nextQuestionAction, runResetAction, runSkippedAction, runStartedAction, setChosenAction } from "../control/RunControl.js";
 import { defaultHintLevel, nextRun } from "../core/run.mjs";
 
 /**
@@ -12,7 +12,8 @@ export const idleState = () => ({
     phase: "idle",
     mode: "random",
     hintLevel: "test",
-    group: null,
+    // the set a narrower mode draws from: a practice set or a first-step lane
+    set: null,
     name: "",
     questions: [],
     index: 0,
@@ -35,10 +36,13 @@ export const run = createReducer(idleState(), (builder) => {
     }).addCase(modeChosenAction, (state, { payload: mode }) => {
         state.mode = mode;
         state.hintLevel = defaultHintLevel(mode);
+        // one mode's sets mean nothing to another: the picker falls back to the
+        // new mode's first set, which is what `setOf` resolves null to
+        state.set = null;
     }).addCase(hintLevelChosenAction, (state, { payload: hintLevel }) => {
         state.hintLevel = hintLevel;
-    }).addCase(groupChosenAction, (state, { payload: group }) => {
-        state.group = group;
+    }).addCase(setChosenAction, (state, { payload: set }) => {
+        state.set = set;
     }).addCase(runStartedAction, (state, { payload }) => {
         Object.assign(state, idleState(), payload);
         state.phase = "running";

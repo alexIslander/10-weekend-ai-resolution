@@ -19,6 +19,12 @@ Open reports: `npx playwright show-report`
 
 ## what is here
 
+`tests/support.js` holds what every spec needs first: `open` (which gets past
+the first-visit name gate), `signIn`, `seed` and the position on screen.
+`tests/ux.spec.js` covers the gate, the dashboard's teaching cards and the Route
+map; `tests/route.spec.js` the route lanes and the map's filled state;
+`tests/modes.spec.js` the practice sets and the mode cards.
+
 `tests/run.spec.js` covers the name prompt, a scored `Random` run (progress,
 score, the streak ladder and its reset), the reveal after a miss (case name,
 OLL number, step count, route, simulator link) and the finish screen. The spec

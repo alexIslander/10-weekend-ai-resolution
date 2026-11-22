@@ -5,6 +5,7 @@
 import { initRouter } from "./router.js";
 import './SiteHeader.js';
 import './quiz/boundary/Dashboard.js';
+import './quiz/boundary/NameGate.js';
 import './quiz/boundary/Run.js';
 import './quiz/boundary/Scores.js';
 import './quiz/boundary/Stats.js';

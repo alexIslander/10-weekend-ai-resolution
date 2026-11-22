@@ -3,19 +3,24 @@ const { test, expect } = require('@playwright/test');
 
 // the positions the app ships, so a test can know what it should be asked
 const cases = require('../../app/src/quiz/entity/cases.json');
+const { open, signIn } = require('./support');
 
 // the game is played on a phone, in portrait
 test.use({ viewport: { width: 390, height: 844 } });
 
-const groups = cases.groups;
+// the eight practice sets Grouped offers, as the core derives them
+const practiceSets = [
+  { id: 'All Edges Oriented Correctly', count: 7 },
+  { id: 'T-Shapes · Squares · C-Shapes', count: 6 },
+  { id: 'W-Shapes · Corners Correct, Edges Flipped · P-Shapes', count: 8 },
+  { id: 'I-Shapes · Fish Shapes', count: 8 },
+  { id: 'Knight Move Shapes · Awkward Shapes', count: 8 },
+  { id: 'L-Shapes', count: 6 },
+  { id: 'Lightning Bolts', count: 6 },
+  { id: 'No Edges Flipped Correctly', count: 8 }
+];
 
-const open = page => page.goto('localhost:3000');
-
-/** The name a run is recorded under: the header's `change` line opens the field. */
-const signIn = async (page, name = 'throwaway') => {
-  await page.getByTestId('change-name').click();
-  await page.getByTestId('name-input').fill(name);
-};
+const setOptions = practiceSets.map(set => `${set.id} · ${set.count}`);
 
 /** The position on screen, read from the run card's `data-oll` — never from a file name. */
 const positionOnScreen = async page => {
@@ -38,11 +43,11 @@ const answerCorrectly = async page => {
 const advance = page => page.getByTestId('next').click();
 
 /** Opens a mode's card — if it is not already open — and starts a run of it. */
-const startRun = async (page, { mode = 'random', hint, group } = {}) => {
+const startRun = async (page, { mode = 'random', hint, set } = {}) => {
   const toggle = page.getByTestId(`mode-toggle-${mode}`);
   if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
   if (hint) await page.getByTestId(`hint-${hint}`).click();
-  if (group) await page.getByTestId('group-select').selectOption(group);
+  if (set) await page.getByTestId('set-select').selectOption(set);
   await page.getByTestId('start-run').click();
   await expect(page.getByTestId('diagram')).toBeVisible();
 };
@@ -71,11 +76,11 @@ test('tapping a card opens its picker inside the card, one card at a time', asyn
   await page.getByTestId('mode-card-random').click();
   await expect(page.getByTestId('position-count')).toHaveText('Random · Test · 57 positions');
   await expect(page.getByTestId('hint-test')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('group-select')).toHaveCount(0);
+  await expect(page.getByTestId('set-select')).toHaveCount(0);
 
   // a second card closes the first: one picker, one start
   await page.getByTestId('mode-toggle-grouped').click();
-  await expect(page.getByTestId('group-select')).toBeVisible();
+  await expect(page.getByTestId('set-select')).toBeVisible();
   await expect(page.getByTestId('start-run')).toHaveCount(1);
   await expect(page.getByTestId('mode-card-random').getByTestId('start-run')).toHaveCount(0);
 
@@ -111,30 +116,30 @@ test('opening a card does not reflow the grid', async ({ page }) => {
   expect(narrow.width).toBeCloseTo(hero.width, 0);
 });
 
-test('Grouped lists the 14 groups in booklet order and runs exactly the chosen one', async ({ page }) => {
+test('Grouped offers eight practice sets of six to eight positions, and runs exactly the chosen one', async ({ page }) => {
   await open(page);
   await signIn(page);
   await page.getByTestId('mode-toggle-grouped').click();
 
-  const group = page.getByTestId('group-select');
-  await expect(group.locator('option')).toHaveText(groups);
-  await expect(group).toHaveValue(groups[0]);
-  await expect(page.getByTestId('position-count')).toHaveText(`Grouped · ${groups[0]} · Test · 7 positions`);
+  const sets = page.getByTestId('set-select');
+  await expect(sets.locator('option')).toHaveText(setOptions);
+  await expect(sets).toHaveValue(practiceSets[0].id);
+  await expect(page.getByTestId('position-count')).toHaveText('Grouped · Test · 7 positions');
 
-  const name = 'T-Shapes';
-  await group.selectOption(name);
-  await expect(page.getByTestId('position-count')).toHaveText('Grouped · T-Shapes · Test · 2 positions');
+  const set = practiceSets[1];
+  await sets.selectOption(set.id);
+  await expect(page.getByTestId('position-count')).toHaveText(`Grouped · Test · ${set.count} positions`);
 
-  await startRun(page, { mode: 'grouped', group: name });
+  await startRun(page, { mode: 'grouped', set: set.id });
 
-  await expect(page.getByTestId('run-progress')).toHaveText('1 / 2');
+  await expect(page.getByTestId('run-progress')).toHaveText(`1 / ${set.count}`);
   await expect(page.getByTestId('run-mode-level')).toHaveText('Grouped · Test');
-  expect((await positionOnScreen(page)).group).toBe(name);
+  expect(set.id).toContain((await positionOnScreen(page)).group);
 
   await answerCorrectly(page);
   await advance(page);
-  await expect(page.getByTestId('run-progress')).toHaveText('2 / 2');
-  expect((await positionOnScreen(page)).group).toBe(name);
+  await expect(page.getByTestId('run-progress')).toHaveText(`2 / ${set.count}`);
+  expect(set.id).toContain((await positionOnScreen(page)).group);
 });
 
 test('Progressive defaults to Training and walks one-step positions first', async ({ page }) => {
@@ -221,13 +226,14 @@ test('a finished run of a mode leaves a green check and its accuracy on the card
   await open(page);
   await signIn(page, 'ada');
 
-  // T-Shapes at Training is two positions: a whole run in two answers
-  await startRun(page, { mode: 'grouped', group: 'T-Shapes', hint: 'training' });
+  // the T-Shapes · Squares · C-Shapes set at Training is six positions
+  const set = practiceSets[1].id;
+  await startRun(page, { mode: 'grouped', set, hint: 'training' });
 
-  await answerCorrectly(page);
-  await advance(page);
-  await answerCorrectly(page);
-  await advance(page);
+  for (let question = 0; question < practiceSets[1].count; question++) {
+    await answerCorrectly(page);
+    await advance(page);
+  }
   await expect(page.getByTestId('finish')).toBeVisible();
 
   await page.getByTestId('start-another').click();

@@ -4,6 +4,7 @@
  * and the random source is injected, so a run replays exactly in a test.
  */
 import { askPosition, askRoute, evaluateAnswer } from "./drill.mjs";
+import { setOf } from "./sets.mjs";
 
 /** @typedef {import("./drill.mjs").Question} Question */
 import { shuffle } from "./random.mjs";
@@ -43,28 +44,19 @@ export const defaultHintLevel = mode => (mode === "progressive" ? "training" : "
 export const multiplierFor = streak => Math.min(streak, STREAK_CAP);
 
 /**
- * The group a run uses: the chosen one for Grouped, nothing for a mode that
- * asks everything. A group the data no longer carries falls back to the first,
- * so a stale persisted choice cannot break the screen.
- * @param {string[]} groups the 14 group names, in booklet order
- * @param {{mode?: string, group?: string|null}} choices
- * @returns {string|undefined}
- */
-export const groupFor = (groups, { mode, group }) =>
-  mode === "grouped" ? (groups.includes(group) ? group : groups[0]) : undefined;
-
-/**
- * The positions a mode draws from — all of them, or one group's; a grouped run
- * without a group is refused rather than silently asking everything.
+ * The positions a mode draws from — all of them, or the chosen set's: a
+ * practice set for `Grouped`, a first-step lane for `Route`. A set the data no
+ * longer offers falls back to the mode's first one, so a stale persisted choice
+ * cannot break a run.
  * @param {{oll: number, group: string, steps: number, route: {auf: string, trigger: string}[]}[]} positions
- * @param {{mode: string, group?: string}} options
+ * @param {{mode: string, set?: string|null}} options
  */
-export const poolOf = (positions, { mode, group }) => {
+export const poolOf = (positions, { mode, set }) => {
   if (!MODES.includes(mode)) throw new Error(`unsupported mode "${mode}"`);
-  if (mode !== "grouped") return [...positions];
-  const pool = positions.filter(position => position.group === group);
-  if (pool.length === 0) throw new Error(`unsupported group "${group}"`);
-  return pool;
+  if (mode !== "grouped" && mode !== "route") return [...positions];
+  const chosen = setOf(positions, { mode, set });
+  if (!chosen || chosen.positions.length === 0) throw new Error(`mode "${mode}" has no set "${set}"`);
+  return [...chosen.positions];
 };
 
 /** Which question a mode asks of a position: one trigger, or the whole route. */
@@ -75,11 +67,11 @@ const askOf = mode => (mode === "route" ? askRoute : askPosition);
  * random source decides, each with its four options shuffled. Progressive walks
  * one-step, then two-step, then three-step, shuffled within each block.
  * @param {{oll: number, group: string, steps: number, route: {auf: string, trigger: string}[]}[]} positions
- * @param {{mode: string, group?: string, random: () => number}} options
+ * @param {{mode: string, set?: string|null, random: () => number}} options
  * @returns {Question[]} the questions
  */
-export const buildRun = (positions, { mode, group, random }) => {
-  const pool = poolOf(positions, { mode, group });
+export const buildRun = (positions, { mode, set, random }) => {
+  const pool = poolOf(positions, { mode, set });
   const ask = askOf(mode);
   if (mode !== "progressive") return shuffle(pool, random).map(position => ask(position, random));
   const blocks = new Map();
@@ -93,13 +85,13 @@ export const buildRun = (positions, { mode, group, random }) => {
  * The choices the play screen reopens with after a run: the run's own, unless
  * it was a drill — a mode the picker does not offer, so the screen falls back to
  * the default rather than showing a mode with no button pressed.
- * @param {{mode: string, hintLevel: string, group?: string|null}} run
- * @returns {{mode: string, hintLevel: string, group: string|null}}
+ * @param {{mode: string, hintLevel: string, set?: string|null}} run
+ * @returns {{mode: string, hintLevel: string, set: string|null}}
  */
-export const nextRun = ({ mode, hintLevel, group }) =>
+export const nextRun = ({ mode, hintLevel, set }) =>
   isBoardMode(mode)
-    ? { mode, hintLevel, group: group ?? null }
-    : { mode: MODES[0], hintLevel: defaultHintLevel(MODES[0]), group: null };
+    ? { mode, hintLevel, set: set ?? null }
+    : { mode: MODES[0], hintLevel: defaultHintLevel(MODES[0]), set: null };
 
 /**
  * How many answers an open run has taken: the questions it has moved past, plus

@@ -1,21 +1,13 @@
 import BElement from "../../BElement.js";
 import { html, nothing } from "lit-html";
 import { answerWith, chipTapped, nextQuestion, skipRun, submitRoute } from "../control/RunControl.js";
-import { evaluateAnswer, TRIGGERS } from "../core/drill.mjs";
+import { evaluateAnswer, TRIGGERS, TRIGGER_NAMES } from "../core/drill.mjs";
 import { answersOf } from "../core/run.mjs";
 import { positionOf } from "../entity/Positions.js";
 import "./Finish.js";
 import { icon } from "../../icons.js";
 import { label } from "./format.js";
 import { skipControl } from "./Skip.js";
-
-/** How the four triggers read with a thumb on them. */
-const TRIGGER_NAMES = {
-    S: "Sune",
-    AS: "Anti-Sune",
-    ET: "Edge Trigger",
-    WT: "Wide Edge Trigger"
-};
 
 /**
  * The square a typed step carries on the route chips: one cube colour per
@@ -113,6 +105,7 @@ class Run extends BElement {
                 <h2 class="section-title" data-testid="question">${route
                     ? "Name the route, step by step"
                     : "Which trigger solves this position?"}</h2>
+                ${route ? this.chainView(run, question) : nothing}
                 ${route ? this.routeAnswer(run) : this.triggerAnswer(question, run)}
                 ${verdict
                     ? html`${this.verdictView(verdict, question)}
@@ -142,9 +135,89 @@ class Run extends BElement {
     }
 
     /**
+     * Route mode's map: the shapes the route walks through, with a box between
+     * them for each trigger to go in.
+     *
+     * This is the scaffold that makes a route answerable — the diagram on screen
+     * says where the route starts, not what it passes through, and a three-step
+     * route was otherwise invisible until it was wrong. The boxes stay empty
+     * until the route is submitted (the answer is still typed in the chips
+     * below, and still judged whole); the next one is marked so the player can
+     * see where they are. At Training each checkpoint also carries its case
+     * name; at Test the shapes carry nothing but themselves (ADR-0002).
+     *
+     * The checkpoints are recognition aids, not shortcuts: the booklet's `warn`
+     * flag marks a shape whose own row needs more steps than the lane has left,
+     * and it is surfaced at Training because that is the case a learner would
+     * get wrong by jumping.
+     */
+    chainView(run, question) {
+        const position = positionOf(question.oll);
+        const submitted = run.given !== null;
+        const typed = run.chips ?? [];
+        const training = run.hintLevel === "training";
+        return html`
+            <div class="chain-block" data-testid="route-chain" data-steps="${position.steps}">
+                <p class="chain-caption" data-testid="chain-caption">
+                    route map · ${position.steps} ${position.steps === 1 ? "step" : "steps"} —
+                    ${submitted ? "the route, with its AUF turns" : "name each trigger in order"}
+                </p>
+                <div class="chain-scroll">
+                    <ol class="chain" aria-label="Route map">
+                        ${position.route.map((step, index) => html`
+                            ${index === 0 ? nothing : html`<li class="chain-arrow" aria-hidden="true">→</li>`}
+                            ${this.chainStep(step, index, { submitted, next: typed.length })}
+                            ${this.chainShape(step, training)}`)}
+                    </ol>
+                </div>
+            </div>
+        `;
+    }
+
+    /** One box of the chain: the trigger that takes this shape to the next. */
+    chainStep(step, index, { submitted, next }) {
+        const state = submitted ? "given" : index === next ? "next" : "todo";
+        return html`
+            <li class="chain-cell chain-step" data-testid="chain-step" data-index="${index + 1}"
+                data-state="${state}">
+                ${submitted
+                    ? html`<span class="chain-alg">${step.auf === "none" ? "" : `${step.auf} + `}${step.trigger}</span>`
+                    : html`<span class="chain-n">${index + 1}</span>`}
+            </li>
+        `;
+    }
+
+    /** The shape the cube is in after that trigger, or the solved badge after the last. */
+    chainShape(step, training) {
+        if (step.shape === 0) {
+            return html`
+                <li class="chain-cell chain-solved" data-testid="chain-solved">
+                    ${icon("check")}<span>solved</span>
+                </li>
+            `;
+        }
+        const shape = positionOf(step.shape);
+        return html`
+            <li class="chain-cell chain-shape" data-testid="chain-shape"
+                data-oll="${step.shape}" data-warn="${step.warn}">
+                <span class="chain-frame">
+                    <img class="chain-diagram" src="${shape.image}" width="44" height="44"
+                         alt="${training ? shape.name : "checkpoint shape"}">
+                </span>
+                ${training
+                    ? html`<span class="chain-label" title="${shape.name}">${shape.name}</span>`
+                    : nothing}
+                ${step.warn && training
+                    ? html`<span class="chain-warn" title="this lane continues past the shape: follow the route, not that case's row">!</span>`
+                    : nothing}
+            </li>
+        `;
+    }
+
+    /**
      * Route mode: the four triggers append to a list the player can read, and
-     * nothing is judged until `submit`. The list never says how many steps the
-     * position has, so its length leaks only what the player themselves typed.
+     * nothing is judged until `submit` — the map above says which shape each
+     * step reaches, the chips below are the answer being typed.
      */
     routeAnswer(run) {
         const open = run.given === null;

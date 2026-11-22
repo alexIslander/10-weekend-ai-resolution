@@ -16,7 +16,10 @@ ladder, finish screen, per-position records; boards derived from finished runs
 (#6) — `Random`, `Grouped`, `Progressive` at `Training` or `Test`; the `stats`
 page (#7) — accuracy per mode and group, the ten weak spots with one-question
 drills, lifetime totals, reset and delete; and `Route` (#8), the mode that asks
-for the whole sequence of triggers.
+for the whole sequence of triggers. The first live player's round of UX fixes is
+in too (**ADR-0007**): the first-visit name gate, the dashboard's teaching cards,
+`Grouped` practice sets of six to eight positions, `Route` first-step lanes, and
+the route map drawn above a Route answer.
 
 ## Serve
 
@@ -35,25 +38,28 @@ The fallback matters: `/` renders the play screen, `/stats` the stats page and
 `/scores` the boards, and a reload of any of them must reach `index.html`. `zws.sh --single` (from the template) or browsersync
 serve the same directory.
 
-## Starting the app: no login, no dashboard
+## Starting the app: a name, no login, no dashboard
 
 A name is identity, not authentication: there is no account, no password and no
-server, so there is nothing to log in to. The play screen at `/` is the home
-screen, and its start form — name, mode, hint level, and a group for `Grouped` —
-is the app's only entry point. The name field arrives already filled with the
-last name used, because the run slice persists like everything else.
+server, so there is nothing to log in to. A page load with no stored name opens
+the **name gate** — a modal `what should we call you?` with the field focused and
+an empty name refused — because a score has to belong to someone. `later` puts
+the gate off for that visit; the hero keeps an `add your name` button and the
+header keeps its field, both reopening it. A stored name never shows the gate.
 
-There is no dashboard page either: the spec's navigation decision lists exactly
-the play screen, the run view, the stats page and the scores page. Anything that
-adds up a player's history lives on `/stats`.
+`/` is a dashboard, not a login screen: the open run, one card per mode (with
+the rule it plays by), then — on a first visit, open; afterwards folded — **how
+the game works** and **the four triggers** with their formulas. Anything that
+adds up a player's history still lives on `/stats`; ADR-0006 has the dashboard's
+navigation decision and ADR-0007 the teaching cards.
 
 The whole run persists, so reopening the app resumes it rather than starting
 over. What `/` shows depends on the phase in storage:
 
 | Stored run phase | What `/` shows |
 | --- | --- |
-| `idle` | the start form: name, mode, hint level, start |
-| `running` | the question that run was on, resumed |
+| `idle` | the dashboard: the mode cards, each expanding into hint level, set and start |
+| `running` | the dashboard with the open run first, one tap back into it |
 | `finished` | the finish screen of that run |
 
 That is also the one place the app can feel stuck: there is **no abandon-run
@@ -64,20 +70,25 @@ decision.
 
 ## A session, step by step
 
-1. **Play** (`/`) — type or keep a name, choose a mode and a hint level (and a
-   group for `Grouped`); the line under the choices states mode · level ·
-   position count. `start the run`.
-2. **Run** — one position at a time, with progress, score and mode on top. A
-   trigger mode answers with one of four buttons; `Route` appends triggers to a
-   list of chips and waits for `submit the route`. Every answer, right or wrong,
-   reveals the position — case name, OLL number, group, step count, route with
-   its AUF turns, and the way into the cube simulator — and then `next position`.
-3. **Finish** — score, correct of total, accuracy and elapsed time; `see the
+1. **Name** — a first visit is asked for a name in the gate; after that the
+   header says `playing as <name>` and `change` reopens the field, which closes
+   again on `Enter` or when it loses focus.
+2. **Play** (`/`) — tap a mode card to expand its hint level, its set (`Grouped`
+   offers practice sets, `Route` its first-step lanes) and start; the line under
+   the choices states mode · level · position count. `start the run`.
+3. **Run** — one position at a time, with progress, score and mode on top. A
+   trigger mode answers with one of four buttons; `Route` draws the route map
+   (one box per step, the checkpoint shapes between them, the solved badge at
+   the end), appends triggers to a list of chips and waits for
+   `submit the route`. Every answer, right or wrong, reveals the position — case
+   name, OLL number, group, step count, route with its AUF turns, and the way
+   into the cube simulator — and then `next position`.
+4. **Finish** — score, correct of total, accuracy and elapsed time; `see the
    board` for the mode the run landed on (no board link for a drill), and
    `start another run`, which reopens the picker under the same name.
-4. **Scores** (`/scores`) — one section per mode, a `Training` and a `Test`
+5. **Scores** (`/scores`) — one section per mode, a `Training` and a `Test`
    column each, best score first, the faster run winning a tie.
-5. **Stats** (`/stats`) — the player the next run would be recorded under:
+6. **Stats** (`/stats`) — the player the next run would be recorded under:
    lifetime totals, accuracy per mode, all 14 groups, the ten weakest positions.
    Tapping a weak spot starts a one-question drill at `Test`; `reset stats`
    clears the history and keeps the name, `delete player` removes the name too.
@@ -118,8 +129,9 @@ case name, diagram, step count, route) and
 booklet order), copies the diagrams each position references, and then asserts:
 57 positions, unique OLL numbers, group sizes 7/2/2/2/2/2/4/4/4/4/4/6/6/8 summing
 to 57, step counts 4/32/21, every route as long as its step count, every AUF in
-{`none`, `U`, `U'`, `U2`}, and every referenced diagram present. The same
-assertions run in `node --test` against the committed file.
+{`none`, `U`, `U'`, `U2`}, every step's checkpoint a real position (the last one
+solved), and every referenced diagram present. The same assertions run in
+`node --test` against the committed file.
 
 Two traps the generated file must not fall into:
 
@@ -143,12 +155,14 @@ app/src/
     core/drill.mjs      pure ESM: one question and its verdict, random injected
     core/run.mjs        pure ESM: which positions a run asks, what an answer is worth
     core/boards.mjs     pure ESM: how finished runs rank on a board
+    core/sets.mjs       pure ESM: practice sets and first-step lanes
     core/stats.mjs      pure ESM: per-mode, per-group, worst-N and lifetime rollups
     core/records.mjs    pure ESM: how an answer changes a position's record
     core/random.mjs     the injected shuffle
     entity/             cases.json (generated), Positions.js, RunReducer.js, PlayersReducer.js
     control/            RunControl.js, PlayersControl.js: the actions the screens dispatch
-    boundary/Play.js    `q-play`: name, mode, group, hint level, and the way into a run
+    boundary/Dashboard.js `q-dashboard`: open run, teaching cards, one card per mode and its picker
+    boundary/NameGate.js `q-name-gate`: the first-visit name dialog
     boundary/Run.js     `q-run`: question, progress, score, feedback, reveal
     boundary/Finish.js  `q-finish`: score, correct, accuracy, elapsed, the way to the board
     boundary/Stats.js   `q-stats`: totals, per-mode and per-group accuracy, weak spots
@@ -157,18 +171,22 @@ app/src/
 scripts/
   generate-cases.mjs    booklet -> cases.json + img/
   assert-cases.mjs      what the generated file must satisfy (used by both)
-node-tests/             node --test: data shape, answer evaluation
-tests/                  Playwright e2e
+node-tests/             node --test: data shape, sets, answer evaluation
+tests/                  Playwright e2e; `tests/support.js` gets every spec past the gate
 ```
 
 `quiz/core` is the only place that decides *what happens*: no DOM, no store, no
 imports outside itself. Components render its output; controls dispatch.
 
 A run is one mode at one hint level, both chosen on the play screen. `Random`
-asks all 57 positions shuffled; `Grouped` asks one of the 14 booklet groups,
-shuffled; `Progressive` asks the 4 one-step positions, then the 32 two-step,
-then the 21 three-step, shuffled within each block; `Route` asks all 57 shuffled
-but wants the whole sequence rather than its first step. `Progressive` starts at
+asks all 57 positions shuffled; `Grouped` asks one **practice set** shuffled —
+the booklet's 14 groups filled in order to at least six positions, and never
+split inside a group, which today is eight sets of 7/6/8/8/8/6/6/8
+(`core/sets.mjs`); `Progressive` asks the 4 one-step positions, then the 32
+two-step, then the 21 three-step, shuffled within each block; `Route` asks all
+57 shuffled, or one **first-step lane** (`S` 12, `AS` 8, `ET` 18, `WT` 19 — the
+cut the booklet's route map makes), but wants the whole sequence rather than its
+first step. `Progressive` starts at
 `Training`, the other modes at `Test`, and the hint level can be overridden for
 any mode: `Training` keeps the case name and OLL number on screen while asking,
 `Test` shows nothing identifying until the answer. The reveal is the same at
@@ -179,11 +197,16 @@ a miss scores nothing and resets the multiplier.
 `Route` is the same run in every other way — its own boards, its own records —
 with a different answer: the four triggers append to a list of chips the player
 can read, and a separate `submit the route` is the only thing that judges it.
-A one-chip answer is complete for a one-step position, a wrong first chip is
-judged no earlier than any other, and the list never says how long the route is,
-so the screen gives nothing away that the diagram does not. The four triggers
-sit in a fixed pad rather than a shuffled order: that pad is how the route is
-typed, and the question here is the sequence, not which button carries it.
+A one-chip answer is complete for a one-step position, and a wrong first chip is
+judged no earlier than any other. The **route map** above the answer shows the
+chain: one empty box per trigger, the checkpoint shape (the position the cube is
+in after that step) between them, and the solved badge at the end. The boxes
+stay empty until `submit`, then carry the route and its AUF turns; at `Training`
+each checkpoint is named, at `Test` it is a picture and nothing else. So the
+map says how many steps there are — the triggers are still the player's to name,
+and the answer is judged whole. The four triggers sit in a fixed pad rather than
+a shuffled order: that pad is how the route is typed, and the question here is
+the sequence, not which button carries it.
 Credit is all-or-nothing: the submitted sequence must be the position's route exactly,
 trigger for trigger, and only then does the reveal — which is the same one the
 trigger drills show, AUF turns included — teach what was missed. Either way the answer reveals

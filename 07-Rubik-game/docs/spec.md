@@ -221,3 +221,26 @@ board rows.
   breaks the import map, so the app is served statically, never bundled.
 - The game is a bounded context of its own: quiz, players, and rendering are three
   responsibilities; keep the core free of all three's concerns.
+
+## Amendments
+
+This spec is the record of what was built, not a live document: later decisions
+are ADRs, and this section lists the ones that changed a decision above.
+
+- **ADR-0006** supersedes the navigation decision: `/` is a dashboard, the picker
+  expands inside the chosen mode's card, and the design language is the solve
+  guide's.
+- **ADR-0007** (from the first live player's feedback) changes four things the
+  spec above still states in its original form:
+  - *Identity* — a page load with no stored name opens the **name gate**; `later`
+    leaves the page readable, and the dashboard and header both reopen it.
+  - *Grouped* — the unit is a **practice set** (six to eight positions, made of
+    one or several neighbouring booklet groups), not one of the 14 headings. The
+    headings remain the reveal's label and the stats page's rollup.
+  - *Route* — a run can draw a **first-step lane** (`S` 12, `AS` 8, `ET` 18,
+    `WT` 19) instead of all 57, and the screen draws the **route map** (step
+    boxes, checkpoint shapes, solved) above the answer. The map does say how
+    many steps there are; that trade is recorded in the ADR.
+  - *Teaching* — the dashboard carries **how the game works** and **the four
+    triggers** (formulas and a link to the guide), open on a first visit and
+    folded once there is history; each mode card states its rule.

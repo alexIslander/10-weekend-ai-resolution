@@ -10,7 +10,8 @@ import assert from "node:assert/strict";
 
 import cases from "../app/src/quiz/entity/cases.json" with { type: "json" };
 import { groups, positions as generatedPositions } from "../app/src/quiz/entity/Positions.js";
-import { accuracy, buildRun, answer, defaultHintLevel, DRILL, groupFor, isBoardMode, MODES, nextRun, poolOf } from "../app/src/quiz/core/run.mjs";
+import { accuracy, buildRun, answer, defaultHintLevel, DRILL, isBoardMode, MODES, nextRun, poolOf } from "../app/src/quiz/core/run.mjs";
+import { firstTriggerOf, practiceSets, routeSets, setOf, setsOf } from "../app/src/quiz/core/sets.mjs";
 import { emptyRecord, recordAnswer } from "../app/src/quiz/core/records.mjs";
 import { seeded } from "./seeded.mjs";
 
@@ -153,26 +154,31 @@ test("the group picker lists the 14 groups the data carries, in booklet order", 
   assert.deepEqual([...used].sort(), [...groups].sort());
 });
 
-test("a Grouped run asks exactly the positions of the chosen group, shuffled", () => {
-  const group = "T-Shapes";
-  const inGroup = positions.filter(position => position.group === group).map(({ oll }) => oll);
-  const run = buildRun(positions, { mode: "grouped", group, random: seeded(2) });
-  const replay = buildRun(positions, { mode: "grouped", group, random: seeded(2) });
+test("a Grouped run asks exactly the positions of the chosen practice set, shuffled", () => {
+  const set = "T-Shapes · Squares · C-Shapes";
+  const members = positions.filter(position => set.includes(position.group) && position.group !== "All Edges Oriented Correctly")
+    .filter(position => ["T-Shapes", "Squares", "C-Shapes"].includes(position.group));
+  const expected = members.map(({ oll }) => oll);
+  const run = buildRun(positions, { mode: "grouped", set, random: seeded(2) });
+  const replay = buildRun(positions, { mode: "grouped", set, random: seeded(2) });
 
-  assert.equal(run.length, inGroup.length);
-  assert.deepEqual(run.map(({ oll }) => oll).sort((a, b) => a - b), [...inGroup].sort((a, b) => a - b));
+  assert.equal(run.length, expected.length);
+  assert.deepEqual(run.map(({ oll }) => oll).sort((a, b) => a - b), [...expected].sort((a, b) => a - b));
   assert.deepEqual(run.map(({ oll }) => oll), replay.map(({ oll }) => oll));
-  assert.notDeepEqual(run.map(({ oll }) => oll), inGroup, "the group is shuffled, not in booklet order");
+  assert.notDeepEqual(run.map(({ oll }) => oll), expected, "the set is shuffled, not in booklet order");
 });
 
-test("every group's pool is exactly that group's positions", () => {
-  const sizes = groups.map(group => poolOf(positions, { mode: "grouped", group }).length);
-  assert.deepEqual(sizes, [7, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 8]);
+test("every practice set's pool is exactly its own positions", () => {
+  const sets = practiceSets(positions);
+  const sizes = sets.map(set => poolOf(positions, { mode: "grouped", set: set.id }).length);
+  assert.deepEqual(sizes, sets.map(set => set.count));
+  assert.deepEqual(sizes, [7, 6, 8, 8, 8, 6, 6, 8]);
 });
 
-test("an unknown group is refused", () => {
-  assert.throws(() => buildRun(positions, { mode: "grouped", group: "Nope", random: seeded(1) }), /unsupported group/);
-  assert.throws(() => buildRun(positions, { mode: "grouped", random: seeded(1) }), /unsupported group/);
+test("a set the data no longer offers asks the first one rather than nothing", () => {
+  const first = practiceSets(positions)[0];
+  assert.deepEqual(poolOf(positions, { mode: "grouped", set: "Nope" }).map(({ oll }) => oll), first.positions.map(({ oll }) => oll));
+  assert.equal(buildRun(positions, { mode: "grouped", random: seeded(1) }).length, first.count);
 });
 
 test("a Progressive run walks one-step, then two-step, then three-step, shuffled within each block", () => {
@@ -191,9 +197,16 @@ test("a Progressive run walks one-step, then two-step, then three-step, shuffled
   assert.notDeepEqual(firstBlock, bookletOneStep, "the one-step block is shuffled too");
 });
 
-test("a non-grouped run asks all 57 positions whatever group is offered", () => {
-  assert.equal(poolOf(positions, { mode: "random", group: "T-Shapes" }).length, 57);
+test("a mode with no sets asks all 57 positions whatever set is offered", () => {
+  assert.equal(poolOf(positions, { mode: "random", set: "T-Shapes" }).length, 57);
   assert.equal(poolOf(positions, { mode: "progressive" }).length, 57);
+});
+
+test("a Route run draws the first-step lane it was given", () => {
+  const lane = poolOf(positions, { mode: "route", set: "ET" });
+  assert.equal(lane.length, 18);
+  assert.ok(lane.every(position => firstTriggerOf(position) === "ET"));
+  assert.equal(poolOf(positions, { mode: "route" }).length, 57, "no lane means every position");
 });
 
 test("Progressive starts at Training, every other mode at Test", () => {
@@ -202,11 +215,15 @@ test("Progressive starts at Training, every other mode at Test", () => {
   assert.equal(defaultHintLevel("grouped"), "test");
 });
 
-test("a grouped choice falls back to the first group when it is missing or stale", () => {
-  assert.equal(groupFor(groups, { mode: "random" }), undefined, "a mode that asks everything has no group");
-  assert.equal(groupFor(groups, { mode: "grouped", group: null }), groups[0]);
-  assert.equal(groupFor(groups, { mode: "grouped", group: "T-Shapes" }), "T-Shapes");
-  assert.equal(groupFor(groups, { mode: "grouped", group: "A group the booklet dropped" }), groups[0]);
+test("a set choice falls back to the mode's first set when it is missing or stale", () => {
+  const sets = practiceSets(positions);
+  assert.equal(setOf(positions, { mode: "random" }), null, "a mode that asks everything has no set");
+  assert.equal(setOf(positions, { mode: "grouped", set: null }).id, sets[0].id);
+  assert.equal(setOf(positions, { mode: "grouped", set: "L-Shapes" }).id, "L-Shapes");
+  assert.equal(setOf(positions, { mode: "grouped", set: "A group the booklet dropped" }).id, sets[0].id);
+  assert.equal(setOf(positions, { mode: "route", set: "WT" }).id, "WT");
+  assert.equal(setOf(positions, { mode: "route", set: null }).id, "all");
+  assert.deepEqual(setsOf("random", positions), []);
 });
 
 test("every shipped mode is a board mode, and a drill is not", () => {
@@ -216,16 +233,19 @@ test("every shipped mode is a board mode, and a drill is not", () => {
 
 test("the play screen reopens with the run's own choices", () => {
   assert.deepEqual(
-    nextRun({ mode: "grouped", hintLevel: "training", group: "T-Shapes" }),
-    { mode: "grouped", hintLevel: "training", group: "T-Shapes" });
+    nextRun({ mode: "grouped", hintLevel: "training", set: "L-Shapes" }),
+    { mode: "grouped", hintLevel: "training", set: "L-Shapes" });
   assert.deepEqual(
-    nextRun({ mode: "progressive", hintLevel: "test", group: null }),
-    { mode: "progressive", hintLevel: "test", group: null });
+    nextRun({ mode: "route", hintLevel: "test", set: "ET" }),
+    { mode: "route", hintLevel: "test", set: "ET" });
+  assert.deepEqual(
+    nextRun({ mode: "progressive", hintLevel: "test", set: null }),
+    { mode: "progressive", hintLevel: "test", set: null });
 });
 
 test("a drill hands the play screen back to the default mode and level", () => {
   // the picker has no Drill button, so the screen must not reopen on one
   assert.deepEqual(
-    nextRun({ mode: DRILL, hintLevel: "test", group: null }),
-    { mode: "random", hintLevel: "test", group: null });
+    nextRun({ mode: DRILL, hintLevel: "test", set: null }),
+    { mode: "random", hintLevel: "test", set: null });
 });
