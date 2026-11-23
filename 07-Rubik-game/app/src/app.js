@@ -9,6 +9,7 @@ import './quiz/boundary/NameGate.js';
 import './quiz/boundary/Run.js';
 import './quiz/boundary/Scores.js';
 import './quiz/boundary/Stats.js';
+import './ReleaseNotes.js';
 import store from "./store.js";
 import { save } from "./localstorage/control/StorageControl.js";
 

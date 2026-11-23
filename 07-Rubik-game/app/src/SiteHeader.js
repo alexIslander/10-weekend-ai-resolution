@@ -3,6 +3,8 @@ import { html, nothing } from "lit-html";
 import { icon } from "./icons.js";
 import { cycleTheme, nextTheme, THEME_CHANGED } from "./theme.js";
 import { nameTyped } from "./quiz/control/RunControl.js";
+import { appVersion } from "./app.config.js";
+import { showReleaseNotes } from "./ReleaseNotes.js";
 
 /**
  * How a theme state reads on the pill, and the glyph it wears. The pill shows
@@ -135,6 +137,11 @@ class SiteHeader extends BElement {
                                 : html`<span class="session-name" data-testid="playing-as">
                                     ${icon("user")}${name ? `playing as ${name}` : "no name yet"}
                                 </span>`}
+                            <button type="button" class="theme-toggle release-toggle" data-testid="release-notes-toggle"
+                                    aria-label="release notes, version ${appVersion}" title="release notes, version ${appVersion}"
+                                    @click=${() => showReleaseNotes()}>
+                                ${icon("circle-question")}
+                            </button>
                             <button type="button" class="change-name" data-testid="change-name"
                                     aria-expanded="${this.editingName}" @click=${() => this.toggleNameField()}>
                                 ${this.editingName ? "done" : name ? "change" : "add name"}
